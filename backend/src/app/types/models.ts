@@ -1,0 +1,20 @@
+import { InferSchemaType } from "mongoose";
+import { userSchema } from "../models/user";
+import { walletSchema } from "../models/wallet";
+import { transactionSchema } from "../models/transaction";
+import { auctionSchema } from "../models/auction";
+import { auditLogSchema } from "../models/auditLog";
+import { bidSchema } from "../models/bid";
+import { budgetSchema } from "../models/budget";
+import { depositRequestSchema } from "../models/depositRequest";
+import { notificationSchema } from "../models/notification";
+
+export type IUserDocument = InferSchemaType<typeof userSchema>;
+export type IWalletDocument = InferSchemaType<typeof walletSchema>;
+export type ITransactionDocument = InferSchemaType<typeof transactionSchema>;
+export type IAuctionDocument = InferSchemaType<typeof auctionSchema>;
+export type IAuditLogDocument = InferSchemaType<typeof auditLogSchema>;
+export type IBidDocument = InferSchemaType<typeof bidSchema>;
+export type IBudgetDocument = InferSchemaType<typeof budgetSchema>;
+export type IDepositRequestDocument = InferSchemaType<typeof depositRequestSchema>;
+export type INotificationDocument = InferSchemaType<typeof notificationSchema>;

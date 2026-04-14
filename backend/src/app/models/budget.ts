@@ -1,6 +1,6 @@
 import { InferSchemaType, Schema, Types, model } from "mongoose";
 
-const budgetSchema = new Schema(
+export const budgetSchema = new Schema(
   {
     userId: { 
       type: Types.ObjectId, 
@@ -34,5 +34,6 @@ const budgetSchema = new Schema(
   { timestamps: true },
 );
 
-export type BudgetDocument = InferSchemaType<typeof budgetSchema>;
-export const BudgetModel = model("Budget", budgetSchema);
+import { IBudgetDocument } from "../types/models";
+
+export const BudgetModel = model<IBudgetDocument>("Budget", budgetSchema);

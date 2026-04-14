@@ -3,28 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/auth.store";
-import { LayoutDashboard, Users, Wallet, Gavel, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useLogout } from "@/hooks/useAuth";
+import { getVisibleLinks } from "@/config/navigation";
 
-interface SidebarProps {
-  isMobile?: boolean;
-  onClose?: () => void;
-}
+import { ISidebarProps } from "@/types/components";
 
-export function Sidebar({ isMobile, onClose }: SidebarProps) {
+export function Sidebar({ isMobile, onClose }: ISidebarProps) {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
   const { mutate: logout } = useLogout();
 
-  // Navigation based on roles
-  const navLinks = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["admin", "seller", "bidder"] },
-    { name: "Wallet", href: "/wallet", icon: Wallet, roles: ["seller", "bidder", "admin"] },
-    { name: "Auctions", href: "/auctions", icon: Gavel, roles: ["seller", "bidder"] },
-    { name: "User Management", href: "/admin/users", icon: Users, roles: ["admin"] },
-  ];
-
-  const visibleLinks = navLinks.filter(link => user?.role && link.roles.includes(user.role));
+  const visibleLinks = getVisibleLinks(user?.role);
 
   const handleLinkClick = () => {
     if (isMobile && onClose) {

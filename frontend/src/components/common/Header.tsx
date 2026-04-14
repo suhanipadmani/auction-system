@@ -3,11 +3,9 @@
 import { Menu, User, Bell } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
 
-interface HeaderProps {
-  onMenuClick: () => void;
-}
+import { IHeaderProps } from "@/types/components";
 
-export function Header({ onMenuClick }: HeaderProps) {
+export function Header({ onMenuClick }: IHeaderProps) {
   const user = useAuthStore((state) => state.user);
 
   return (

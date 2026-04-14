@@ -1,12 +1,12 @@
 "use client";
 
 import { Mail, Calendar, UserX, ShieldCheck } from "lucide-react";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "./Select";
 import { Button } from "./Button";
 import {
@@ -16,17 +16,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./table";
-import { Badge } from "./badge";
+} from "./Table";
+import { Badge } from "./Badge";
 
-interface UsersTableProps {
-  users: any[];
-  currentUser: any;
-  updateRole: (data: { id: string; role: string }) => void;
-  deactivateUser: (id: string) => void;
-  isUpdatingRole: boolean;
-  isDeactivating: boolean;
-}
+import { IUsersTableProps } from "@/types/components";
 
 export function UsersTable({
   users,
@@ -35,7 +28,7 @@ export function UsersTable({
   deactivateUser,
   isUpdatingRole,
   isDeactivating,
-}: UsersTableProps) {
+}: IUsersTableProps) {
   return (
     <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-xl mt-8">
       <div className="overflow-x-auto">
@@ -53,7 +46,7 @@ export function UsersTable({
             {users.map((user) => {
               const isAdmin = user.role === "admin";
               const isSelf = user._id === currentUser?._id;
-              
+
               return (
                 <TableRow key={user._id} className="hover:bg-muted/50 transition-colors border-border">
                   <TableCell className="px-6 py-4">
@@ -63,13 +56,13 @@ export function UsersTable({
                       {user.email}
                     </div>
                   </TableCell>
-                  
+
                   <TableCell className="px-6 py-4">
                     {!isAdmin || user.role !== "admin" ? (
                       <div className="w-40">
                         <Select
                           value={user.role}
-                          onValueChange={(value) => updateRole({ id: user._id, role: value })}
+                          onValueChange={(value) => value && updateRole({ id: user._id, role: value })}
                           disabled={isUpdatingRole || isSelf}
                         >
                           <SelectTrigger className="w-full">
@@ -85,7 +78,7 @@ export function UsersTable({
                     ) : (
                       <Badge variant="outline" className="gap-1.5 px-3 py-1.5 bg-primary/10 text-primary border-primary/20">
                         <ShieldCheck className="w-3.5 h-3.5" />
-                        Super Admin
+                        Admin
                       </Badge>
                     )}
                   </TableCell>
@@ -107,7 +100,7 @@ export function UsersTable({
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-2 text-muted-foreground whitespace-nowrap">
                       <Calendar className="w-4 h-4" />
-                      {new Date(user.createdAt).toLocaleDateString()}
+                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
                     </div>
                   </TableCell>
 
@@ -117,7 +110,7 @@ export function UsersTable({
                         variant="destructive"
                         size="sm"
                         onClick={() => {
-                          if(confirm("Are you sure you want to deactivate this user? They will not be able to log in.")) {
+                          if (confirm("Are you sure you want to deactivate this user? They will not be able to log in.")) {
                             deactivateUser(user._id);
                           }
                         }}
@@ -135,7 +128,7 @@ export function UsersTable({
                 </TableRow>
               );
             })}
-            
+
             {users.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className="px-6 py-8 text-center text-muted-foreground">

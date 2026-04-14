@@ -1,40 +1,26 @@
 import { Request, Response, NextFunction } from "express";
 import { createUser, getAllUsers, updateUserRole, deactivateUser } from "../services/user.service";
+import { asyncHandler } from "../utils/asyncHandler";
+import { sendSuccess } from "../utils/apiResponse";
 
-export const create = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const user = await createUser(req.body);
-    res.status(201).json({ success: true, message: "User created successfully", data: user });
-  } catch (error: any) {
-    res.status(400).json({ success: false, message: error.message });
-  }
-};
+export const create = asyncHandler(async (req: Request, res: Response) => {
+  const user = await createUser(req.body);
+  sendSuccess(res, "User created successfully", user, 201);
+});
 
-export const getAll = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const users = await getAllUsers();
-    res.status(200).json({ success: true, message: "Users retrieved", data: users });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+export const getAll = asyncHandler(async (req: Request, res: Response) => {
+  const users = await getAllUsers();
+  sendSuccess(res, "Users retrieved", users);
+});
 
-export const updateRole = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const id = req.params.id as string;
-    const user = await updateUserRole(id, req.body.role);
-    res.status(200).json({ success: true, message: "User role updated", data: user });
-  } catch (error: any) {
-    res.status(400).json({ success: false, message: error.message });
-  }
-};
+export const updateRole = asyncHandler(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const user = await updateUserRole(id as string, req.body.role);
+  sendSuccess(res, "User role updated", user);
+});
 
-export const deactivate = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const id = req.params.id as string;
-    const user = await deactivateUser(id);
-    res.status(200).json({ success: true, message: "User deactivated", data: user });
-  } catch (error: any) {
-    res.status(400).json({ success: false, message: error.message });
-  }
-};
+export const deactivate = asyncHandler(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const user = await deactivateUser(id as string);
+  sendSuccess(res, "User deactivated", user);
+});

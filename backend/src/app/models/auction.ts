@@ -1,13 +1,13 @@
 import { InferSchemaType, Schema, Types, model } from "mongoose";
 
-export const AUCTION_STATUSES = ["pending", "active", "ended", "cancelled"] as const;
+export const AUCTION_STATUSES = ["pending", "approved", "rejected", "active", "ended", "cancelled"] as const;
 
-const auctionSchema = new Schema(
+export const auctionSchema = new Schema(
   {
     title: { 
       type: String, 
-      required: true,
-       trim: true 
+      required: true, 
+      trim: true 
     },
 
     description: {
@@ -37,7 +37,8 @@ const auctionSchema = new Schema(
 
     startTime: { 
       type: Date, 
-      required: true 
+      required: true,
+      index: true
     },
 
     endTime: { 
@@ -49,7 +50,8 @@ const auctionSchema = new Schema(
       type: String, 
       enum: AUCTION_STATUSES, 
       default: "pending", 
-      required: true 
+      required: true,
+      index: true
     },
 
     highestBid: { 
@@ -63,20 +65,11 @@ const auctionSchema = new Schema(
       ref: "User", 
       default: null 
     },
-
-    isApproved: { 
-      type: Boolean, 
-      default: false 
-    },
-
-    isRejected: { 
-      type: Boolean, 
-      default: false 
-    },
     
   },
   { timestamps: true },
 );
 
-export type AuctionDocument = InferSchemaType<typeof auctionSchema>;
-export const AuctionModel = model("Auction", auctionSchema);
+import { IAuctionDocument } from "../types/models";
+
+export const AuctionModel = model<IAuctionDocument>("Auction", auctionSchema);

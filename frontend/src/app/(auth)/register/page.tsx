@@ -17,17 +17,17 @@ const registerSchema = z.object({
   role: z.enum(["bidder", "seller"]),
 });
 
-type RegisterForm = z.infer<typeof registerSchema>;
+import { IRegisterForm } from "@/types/forms";
 
 export default function RegisterPage() {
   const { mutate: registerUser, isPending, error } = useRegister();
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterForm>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<IRegisterForm>({
     resolver: zodResolver(registerSchema),
     defaultValues: { role: "bidder" }
   });
 
-  const onSubmit = (data: RegisterForm) => {
+  const onSubmit = (data: IRegisterForm) => {
     registerUser(data);
   };
 

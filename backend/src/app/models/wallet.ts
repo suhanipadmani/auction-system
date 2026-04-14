@@ -1,6 +1,6 @@
 import { InferSchemaType, Schema, Types, model } from "mongoose";
 
-const walletSchema = new Schema(
+export const walletSchema = new Schema(
   {
     userId: { 
       type: Types.ObjectId, 
@@ -34,5 +34,6 @@ const walletSchema = new Schema(
   { timestamps: true },
 );
 
-export type WalletDocument = InferSchemaType<typeof walletSchema>;
-export const WalletModel = model("Wallet", walletSchema);
+import { IWalletDocument } from "../types/models";
+
+export const WalletModel = model<IWalletDocument>("Wallet", walletSchema);

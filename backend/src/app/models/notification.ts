@@ -2,7 +2,7 @@ import { InferSchemaType, Schema, Types, model } from "mongoose";
 
 export const NOTIFICATION_TYPES = ["outbid", "win", "loss", "auction_end"] as const;
 
-const notificationSchema = new Schema(
+export const notificationSchema = new Schema(
   {
     userId: { 
       type: Types.ObjectId, 
@@ -32,5 +32,6 @@ const notificationSchema = new Schema(
   { timestamps: true },
 );
 
-export type NotificationDocument = InferSchemaType<typeof notificationSchema>;
-export const NotificationModel = model("Notification", notificationSchema);
+import { INotificationDocument } from "../types/models";
+
+export const NotificationModel = model<INotificationDocument>("Notification", notificationSchema);

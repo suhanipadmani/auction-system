@@ -2,7 +2,7 @@ import { InferSchemaType, Schema, Types, model } from "mongoose";
 
 export const BID_STATUSES = ["active", "outbid", "won", "lost"] as const;
 
-const bidSchema = new Schema(
+export const bidSchema = new Schema(
   {
     auctionId: { 
       type: Types.ObjectId, 
@@ -46,5 +46,6 @@ const bidSchema = new Schema(
   { timestamps: true },
 );
 
-export type BidDocument = InferSchemaType<typeof bidSchema>;
-export const BidModel = model("Bid", bidSchema);
+import { IBidDocument } from "../types/models";
+
+export const BidModel = model<IBidDocument>("Bid", bidSchema);

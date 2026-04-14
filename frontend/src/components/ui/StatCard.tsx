@@ -2,14 +2,9 @@
 
 import { ReactNode } from "react";
 
-interface StatCardProps {
-  title: string;
-  value: string | number;
-  icon: ReactNode;
-  iconContainerClass: string;
-}
+import { IStatCardProps } from "@/types/components";
 
-export function StatCard({ title, value, icon, iconContainerClass }: StatCardProps) {
+export function StatCard({ title, value, icon, iconContainerClass }: IStatCardProps) {
   return (
     <div className="bg-card border border-border rounded-2xl px-6 py-4 flex items-center gap-4">
       <div className={`p-3 rounded-xl ${iconContainerClass}`}>

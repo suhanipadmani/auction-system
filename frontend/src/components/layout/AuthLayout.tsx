@@ -3,13 +3,9 @@
 import { ReactNode } from "react";
 import { Gavel } from "lucide-react";
 
-interface AuthLayoutProps {
-  children: ReactNode;
-  title: string;
-  subtitle?: string;
-}
+import { IAuthLayoutProps } from "@/types/components";
 
-export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
+export function AuthLayout({ children, title, subtitle }: IAuthLayoutProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
       {/* Subtle Background blobs for premium feel */}

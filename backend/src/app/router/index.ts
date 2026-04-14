@@ -1,6 +1,9 @@
-import { Router } from "express";
 import { authRoutes } from "./auth.routes";
 import { userRoutes } from "./user.routes";
+import { walletRoutes } from "./wallet.routes";
+import { adminWalletRoutes } from "./adminWallet.routes";
+import { auctionRoutes } from "./auction.routes";
+import { Router } from "express";
 
 export const appRouter = Router();
 
@@ -10,4 +13,7 @@ appRouter.get("/health", (_req, res) => {
 
 appRouter.use("/auth", authRoutes);
 appRouter.use("/users", userRoutes);
+appRouter.use("/wallet", walletRoutes);
+appRouter.use("/admin/wallet", adminWalletRoutes);
+appRouter.use("/auctions", auctionRoutes);
 

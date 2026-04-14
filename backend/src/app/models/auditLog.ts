@@ -2,7 +2,7 @@ import { InferSchemaType, Schema, Types, model } from "mongoose";
 
 export const AUDIT_ACTIONS = ["BID_PLACED", "AUCTION_CREATED", "WALLET_UPDATED"] as const;
 
-const auditLogSchema = new Schema(
+export const auditLogSchema = new Schema(
   {
     userId: { 
       type: Types.ObjectId, 
@@ -26,5 +26,6 @@ const auditLogSchema = new Schema(
   { timestamps: true },
 );
 
-export type AuditLogDocument = InferSchemaType<typeof auditLogSchema>;
-export const AuditLogModel = model("AuditLog", auditLogSchema);
+import { IAuditLogDocument } from "../types/models";
+
+export const AuditLogModel = model<IAuditLogDocument>("AuditLog", auditLogSchema);

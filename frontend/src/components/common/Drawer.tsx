@@ -3,13 +3,9 @@
 import { ReactNode, useEffect } from "react";
 import { X } from "lucide-react";
 
-interface DrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: ReactNode;
-}
+import { IDrawerProps } from "@/types/components";
 
-export function Drawer({ isOpen, onClose, children }: DrawerProps) {
+export function Drawer({ isOpen, onClose, children }: IDrawerProps) {
   // Prevent scrolling when drawer is open
   useEffect(() => {
     if (isOpen) {

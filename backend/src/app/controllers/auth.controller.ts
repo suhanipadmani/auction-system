@@ -1,24 +1,18 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { registerUser, loginUser } from "../services/auth.service";
+import { asyncHandler } from "../utils/asyncHandler";
+import { sendSuccess } from "../utils/apiResponse";
 
-export const register = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const user = await registerUser(req.body);
-    res.status(201).json({ success: true, message: "User registered successfully", data: user });
-  } catch (error: any) {
-    res.status(400).json({ success: false, message: error.message });
-  }
-};
+export const register = asyncHandler(async (req: Request, res: Response) => {
+  const user = await registerUser(req.body);
+  sendSuccess(res, "User registered successfully", user, 201);
+});
 
-export const login = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const data = await loginUser(req.body);
-    res.status(200).json({ success: true, message: "Login successful", data });
-  } catch (error: any) {
-    res.status(401).json({ success: false, message: error.message });
-  }
-};
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  const data = await loginUser(req.body);
+  sendSuccess(res, "Login successful", data);
+});
 
-export const logout = async (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({ success: true, message: "Logged out successfully" });
-};
+export const logout = asyncHandler(async (req: Request, res: Response) => {
+  sendSuccess(res, "Logged out successfully");
+});

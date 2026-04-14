@@ -16,17 +16,17 @@ const loginSchema = z.object({
   role: z.enum(["bidder", "seller"]),
 });
 
-type LoginForm = z.infer<typeof loginSchema>;
+import { ILoginForm } from "@/types/forms";
 
 export default function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<LoginForm>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<ILoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: { role: "bidder" }
   });
 
-  const onSubmit = (data: LoginForm) => {
+  const onSubmit = (data: ILoginForm) => {
     login(data);
   };
 

@@ -7,10 +7,10 @@ export const seedAdmin = async () => {
     const adminExists = await UserModel.findOne({ role: "admin" });
     
     if (!adminExists) {
-      const hashedPassword = await bcrypt.hash(env.adminPassword, 10);
+      const hashedPassword = await bcrypt.hash(env.adminPassword!, 10);
       await UserModel.create({
-        name: "Super Admin",
-        email: env.adminEmail,
+        name: "Admin",
+        email: env.adminEmail!,
         password: hashedPassword,
         role: "admin",
         status: "active",

@@ -3,7 +3,7 @@ import { InferSchemaType, Schema, model } from "mongoose";
 export const USER_ROLES = ["admin", "seller", "bidder"] as const;
 export const USER_STATUSES = ["active", "deleted"] as const;
 
-const userSchema = new Schema(
+export const userSchema = new Schema(
   {
     name: { 
       type: String, 
@@ -42,5 +42,6 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
-export type UserDocument = InferSchemaType<typeof userSchema>;
-export const UserModel = model("User", userSchema);
+import { IUserDocument } from "../types/models";
+
+export const UserModel = model<IUserDocument>("User", userSchema);

@@ -1,7 +1,8 @@
-﻿import cors from "cors";
+import cors from "cors";
 import express from "express";
 import { env } from "../config";
 import { appRouter } from "../app/router";
+import { errorMiddleware } from "../app/middleware/error.middleware";
 
 export const createExpressApp = () => {
   const app = express();
@@ -14,6 +15,9 @@ export const createExpressApp = () => {
   });
 
   app.use("/api", appRouter);
+
+  // Global Error Handler
+  app.use(errorMiddleware);
 
   return app;
 };
