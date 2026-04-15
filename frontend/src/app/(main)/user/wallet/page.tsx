@@ -1,17 +1,25 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+// External
+import { Wallet, History, PlusCircle, Lock, Loader2, ArrowUpCircle, ArrowDownCircle, RefreshCcw } from "lucide-react";
+
+// State (Auth Store)
+import { useAuthStore } from "@/store/auth.store";
+
+// Hooks
+import { useState } from "react";
+import { useBalance, useTransactions, useMyRequests, useRequestDeposit } from "@/hooks/useWallet";
+
+// Components
 import { StatCard } from "@/components/ui/StatCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Wallet, History, PlusCircle, Lock, Loader2, ArrowUpCircle, ArrowDownCircle, RefreshCcw } from "lucide-react";
-import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/Table";
 import { Badge } from "@/components/ui/Badge";
-import { useAuthStore } from "@/store/auth.store";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useBalance, useTransactions, useMyRequests, useRequestDeposit } from "@/hooks/useWallet";
 
 
 export default function UserWalletPage() {

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useProcessDeposit, useAdjustBalance } from "@/hooks/useWallet";
+
 import { IViewType } from "@/types/forms";
+
+import { useProcessDeposit, useAdjustBalance } from "@/hooks/useWallet";
 
 // Modular Components
 import { WalletHeader } from "@/components/wallet/WalletHeader";

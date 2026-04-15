@@ -1,11 +1,18 @@
 "use client";
 
-import { useAuthStore } from "@/store/auth.store";
-import { useUsers } from "@/hooks/useUsers";
+// External
 import {
   UsersRound, UserCheck, Gavel,
   BadgeIndianRupee, Tags, ArrowUpRight
 } from "lucide-react";
+
+// State (Auth Store)
+import { useAuthStore } from "@/store/auth.store";
+
+// Hooks
+import { useUsers } from "@/hooks/useUsers";
+
+// UI Components
 import { DashboardStatCard } from "@/components/dashboard/DashboardStatCard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { QuickActionCard } from "@/components/dashboard/QuickActionCard";

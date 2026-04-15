@@ -1,13 +1,23 @@
 "use client";
 
-import { useAuctions } from "@/hooks/useAuction";
+import Link from "next/link";
+
+// External
+import { Loader2, Plus } from "lucide-react";
+
+// State (Auth Store)
 import { useAuthStore } from "@/store/auth.store";
+
+// Hooks
+import { useAuctions } from "@/hooks/useAuction";
+
+// Utils
+import { cn } from "@/lib/utils";
+
+// Components
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { AuctionCard } from "@/components/auctions/AuctionCard";
-import { Loader2, Plus } from "lucide-react";
-import Link from "next/link";
 import { buttonVariants } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
 
 export default function SellerAuctionsPage() {
   const user = useAuthStore((state) => state.user);

@@ -1,15 +1,25 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useAuctionDetails, useCancelAuction } from "@/hooks/useAuction";
+
+// External 
+import { Loader2, Clock, Trophy, AlertCircle, ChevronLeft } from "lucide-react";
+import { format } from "date-fns";
+import { toast } from "sonner";
+
+// State (Auth store)
 import { useAuthStore } from "@/store/auth.store";
+
+// Hooks
+import { useAuctionDetails, useCancelAuction } from "@/hooks/useAuction";
+
+// Utils
+import { formatCurrency } from "@/lib/utils";
+
+// UI Components
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Loader2, Gavel, Clock, Trophy, AlertCircle, ChevronLeft } from "lucide-react";
-import { format } from "date-fns";
-import { cn, formatCurrency } from "@/lib/utils";
-import { toast } from "sonner";
 
 export default function AuctionDetailPage() {
    const { id } = useParams();

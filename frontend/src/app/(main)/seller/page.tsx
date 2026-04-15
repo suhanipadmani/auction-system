@@ -1,7 +1,12 @@
 "use client";
 
-import { useAuthStore } from "@/store/auth.store";
+// External
 import { Tags, Gavel, PlusCircle, LayoutDashboard, BadgeIndianRupee, ArrowUpRight } from "lucide-react";
+
+// State (Auth Store)
+import { useAuthStore } from "@/store/auth.store";
+
+// Components
 import { DashboardStatCard } from "@/components/dashboard/DashboardStatCard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { QuickActionCard } from "@/components/dashboard/QuickActionCard";

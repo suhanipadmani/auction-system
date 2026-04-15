@@ -1,13 +1,19 @@
 "use client";
 
-import { useAuctions, useAdminApprove } from "@/hooks/useAuction";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
-import { Button } from "@/components/ui/Button";
+import Link from "next/link";
+
+// External
 import { Loader2, Check, X, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import Link from "next/link";
+
+// Hooks
+import { useAuctions, useAdminApprove } from "@/hooks/useAuction";
+
+// Components
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
+import { Button } from "@/components/ui/Button";
 
 export default function AdminAuctionApprovalPage() {
   const { data: response, isLoading } = useAuctions({ status: "pending" });

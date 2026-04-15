@@ -1,9 +1,9 @@
 "use client";
 
-import { useAuthStore } from "@/store/auth.store";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+import { useAuthStore } from "@/store/auth.store";
 
 export default function DashboardRedirect() {
   const user = useAuthStore((state) => state.user);
@@ -15,7 +15,7 @@ export default function DashboardRedirect() {
       return;
     }
 
-    // Role-based routing logic
+    // Role-based routing 
     switch (user.role) {
       case "admin":
         router.replace("/admin");

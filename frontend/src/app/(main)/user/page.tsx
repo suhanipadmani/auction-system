@@ -1,14 +1,23 @@
 "use client";
 
-import { useAuthStore } from "@/store/auth.store";
-import { useBalance } from "@/hooks/useWallet";
+// External
 import {
     Wallet, Gavel, Trophy, PlusCircle, ArrowUpRight
 } from "lucide-react";
+
+// State (Auth Store)
+import { useAuthStore } from "@/store/auth.store";
+
+// Hooks
+import { useBalance } from "@/hooks/useWallet";
+
+// Utils 
+import { formatCurrency } from "@/lib/utils";
+
+// Components
 import { DashboardStatCard } from "@/components/dashboard/DashboardStatCard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { QuickActionCard } from "@/components/dashboard/QuickActionCard";
-import { formatCurrency } from "@/lib/utils";
 
 export default function UserDashboardPage() {
     const user = useAuthStore((state) => state.user);

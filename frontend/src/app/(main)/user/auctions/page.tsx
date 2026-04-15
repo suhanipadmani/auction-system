@@ -1,13 +1,21 @@
 "use client";
 
+import { useState } from "react";
+
+// External
+import { Loader2, Search, SlidersHorizontal } from "lucide-react";
+
+// Types
+import { AuctionStatus } from "@/types/auction";
+
+// Hooks
 import { useAuctions } from "@/hooks/useAuction";
+
+// Components
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { AuctionCard } from "@/components/auctions/AuctionCard";
-import { Loader2, Search, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { useState } from "react";
-import { AuctionStatus } from "@/types/auction";
 
 export default function BidderAuctionsPage() {
   const [status, setStatus] = useState<AuctionStatus | undefined>("active");

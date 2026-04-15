@@ -1,11 +1,17 @@
 "use client";
 
+import Link from "next/link";
+
+// External
+import { ChevronLeft } from "lucide-react";
+
+// Utils
+import { cn } from "@/lib/utils";
+
+// Components
 import { CreateAuctionForm } from "@/components/auctions/CreateAuctionForm";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
 import { buttonVariants } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
 
 export default function CreateAuctionPage() {
   return (
