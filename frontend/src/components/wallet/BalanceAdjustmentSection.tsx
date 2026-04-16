@@ -30,18 +30,12 @@ import {
   SelectItem
 } from "@/components/ui/Select";
 
-interface BalanceAdjustmentSectionProps {
-  onReviewClick: (data: {
-    userId: string;
-    amount: number;
-    type: "credit" | "debit";
-    note: string;
-    userName: string;
-  }) => void;
-  isAdjusting: boolean;
-}
+// Types
+import { IBalanceAdjustmentSectionProps } from "@/types/components";
 
-export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: BalanceAdjustmentSectionProps) {
+
+export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanceAdjustmentSectionProps) {
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserId, setSelectedUserId] = useState("");
   const [adjustmentAmount, setAdjustmentAmount] = useState("");

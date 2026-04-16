@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 // External
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 // Validation
-import { AuctionFormData, auctionSchema } from "@/validations/auction.validation";
+import { IAuctionFormData } from "@/types/auction";
+import { auctionSchema } from "@/validations/auction.validation";
+
 
 // Hooks
 import { useCreateAuction } from "@/hooks/useAuction";
@@ -28,15 +29,18 @@ export function CreateAuctionForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(auctionSchema),
+  } = useForm<IAuctionFormData>({
+    resolver: zodResolver(auctionSchema) as any,
+
+
     defaultValues: {
       basePrice: 0,
       minIncrement: 1,
     }
   });
 
-  const onSubmit = (data: AuctionFormData) => {
+  const onSubmit = (data: IAuctionFormData) => {
+
     createAuction(data, {
       onSuccess: () => {
         toast.success("Auction created successfully and is pending approval!");

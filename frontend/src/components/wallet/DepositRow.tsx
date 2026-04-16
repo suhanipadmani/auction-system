@@ -3,7 +3,7 @@
 import { XCircle, CheckCircle2 } from "lucide-react";
 
 // Types
-import { IDepositRequest } from "@/types/wallet";
+import { IDepositRowProps } from "@/types/components";
 
 // Utils
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -13,14 +13,10 @@ import { TableRow, TableCell } from "@/components/ui/Table";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
-interface DepositRowProps {
-  req: IDepositRequest;
-  onProcessClick: (req: IDepositRequest, type: "approved" | "rejected") => void;
-  isLoading: boolean;
-  processingId?: string;
-}
 
-export function DepositRow({ req, onProcessClick, isLoading, processingId }: DepositRowProps) {
+
+export function DepositRow({ req, onProcessClick, isLoading, processingId }: IDepositRowProps) {
+
   const isSelectedForProcessing = processingId === req._id && isLoading;
 
   return (

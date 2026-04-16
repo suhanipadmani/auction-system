@@ -1,4 +1,10 @@
-export type AuctionStatus = "pending" | "approved" | "rejected" | "active" | "ended" | "cancelled";
+import { AuctionStatus } from "@/constants/auction.constants";
+
+export type { AuctionStatus };
+export type IAuctionTabType = "active" | "won" | "past";
+export type IDiscoveryTabType = "live" | "upcoming";
+
+
 
 export interface IAuction {
   _id: string;
@@ -14,7 +20,9 @@ export interface IAuction {
   endTime: string;
   status: AuctionStatus;
   highestBid: number;
-  highestBidderId?: string | null;
+  highestBidderId?: string | { _id: string; name: string } | null;
+  currentUserStatus?: "winning" | "outbid";
+
   createdAt: string;
   updatedAt: string;
 }
@@ -33,6 +41,8 @@ export interface IUpdateAuctionDTO extends Partial<ICreateAuctionDTO> {}
 export interface IAuctionFilters {
   status?: AuctionStatus;
   sellerId?: string;
+  search?: string;
+  activity?: "my";
   page?: number;
   limit?: number;
 }
@@ -44,3 +54,12 @@ export interface IAuctionResponse {
   page: number;
   totalPages: number;
 }
+export type IAuctionFormData = {
+  title: string;
+  description: string;
+  basePrice: number;
+  minIncrement: number;
+  startTime: string;
+  endTime: string;
+};
+

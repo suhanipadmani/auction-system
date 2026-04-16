@@ -13,30 +13,9 @@ import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 
-interface AdjustmentData {
-  userId: string;
-  amount: number;
-  type: "credit" | "debit";
-  note: string;
-  userName: string;
-}
+// Types
+import { IAdjustmentData, IWalletModalsProps } from "@/types/components";
 
-interface WalletModalsProps {
-  // Adjustment Modal
-  isAdjustmentOpen: boolean;
-  onAdjustmentClose: () => void;
-  adjustmentData: AdjustmentData | null;
-  onAdjustmentConfirm: () => void;
-  isAdjusting: boolean;
-
-  // Deposit Modal
-  isDepositOpen: boolean;
-  onDepositClose: () => void;
-  selectedRequest: any;
-  actionType: "approved" | "rejected";
-  onDepositConfirm: (id: string, status: "approved" | "rejected") => void;
-  isProcessing: boolean;
-}
 
 export function WalletStatusCheck({ userId }: { userId: string }) {
   const { data: walletData, isLoading } = useUserWallet(userId);
@@ -69,7 +48,7 @@ export function WalletModals({
   actionType,
   onDepositConfirm,
   isProcessing
-}: WalletModalsProps) {
+}: IWalletModalsProps) {
   return (
     <>
       {/* Confirmation Modal */}

@@ -1,7 +1,7 @@
 "use client";
 
 // Types
-import { ITransaction } from "@/types/wallet";
+import { ITransactionLogRowProps } from "@/types/components";
 
 // Hooks
 import { useTransactionStatus } from "@/hooks/useTransactionStatus";
@@ -14,9 +14,7 @@ import { formatDate } from "@/lib/utils";
 import { TableRow, TableCell } from "@/components/ui/Table";
 import { Badge } from "@/components/ui/Badge";
 
-interface ITransactionLogRowProps {
-  tx: ITransaction;
-}
+
 
 export function TransactionLogRow({ tx }: ITransactionLogRowProps) {
   const { typeStyle, statusStyle, sourceStyle } = useTransactionStatus(

@@ -7,7 +7,7 @@ import { Clock, Trash2, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
 
 // Types
-import { IAuction } from "@/types/auction";
+import { IAuctionCardProps } from "@/types/components";
 
 // Hooks
 import { useAuctionStatus } from "@/hooks/useAuctionStatus";
@@ -25,11 +25,6 @@ import { Modal } from "@/components/ui/Modal";
 import { useState } from "react";
 
 
-interface IAuctionCardProps {
-  auction: IAuction;
-  href?: string;
-  showActions?: boolean;
-}
 
 export function AuctionCard({ auction, href, showActions }: IAuctionCardProps) {
   const { colorClass, isLive, label } = useAuctionStatus(auction.status);
@@ -82,12 +77,27 @@ export function AuctionCard({ auction, href, showActions }: IAuctionCardProps) {
         <Badge variant="outline" className={cn("capitalize font-medium", colorClass)}>
           {label}
         </Badge>
-        {isLive && (
-          <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-500 animate-pulse">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            LIVE
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {auction.currentUserStatus && (
+            <Badge 
+              variant="secondary" 
+              className={cn(
+                "text-[10px] uppercase font-bold tracking-tight px-1.5 py-0",
+                auction.currentUserStatus === "winning" 
+                  ? "bg-emerald-500/20 text-emerald-500 border-emerald-500/20" 
+                  : "bg-amber-500/20 text-amber-500 border-amber-500/20"
+              )}
+            >
+              {auction.currentUserStatus}
+            </Badge>
+          )}
+          {isLive && (
+            <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-500 animate-pulse">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              LIVE
+            </span>
+          )}
+        </div>
       </CardHeader>
 
       <CardContent className="p-5 space-y-4">

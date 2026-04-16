@@ -11,6 +11,7 @@ import { useAuthStore } from "@/store/auth.store";
 
 // Hooks
 import { useUsers } from "@/hooks/useUsers";
+import { useAdminStats } from "@/hooks/useAuction";
 
 // UI Components
 import { DashboardStatCard } from "@/components/dashboard/DashboardStatCard";
@@ -20,10 +21,17 @@ import { QuickActionCard } from "@/components/dashboard/QuickActionCard";
 export default function AdminPage() {
   const user = useAuthStore((state) => state.user);
   const { data: usersResponse } = useUsers();
+  const { data: statsResponse } = useAdminStats();
 
   const allUsers = usersResponse?.data || [];
   const users = allUsers.filter((u: any) => u.role !== "admin");
   const activeUsersCount = users.filter((u: any) => u.status === "active").length;
+
+  const stats = statsResponse?.data || {
+    totalAuctions: 0,
+    systemRevenue: 0,
+    bidsToday: 0
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -50,20 +58,20 @@ export default function AdminPage() {
         />
         <DashboardStatCard
           title="Total Auctions"
-          value="0"
+          value={stats.totalAuctions}
           icon={<Gavel className="w-6 h-6" />}
           color="purple"
         />
         <DashboardStatCard
           title="System Revenue"
-          value="₹0"
+          value={`₹${stats.systemRevenue.toLocaleString()}`}
           icon={<BadgeIndianRupee className="w-6 h-6" />}
           color="amber"
           className="lg:col-span-1"
         />
         <DashboardStatCard
           title="Bids Today"
-          value="0"
+          value={stats.bidsToday}
           icon={<Tags className="w-6 h-6" />}
           color="blue"
         />

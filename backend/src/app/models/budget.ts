@@ -6,20 +6,18 @@ export const budgetSchema = new Schema(
       type: Types.ObjectId, 
       ref: "User", 
       required: true, 
-      unique: true, 
       index: true 
+    },
+
+    name: { 
+      type: String, 
+      required: true,
+      trim: true
     },
 
     maxBudget: { 
       type: Number, 
       required: true, 
-      min: 0 
-    },
-
-    currentExposure: { 
-      type: Number, 
-      required: true, 
-      default: 0, 
       min: 0 
     },
 
@@ -33,6 +31,9 @@ export const budgetSchema = new Schema(
   },
   { timestamps: true },
 );
+
+// Compound index to prevent duplicate goal names for the same user
+budgetSchema.index({ userId: 1, name: 1 }, { unique: true });
 
 import { IBudgetDocument } from "../types/models";
 

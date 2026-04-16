@@ -11,14 +11,27 @@ import { DashboardStatCard } from "@/components/dashboard/DashboardStatCard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { QuickActionCard } from "@/components/dashboard/QuickActionCard";
 
+// Hooks
+import { useSellerStats } from "@/hooks/useAuction";
+
+// Utils
+import { formatCurrency } from "@/lib/utils";
+
 export default function SellerDashboardPage() {
   const user = useAuthStore((state) => state.user);
+  const { data: statsResponse, isLoading } = useSellerStats();
+
+  const stats = statsResponse?.data || {
+    totalEarnings: 0,
+    activeListings: 0,
+    completedSales: 0
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
       <DashboardHeader
-        userName="Seller Studio"
+        userName={user?.name || "Seller Studio"}
         subtitle="Manage your listings and track your sales performance."
         statusValue="Verified Seller"
       />
@@ -26,23 +39,24 @@ export default function SellerDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <DashboardStatCard
           title="Total Earnings"
-          value="₹0"
+          value={isLoading ? "..." : formatCurrency(stats.totalEarnings)}
           icon={<BadgeIndianRupee className="w-6 h-6" />}
           color="emerald"
         />
         <DashboardStatCard
           title="Active Listings"
-          value="0"
+          value={isLoading ? "..." : stats.activeListings.toString()}
           icon={<Tags className="w-6 h-6" />}
           color="indigo"
         />
         <DashboardStatCard
           title="Completed Sales"
-          value="0"
+          value={isLoading ? "..." : stats.completedSales.toString()}
           icon={<Gavel className="w-6 h-6" />}
           color="purple"
         />
       </div>
+
 
       {/* Seller Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

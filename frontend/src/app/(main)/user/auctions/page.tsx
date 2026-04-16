@@ -1,76 +1,90 @@
 "use client";
 
 import { useState } from "react";
-
-// External
-import { Loader2, Search } from "lucide-react";
-
-// Types
-import { AuctionStatus } from "@/types/auction";
-
-// Hooks
-import { useAuctions } from "@/hooks/useAuction";
-
-// Components
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { useMyBiddingActivity } from "@/hooks/useAuction";
 import { AuctionCard } from "@/components/auctions/AuctionCard";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { Gavel, Trophy, History, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { IAuctionTabType } from "@/types/auction";
 
-export default function BidderAuctionsPage() {
-  const [status, setStatus] = useState<AuctionStatus | undefined>("active");
-  const { data: response, isLoading } = useAuctions({ status });
 
-  return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <DashboardHeader
-          userName="Live Marketplace"
-          subtitle="Explore active auctions and place your bids."
-        />
-      </div>
+export default function MyBiddingActivityPage() {
+    const { data: response, isLoading } = useMyBiddingActivity();
+    const [activeTab, setActiveTab] = useState<IAuctionTabType>("active");
 
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search items, categories, or sellers..." 
-            className="pl-10 bg-white/5 border-white/10 w-full"
-          />
-        </div>
-        <div className="flex gap-2">
-            <Button 
-                variant={status === "active" ? "default" : "outline"}
-                onClick={() => setStatus("active")}
-                className={status === "active" ? "bg-emerald-600 hover:bg-emerald-700" : "border-white/10"}
-            >
-                Live Now
-            </Button>
-            <Button 
-                variant={status === "approved" ? "default" : "outline"}
-                onClick={() => setStatus("approved")}
-                className={status === "approved" ? "bg-indigo-600 hover:bg-indigo-700" : "border-white/10"}
-            >
-                Upcoming
-            </Button>
-        </div>
-      </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    const auctions = response?.data || [];
+    
+    const filteredAuctions = auctions.filter(auction => {
+        if (activeTab === "active") return auction.status === "active";
+        if (activeTab === "won") return (auction.status === "sold" || auction.status === "ended") && auction.currentUserStatus === "winning";
+        return (auction.status !== "active" && auction.currentUserStatus === "outbid") || (auction.status === "expired");
+    });
+
+    const tabs = [
+        { id: "active" as IAuctionTabType, label: "Live Bids", icon: <Gavel className="w-4 h-4" /> },
+        { id: "won" as IAuctionTabType, label: "Won", icon: <Trophy className="w-4 h-4" /> },
+        { id: "past" as IAuctionTabType, label: "History", icon: <History className="w-4 h-4" /> },
+    ];
+
+
+    return (
+        <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <DashboardHeader
+                userName="Bidding"
+                subtitle="Track your participation and auction results"
+                statusValue="My Activity"
+            />
+
+            {/* Tabs */}
+            <div className="flex p-1 bg-white/5 border border-white/10 rounded-xl w-fit">
+                {tabs.map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={cn(
+                            "flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300",
+                            activeTab === tab.id
+                                ? "bg-primary text-white shadow-lg shadow-primary/20"
+                                : "text-muted-foreground hover:text-white hover:bg-white/5"
+                        )}
+                    >
+                        {tab.icon}
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* Content */}
+            {isLoading ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-4">
+                    <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                    <p className="text-muted-foreground font-medium">Loading your activity...</p>
+                </div>
+            ) : filteredAuctions.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredAuctions.map((auction) => (
+                        <AuctionCard key={auction._id} auction={auction} />
+                    ))}
+                </div>
+            ) : (
+                <div className="flex flex-col items-center justify-center py-24 bg-white/5 border border-dashed border-white/10 rounded-3xl gap-4">
+                    <div className="p-4 rounded-full bg-white/5">
+                        {activeTab === "active" ? <Gavel className="w-8 h-8 text-muted-foreground" /> : 
+                         activeTab === "won" ? <Trophy className="w-8 h-8 text-muted-foreground" /> : 
+                         <History className="w-8 h-8 text-muted-foreground" />}
+                    </div>
+                    <div className="text-center">
+                        <p className="text-white font-semibold">No auctions found</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            {activeTab === "active" ? "You haven't placed any bids on live auctions yet." : 
+                             activeTab === "won" ? "You haven't won any auctions yet. Keep bidding!" : 
+                             "No past auction activity found."}
+                        </p>
+                    </div>
+                </div>
+            )}
         </div>
-      ) : response?.data.length === 0 ? (
-        <div className="flex flex-col items-center justify-center min-h-[400px] border-2 border-dashed border-white/5 rounded-2xl bg-white/[0.02]">
-          <p className="text-muted-foreground">No auctions found matching your criteria.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
-          {response?.data.map((auction) => (
-            <AuctionCard key={auction._id} auction={auction} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
+    );
 }

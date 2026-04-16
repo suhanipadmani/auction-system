@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowUpCircle } from "lucide-react";
 
 // Types
+import { IDepositRequestsSectionProps } from "@/types/components";
 import { IDepositRequest } from "@/types/wallet";
 
 // Hooks
@@ -16,12 +17,10 @@ import { DepositRow } from "./DepositRow";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Table, TableHeader, TableBody, TableHead, TableRow } from "@/components/ui/Table";
 
-interface DepositRequestsSectionProps {
-  onProcessClick: (req: IDepositRequest, type: "approved" | "rejected") => void;
-  processingId?: string;
-}
 
-export function DepositRequestsSection({ onProcessClick, processingId }: DepositRequestsSectionProps) {
+
+export function DepositRequestsSection({ onProcessClick, processingId }: IDepositRequestsSectionProps) {
+
   const [depositFilter, setDepositFilter] = useState<"pending" | "approved" | "rejected">("pending");
   const { data: pendingData, isLoading: isPendingLoading } = usePendingDeposits(depositFilter);
   const processDeposit = useProcessDeposit();

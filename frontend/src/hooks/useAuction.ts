@@ -80,3 +80,43 @@ export const useAdminForceAction = () => {
     },
   });
 };
+
+export const useFinalizeAuction = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => auctionApi.finalizeAuction(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: AUCTION_KEYS.detail(id) });
+      queryClient.invalidateQueries({ queryKey: AUCTION_KEYS.lists() });
+    },
+  });
+};
+
+export const useMyBiddingActivity = () => {
+  return useQuery({
+    queryKey: AUCTION_KEYS.list({ activity: 'my' }),
+    queryFn: () => auctionApi.getMyBiddingActivity(),
+  });
+};
+
+export const useSellerStats = () => {
+  return useQuery({
+    queryKey: [...AUCTION_KEYS.all, 'seller-stats'],
+    queryFn: () => auctionApi.getSellerStats(),
+  });
+};
+
+export const useAdminStats = () => {
+  return useQuery({
+    queryKey: [...AUCTION_KEYS.all, 'admin-stats'],
+    queryFn: () => auctionApi.getAdminStats(),
+  });
+};
+
+export const useAdminInventory = (filters: IAuctionFilters = {}) => {
+  return useQuery({
+    queryKey: [...AUCTION_KEYS.all, 'admin-inventory', filters],
+    queryFn: () => auctionApi.getAdminInventory(filters),
+  });
+};
+

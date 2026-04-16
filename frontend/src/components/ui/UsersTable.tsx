@@ -20,17 +20,9 @@ import {
 } from "./Table";
 import { Badge } from "./Badge";
 import { Modal } from "./Modal";
-import { IUsersTableProps } from "@/types/components";
+import { IUsersTableProps, IConfirmModalProps } from "@/types/components";
 import { IUser } from "@/types/auth";
 
-// Confirmation modal 
-interface IConfirmModalProps {
-  user: IUser | null;
-  action: "delete" | "restore" | "deactivate" | "activate" | null;
-  onConfirm: () => void;
-  onCancel: () => void;
-  isLoading: boolean;
-}
 
 function ConfirmModal({ user, action, onConfirm, onCancel, isLoading }: IConfirmModalProps) {
   const isDelete = action === "delete";

@@ -34,7 +34,8 @@ function Input({
           type={type}
           data-slot="input"
           className={cn(
-            "h-12 w-full min-w-0 rounded-2xl border border-border bg-background/50 px-4 py-2 text-base transition-all outline-none placeholder:text-muted-foreground/40 ring-[1.5px] ring-white/10 focus-visible:border-white/50 focus-visible:ring-4 focus-visible:ring-white/10 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm shadow-inner",
+            "h-12 w-full min-w-0 rounded-2xl border border-border bg-background/50 px-4 py-2 text-base transition-all outline-none placeholder:text-muted-foreground/40 ring-[1.5px] ring-white/10 focus-visible:border-white/50 focus-visible:ring-4 focus-visible:ring-white/10 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm shadow-inner [color-scheme:dark]",
+
             icon && "pl-11",
             rightElement && "pr-12",
             error && "border-destructive ring-destructive/20",

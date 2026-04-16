@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-import { IViewType } from "@/types/forms";
+import { IViewType } from "@/types/wallet";
+
 
 import { useProcessDeposit, useAdjustBalance } from "@/hooks/useWallet";
 

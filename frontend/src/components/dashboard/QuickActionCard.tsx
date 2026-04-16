@@ -11,8 +11,9 @@ export function QuickActionCard({
   href,
   onClick,
   disabled = false,
-  color = "indigo"
-}: IQuickActionCardProps) {
+  color = "indigo",
+
+}: IQuickActionCardProps & { className?: string }) {
   const colorMap = {
     indigo: "bg-indigo-500/10 text-indigo-400 group-hover:text-indigo-400",
     emerald: "bg-emerald-500/10 text-emerald-400 group-hover:text-emerald-400",
@@ -25,8 +26,8 @@ export function QuickActionCard({
 
   const Content = (
     <div className={cn(
-      "p-8 rounded-3xl bg-white/5 border border-white/10 transition-all flex items-center gap-6 shadow-lg",
-      disabled ? "opacity-50 cursor-not-allowed" : "hover:border-white/20 hover:bg-white/10 group cursor-pointer"
+      "p-8 rounded-3xl bg-white/[0.06] border border-white/[0.12] transition-all flex items-center gap-6 shadow-lg",
+      disabled ? "opacity-50 cursor-not-allowed" : "hover:border-white/20 hover:bg-white/[0.12] group cursor-pointer"
     )}>
       <div className={cn(
         "h-16 w-16 rounded-2xl flex items-center justify-center transition-transform",
@@ -39,7 +40,7 @@ export function QuickActionCard({
         <h4 className={cn(
           "text-xl font-bold transition-colors",
           disabled ? "text-gray-400" : "text-white",
-          !disabled && colorMap[color].split(" ").pop() 
+          !disabled && colorMap[color].split(" ").pop()
         )}>{title}</h4>
         <p className={cn(
           "text-sm font-medium",

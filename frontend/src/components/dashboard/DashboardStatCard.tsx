@@ -4,13 +4,13 @@ import { IDashboardStatCardProps } from "@/types/components";
 
 export function DashboardStatCard({ title, value, icon, color = "indigo", className, trend }: IDashboardStatCardProps) {
   const colorMap = {
-    indigo: "from-indigo-500/10 to-indigo-500/5 border-indigo-500/20 text-indigo-400",
-    emerald: "from-emerald-500/10 to-emerald-500/5 border-emerald-500/20 text-emerald-400",
-    purple: "from-purple-500/10 to-purple-500/5 border-purple-500/20 text-purple-400",
-    amber: "from-amber-500/10 to-amber-500/5 border-amber-400/20 text-amber-400",
-    rose: "from-rose-500/10 to-rose-500/5 border-rose-500/20 text-rose-400",
-    blue: "from-blue-500/10 to-blue-500/5 border-blue-500/20 text-blue-400",
-    teal: "from-teal-500/10 to-teal-500/5 border-teal-500/20 text-teal-400",
+    indigo: "from-indigo-500/15 to-indigo-500/10 border-indigo-500/30 text-indigo-400",
+    emerald: "from-emerald-500/15 to-emerald-500/10 border-emerald-500/30 text-emerald-400",
+    purple: "from-purple-500/15 to-purple-500/10 border-purple-500/30 text-purple-400",
+    amber: "from-amber-500/15 to-amber-500/10 border-amber-400/30 text-amber-400",
+    rose: "from-rose-500/15 to-rose-500/10 border-rose-500/30 text-rose-400",
+    blue: "from-blue-500/15 to-blue-500/10 border-blue-500/30 text-blue-400",
+    teal: "from-teal-500/15 to-teal-500/10 border-teal-500/30 text-teal-400",
   };
 
   return (

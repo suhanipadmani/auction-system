@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
 import { USER_STATUSES } from "../enums";
 import { UserModel } from "../models/user";
+import { ICreateUserData } from "../types/user";
 
-export const createUser = async (data: any) => {
+export const createUser = async (data: ICreateUserData) => {
   const existingUser = await UserModel.findOne({ email: data.email });
   if (existingUser) {
     throw new Error("User already exists with this email");
@@ -16,6 +17,7 @@ export const createUser = async (data: any) => {
 
   return newUser;
 };
+
 
 /**
  * Returns all users.

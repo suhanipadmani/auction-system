@@ -1,8 +1,9 @@
 import { USER_STATUSES } from "../enums";
 import { generateToken } from "../utils/jwt";
 import { UserModel } from "../models/user";
+import { IRegisterData, ILoginData, IAuthResponse } from "../types/auth";
 
-export const registerUser = async (data: any) => {
+export const registerUser = async (data: IRegisterData) => {
   const existingUser = await UserModel.findOne({ email: data.email });
   if (existingUser) {
     throw new Error("User already exists with this email");
@@ -17,7 +18,7 @@ export const registerUser = async (data: any) => {
   return newUser;
 };
 
-export const loginUser = async (data: any) => {
+export const loginUser = async (data: ILoginData): Promise<IAuthResponse> => {
   const user = await UserModel.findOne({ email: data.email });
   if (!user) {
     throw new Error("Invalid credentials");
@@ -44,3 +45,4 @@ export const loginUser = async (data: any) => {
 
   return { user, token };
 };
+

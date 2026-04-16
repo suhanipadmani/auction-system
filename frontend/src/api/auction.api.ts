@@ -41,5 +41,38 @@ export const auctionApi = {
   adminForceAction: async (id: string, action: "start" | "end"): Promise<{ success: boolean; data: IAuction }> => {
     const response = await axiosClient.patch(`/auctions/${id}/force-action`, { action });
     return response.data;
+  },
+
+  finalizeAuction: async (id: string): Promise<{ success: boolean; data: IAuction }> => {
+    const response = await axiosClient.patch(`/auctions/${id}/finalize`);
+    return response.data;
+  },
+
+  getMyBiddingActivity: async (): Promise<{ success: boolean; data: IAuction[]; stats: any }> => {
+    const response = await axiosClient.get("/auctions/my-activity");
+    return response.data;
+  },
+  
+  getSellerStats: async (): Promise<{ success: boolean; data: { activeListings: number; completedSales: number; totalEarnings: number } }> => {
+    const response = await axiosClient.get("/auctions/seller-stats");
+    return response.data;
+  },
+
+  getAdminStats: async (): Promise<{ success: boolean; data: { totalAuctions: number; systemRevenue: number; bidsToday: number } }> => {
+    const response = await axiosClient.get("/auctions/admin-stats");
+    return response.data;
+  },
+
+  getAdminInventory: async (filters: IAuctionFilters = {}): Promise<IAuctionResponse> => {
+    const params = new URLSearchParams();
+    if (filters.status) params.append("status", filters.status);
+    if (filters.search) params.append("search", filters.search);
+    if (filters.sellerId) params.append("sellerId", filters.sellerId);
+    if (filters.page) params.append("page", filters.page.toString());
+    if (filters.limit) params.append("limit", filters.limit.toString());
+
+    const response = await axiosClient.get(`/auctions/admin/inventory?${params.toString()}`);
+    return response.data;
   }
 };
+

@@ -1,14 +1,13 @@
 "use client";
 
 import { LayoutGrid, Settings2, FileText } from "lucide-react";
-import { IViewType } from "@/types/forms";
 
-interface WalletHeaderProps {
-  activeView: IViewType;
-  onViewChange: (view: IViewType) => void;
-}
+// Types
+import { IWalletHeaderProps } from "@/types/components";
 
-export function WalletHeader({ activeView, onViewChange }: WalletHeaderProps) {
+
+export function WalletHeader({ activeView, onViewChange }: IWalletHeaderProps) {
+
   return (
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
       <div className="space-y-1">

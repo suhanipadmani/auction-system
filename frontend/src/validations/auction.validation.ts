@@ -1,3 +1,4 @@
+import { IAuctionFormData } from "@/types/auction";
 import { z } from "zod";
 
 export const auctionSchema = z.object({
@@ -17,4 +18,4 @@ export const auctionSchema = z.object({
   path: ["startTime"],
 });
 
-export type AuctionFormData = z.infer<typeof auctionSchema>;
+

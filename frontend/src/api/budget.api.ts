@@ -1,0 +1,30 @@
+import { axiosClient } from "@/lib/axios";
+import { IBudgetGoal } from "@/types/budget";
+
+
+export const budgetApi = {
+  getGoals: async (): Promise<{ success: boolean; data: IBudgetGoal[] }> => {
+    const response = await axiosClient.get("/budgets");
+    return response.data;
+  },
+
+  createGoal: async (data: { name: string; maxBudget: number }): Promise<{ success: boolean; data: IBudgetGoal }> => {
+    const response = await axiosClient.post("/budgets", data);
+    return response.data;
+  },
+
+  updateGoal: async (id: string, data: Partial<IBudgetGoal>): Promise<{ success: boolean; data: IBudgetGoal }> => {
+    const response = await axiosClient.patch(`/budgets/${id}`, data);
+    return response.data;
+  },
+
+  deleteGoal: async (id: string): Promise<{ success: boolean }> => {
+    const response = await axiosClient.delete(`/budgets/${id}`);
+    return response.data;
+  },
+
+  assignAuction: async (goalId: string, auctionId: string): Promise<{ success: boolean; data: IBudgetGoal }> => {
+    const response = await axiosClient.post(`/budgets/${goalId}/assign`, { auctionId });
+    return response.data;
+  }
+};

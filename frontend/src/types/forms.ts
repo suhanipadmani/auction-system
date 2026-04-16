@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 
-export type IViewType = "overview" | "manual" | "history";
 
 export interface IProvidersProps {
   children: ReactNode;

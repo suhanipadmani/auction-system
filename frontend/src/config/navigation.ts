@@ -1,11 +1,6 @@
-import { LayoutDashboard, Users, Wallet, Gavel, ShieldAlert, LucideIcon } from "lucide-react";
+import { LayoutDashboard, Users, Wallet, Gavel, ShieldAlert } from "lucide-react";
+import { INavLink } from "@/types/navigation";
 
-export interface INavLink {
-  name: string;
-  href: string;
-  icon: LucideIcon;
-  roles: string[];
-}
 
 export const NAV_LINKS: INavLink[] = [
   { 
@@ -48,7 +43,7 @@ export const NAV_LINKS: INavLink[] = [
     name: "Marketplace", 
     href: "/user/auctions", 
     icon: Gavel, 
-    roles: ["seller", "bidder"] 
+    roles: ["bidder"] 
   },
   { 
     name: "My Auctions", 

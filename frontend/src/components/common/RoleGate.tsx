@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth.store";
 import { Loader2 } from "lucide-react";
 
-interface RoleGateProps {
-  children: React.ReactNode;
-  allowedRoles: string[];
-}
+// Types
+import { IRoleGateProps } from "@/types/components";
+
 
 /**
  * RoleGate component ensures that the current authenticated user
  * has the required permissions to access a specific route group.
  */
-export function RoleGate({ children, allowedRoles }: RoleGateProps) {
+export function RoleGate({ children, allowedRoles }: IRoleGateProps) {
+
   const { user, _hasHydrated } = useAuthStore();
   const router = useRouter();
 

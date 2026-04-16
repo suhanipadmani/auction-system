@@ -4,5 +4,7 @@ export enum AUCTION_STATUSES {
     REJECTED = "rejected",
     ACTIVE = "active",
     ENDED = "ended",
-    CANCELLED = "cancelled"
+    CANCELLED = "cancelled",
+    SOLD = "sold",
+    EXPIRED = "expired"
 }
