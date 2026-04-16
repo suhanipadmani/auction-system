@@ -1,8 +1,8 @@
 "use client";
 
-import { TableRow, TableCell } from "@/components/ui/Table";
 import { FileText } from "lucide-react";
 import { IEmptyStateProps } from "@/types/components";
+import { TableRow, TableCell } from "@/components/ui/Table";
 
 export function EmptyState({ message, colSpan = 5 }: IEmptyStateProps) {
   return (

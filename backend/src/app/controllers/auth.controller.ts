@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
-import { registerUser, loginUser } from "../services/auth.service";
+
+// Utils
 import { asyncHandler } from "../utils/asyncHandler";
 import { sendSuccess } from "../utils/apiResponse";
+
+// Services
+import { registerUser, loginUser } from "../services/auth.service";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const user = await registerUser(req.body);

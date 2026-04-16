@@ -1,11 +1,17 @@
 "use client";
 
+import { XCircle, CheckCircle2 } from "lucide-react";
+
+// Types
+import { IDepositRequest } from "@/types/wallet";
+
+// Utils
+import { formatCurrency, formatDate } from "@/lib/utils";
+
+// Components
 import { TableRow, TableCell } from "@/components/ui/Table";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { XCircle, CheckCircle2 } from "lucide-react";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import { IDepositRequest } from "@/types/wallet";
 
 interface DepositRowProps {
   req: IDepositRequest;

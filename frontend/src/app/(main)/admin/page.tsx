@@ -21,7 +21,8 @@ export default function AdminPage() {
   const user = useAuthStore((state) => state.user);
   const { data: usersResponse } = useUsers();
 
-  const users = usersResponse?.data || [];
+  const allUsers = usersResponse?.data || [];
+  const users = allUsers.filter((u: any) => u.role !== "admin");
   const activeUsersCount = users.filter((u: any) => u.status === "active").length;
 
   return (

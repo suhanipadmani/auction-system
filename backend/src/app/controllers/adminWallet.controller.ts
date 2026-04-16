@@ -1,8 +1,19 @@
+// External
 import { Request, Response } from "express";
-import * as AdminWalletService from "../services/adminWallet.service";
+
+// Enums
+import { DEPOSIT_STATUSES, TRANSACTION_TYPES } from "../enums";
+
+// utils
 import { asyncHandler } from "../utils/asyncHandler";
 import { sendSuccess } from "../utils/apiResponse";
 import { AppError } from "../utils/AppError";
+
+// Services
+import * as AdminWalletService from "../services/adminWallet.service";
+
+const VALID_DEPOSIT_ACTIONS = [DEPOSIT_STATUSES.APPROVED, DEPOSIT_STATUSES.REJECTED] as const;
+const VALID_ADJUSTMENT_TYPES = [TRANSACTION_TYPES.CREDIT, TRANSACTION_TYPES.DEBIT] as const;
 
 export const getPendingDeposits = asyncHandler(async (req: Request, res: Response) => {
   const { status } = req.query;
@@ -14,11 +25,19 @@ export const approveRejectDeposit = asyncHandler(async (req: Request, res: Respo
   const { requestId, status, adminNote } = req.body;
   const adminId = (req as any).user.id;
 
-  if (!requestId || !["approved", "rejected"].includes(status)) {
-    throw new AppError("Invalid request data", 400);
+  if (!requestId || !VALID_DEPOSIT_ACTIONS.includes(status)) {
+    throw new AppError(
+      `Invalid request data. Status must be one of: ${VALID_DEPOSIT_ACTIONS.join(", ")}`,
+      400
+    );
   }
 
-  const result = await AdminWalletService.processDepositRequest(requestId, status, adminId, adminNote);
+  const result = await AdminWalletService.processDepositRequest(
+    requestId,
+    status as DEPOSIT_STATUSES.APPROVED | DEPOSIT_STATUSES.REJECTED,
+    adminId,
+    adminNote
+  );
   sendSuccess(res, "Deposit request processed", result);
 });
 
@@ -26,11 +45,20 @@ export const adjustBalance = asyncHandler(async (req: Request, res: Response) =>
   const { userId, amount, type, note } = req.body;
   const adminId = (req as any).user.id;
 
-  if (!userId || !amount || !["credit", "debit"].includes(type)) {
-    throw new AppError("Invalid adjustment data", 400);
+  if (!userId || !amount || !VALID_ADJUSTMENT_TYPES.includes(type)) {
+    throw new AppError(
+      `Invalid adjustment data. Type must be one of: ${VALID_ADJUSTMENT_TYPES.join(", ")}`,
+      400
+    );
   }
 
-  const result = await AdminWalletService.adjustUserBalance(userId, amount, type, adminId, note);
+  const result = await AdminWalletService.adjustUserBalance(
+    userId,
+    amount,
+    type as TRANSACTION_TYPES.CREDIT | TRANSACTION_TYPES.DEBIT,
+    adminId,
+    note
+  );
   sendSuccess(res, "User balance adjusted", result);
 });
 
@@ -53,7 +81,7 @@ export const getSystemTransactions = asyncHandler(async (req: Request, res: Resp
     source: source as string,
     search: search as string,
     startDate: startDate as string,
-    endDate: endDate as string
+    endDate: endDate as string,
   });
   sendSuccess(res, "System transactions retrieved", transactions);
 });

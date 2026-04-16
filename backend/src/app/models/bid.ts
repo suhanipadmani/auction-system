@@ -1,6 +1,5 @@
-import { InferSchemaType, Schema, Types, model } from "mongoose";
-
-export const BID_STATUSES = ["active", "outbid", "won", "lost"] as const;
+import { Schema, Types, model } from "mongoose";
+import { BID_STATUSES } from "../enums";
 
 export const bidSchema = new Schema(
   {
@@ -37,9 +36,9 @@ export const bidSchema = new Schema(
 
     status: { 
       type: String, 
-      enum: BID_STATUSES, 
+      enum: Object.values(BID_STATUSES), 
       required: true, 
-      default: "active" 
+      default: BID_STATUSES.ACTIVE
     },
     
   },

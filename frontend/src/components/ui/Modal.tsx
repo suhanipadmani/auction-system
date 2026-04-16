@@ -1,8 +1,7 @@
 "use client";
 
-import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { Button } from "./Button";
+import { X } from "lucide-react";
 
 import { IModalProps } from "@/types/components";
 

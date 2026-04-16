@@ -1,11 +1,18 @@
 "use client";
 
-import { TableRow, TableCell } from "@/components/ui/Table";
-import { Badge } from "@/components/ui/Badge";
-import { formatDate } from "@/lib/utils";
+// Types
 import { ITransaction } from "@/types/wallet";
+
+// Hooks
 import { useTransactionStatus } from "@/hooks/useTransactionStatus";
 import { useCurrency } from "@/hooks/useCurrency";
+
+// Utils
+import { formatDate } from "@/lib/utils";
+
+// Components
+import { TableRow, TableCell } from "@/components/ui/Table";
+import { Badge } from "@/components/ui/Badge";
 
 interface ITransactionLogRowProps {
   tx: ITransaction;

@@ -1,6 +1,5 @@
-import { InferSchemaType, Schema, Types, model } from "mongoose";
-
-export const AUDIT_ACTIONS = ["BID_PLACED", "AUCTION_CREATED", "WALLET_UPDATED"] as const;
+import { Schema, Types, model } from "mongoose";
+import { AUDIT_ACTIONS } from "../enums";
 
 export const auditLogSchema = new Schema(
   {
@@ -13,7 +12,7 @@ export const auditLogSchema = new Schema(
 
     action: { 
       type: String, 
-      enum: AUDIT_ACTIONS, 
+      enum: Object.values(AUDIT_ACTIONS), 
       required: true 
     },
 

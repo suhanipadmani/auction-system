@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { auctionApi } from '../api/auction.api';
 import { IAuctionFilters } from '../types/auction';
+import { auctionApi } from '../api/auction.api';
 
 export const AUCTION_KEYS = {
   all: ['auctions'] as const,

@@ -1,8 +1,12 @@
 import { Request, Response } from "express";
-import * as WalletService from "../services/wallet.service";
+
+// Utils 
 import { asyncHandler } from "../utils/asyncHandler";
 import { sendSuccess } from "../utils/apiResponse";
 import { AppError } from "../utils/AppError";
+
+// Services 
+import * as WalletService from "../services/wallet.service";
 
 export const getWallet = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req as any).user.id;

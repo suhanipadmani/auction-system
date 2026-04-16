@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 // External
-import { Loader2, Search, SlidersHorizontal } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 
 // Types
 import { AuctionStatus } from "@/types/auction";
@@ -52,9 +52,6 @@ export default function BidderAuctionsPage() {
                 className={status === "approved" ? "bg-indigo-600 hover:bg-indigo-700" : "border-white/10"}
             >
                 Upcoming
-            </Button>
-            <Button variant="outline" className="border-white/10">
-                <SlidersHorizontal className="h-4 w-4" />
             </Button>
         </div>
       </div>

@@ -1,11 +1,17 @@
 "use client";
 
+import { ShieldAlert, CheckCircle2, XCircle } from "lucide-react";
+
+// Hooks
+import { useUserWallet } from "@/hooks/useWallet";
+
+// Utils
+import { formatCurrency, formatDate } from "@/lib/utils";
+
+// Components
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import { useUserWallet } from "@/hooks/useWallet";
-import { ShieldAlert, CheckCircle2, XCircle, IndianRupee } from "lucide-react";
 
 interface AdjustmentData {
   userId: string;

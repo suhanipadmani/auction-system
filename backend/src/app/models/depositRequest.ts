@@ -1,6 +1,5 @@
-import { InferSchemaType, Schema, Types, model } from "mongoose";
-
-export const DEPOSIT_STATUSES = ["pending", "approved", "rejected"] as const;
+import { Schema, Types, model } from "mongoose";
+import { DEPOSIT_STATUSES } from "../enums";
 
 export const depositRequestSchema = new Schema(
   {
@@ -19,9 +18,9 @@ export const depositRequestSchema = new Schema(
 
     status: { 
       type: String, 
-      enum: DEPOSIT_STATUSES, 
+      enum: Object.values(DEPOSIT_STATUSES), 
       required: true, 
-      default: "pending" 
+      default: DEPOSIT_STATUSES.PENDING
     },
 
     adminId: { 

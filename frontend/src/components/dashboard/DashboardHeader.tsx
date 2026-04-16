@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 import { LayoutDashboard } from "lucide-react";
 
 import { IDashboardHeaderProps } from "@/types/components";

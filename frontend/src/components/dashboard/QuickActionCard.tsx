@@ -1,10 +1,8 @@
 "use client";
 
-import { ReactNode } from "react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-
 import { IQuickActionCardProps } from "@/types/components";
+import { cn } from "@/lib/utils";
 
 export function QuickActionCard({
   title,
@@ -41,7 +39,7 @@ export function QuickActionCard({
         <h4 className={cn(
           "text-xl font-bold transition-colors",
           disabled ? "text-gray-400" : "text-white",
-          !disabled && colorMap[color].split(" ").pop() // Use the text-color part for hover
+          !disabled && colorMap[color].split(" ").pop() 
         )}>{title}</h4>
         <p className={cn(
           "text-sm font-medium",

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Loader2, ShieldAlert, Search, Eye, EyeOff } from "lucide-react";
 
 // Hooks
-import { useUsers, useUpdateRole, useDeleteUser, useRestoreUser } from "@/hooks/useUsers";
+import { useUsers, useUpdateRole, useDeleteUser, useRestoreUser, useDeactivateUser, useActivateUser } from "@/hooks/useUsers";
 
 // State (Auth Store)
 import { useAuthStore } from "@/store/auth.store";
@@ -25,14 +25,18 @@ export default function AdminUsersPage() {
   const { mutate: updateRole, isPending: isUpdatingRole } = useUpdateRole();
   const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
   const { mutate: restoreUser, isPending: isRestoring } = useRestoreUser();
+  const { mutate: deactivateUser, isPending: isDeactivating } = useDeactivateUser();
+  const { mutate: activateUser, isPending: isActivating } = useActivateUser();
 
   const users = response?.data || [];
 
-  // Filter by search query
-  const filteredUsers = users.filter((u: any) =>
-    u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter by search query 
+  const filteredUsers = users.filter((u: any) => {
+    const matchesSearch = u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const isNotAdmin = u.role !== "admin";
+    return matchesSearch && isNotAdmin;
+  });
 
   const activeCount  = filteredUsers.filter((u: any) => u.status !== "deleted").length;
   const deletedCount = filteredUsers.filter((u: any) => u.status === "deleted").length;
@@ -125,11 +129,12 @@ export default function AdminUsersPage() {
         restoreUser={restoreUser}
         isUpdatingRole={isUpdatingRole}
         isDeleting={isDeleting}
-        isRestoring={isRestoring} deactivateUser={function (id: string): void {
-          throw new Error("Function not implemented.");
-        } } activateUser={function (id: string): void {
-          throw new Error("Function not implemented.");
-        } } isDeactivating={false} isActivating={false} />
+        isRestoring={isRestoring}
+        deactivateUser={(id) => deactivateUser(id)}
+        activateUser={(id) => activateUser(id)}
+        isDeactivating={isDeactivating}
+        isActivating={isActivating}
+      />
     </div>
   );
 }

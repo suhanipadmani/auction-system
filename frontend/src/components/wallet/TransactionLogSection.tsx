@@ -1,14 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { History, Search } from "lucide-react";
+
+// Types
+import { ITransaction } from "@/types/wallet";
+
+// Hooks
 import { useAllTransactions } from "@/hooks/useWallet";
+
+// Components
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Table, TableHeader, TableBody, TableHead, TableRow } from "@/components/ui/Table";
 import { Badge } from "@/components/ui/Badge";
-import { History, Search } from "lucide-react";
-
-// Common & Modular Components
 import { TableSkeleton } from "@/components/common/TableSkeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { TransactionLogRow } from "./TransactionLogRow";
@@ -19,7 +24,6 @@ import {
   SelectContent,
   SelectItem
 } from "@/components/ui/Select";
-import { ITransaction } from "@/types/wallet";
 
 export function TransactionLogSection() {
   const [txType, setTxType] = useState<string>("all");

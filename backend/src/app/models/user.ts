@@ -1,7 +1,6 @@
-import { InferSchemaType, Schema, model } from "mongoose";
-
-export const USER_ROLES = ["admin", "seller", "bidder"] as const;
-export const USER_STATUSES = ["active", "deleted"] as const;
+import { Schema, model } from "mongoose";
+import bcrypt from "bcrypt";
+import { USER_ROLES, USER_STATUSES } from "../enums";
 
 export const userSchema = new Schema(
   {
@@ -26,15 +25,15 @@ export const userSchema = new Schema(
 
     role: { 
       type: String, 
-      enum: USER_ROLES, 
-      default: "bidder", 
+      enum: Object.values(USER_ROLES), 
+      default: USER_ROLES.BIDDER, 
       required: true 
     },
     
     status: { 
       type: String, 
-      enum: USER_STATUSES, 
-      default: "active", 
+      enum: Object.values(USER_STATUSES), 
+      default: USER_STATUSES.ACTIVE, 
       required: true 
     },
     
@@ -42,6 +41,26 @@ export const userSchema = new Schema(
   { timestamps: true },
 );
 
+// Hash password before saving
+userSchema.pre("save", async function () {
+  const user = this as any;
+  if (!user.isModified("password")) return;
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+  } catch (error: any) {
+    throw error;
+  }
+});
+
+// Instance method to compare password
+userSchema.methods.comparePassword = async function (password: string) {
+  return bcrypt.compare(password, this.password);
+};
+
 import { IUserDocument } from "../types/models";
 
 export const UserModel = model<IUserDocument>("User", userSchema);
+export { USER_ROLES };
+

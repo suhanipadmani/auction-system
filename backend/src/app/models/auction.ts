@@ -1,6 +1,5 @@
-import { InferSchemaType, Schema, Types, model } from "mongoose";
-
-export const AUCTION_STATUSES = ["pending", "approved", "rejected", "active", "ended", "cancelled"] as const;
+import { Schema, Types, model } from "mongoose";
+import { AUCTION_STATUSES } from "../enums";
 
 export const auctionSchema = new Schema(
   {
@@ -48,8 +47,8 @@ export const auctionSchema = new Schema(
 
     status: { 
       type: String, 
-      enum: AUCTION_STATUSES, 
-      default: "pending", 
+      enum: Object.values(AUCTION_STATUSES), 
+      default: AUCTION_STATUSES.PENDING, 
       required: true,
       index: true
     },

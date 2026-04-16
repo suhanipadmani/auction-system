@@ -55,7 +55,7 @@ export default function SellerDashboardPage() {
         />
 
         <QuickActionCard
-          title="My Auctions"
+          title="Auctions"
           description="Manage your active and pending listings"
           icon={<Gavel className="w-8 h-8" />}
           href="/seller/auctions"

@@ -1,34 +1,24 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
+// External
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+// Validation
+import { AuctionFormData, auctionSchema } from "@/validations/auction.validation";
+
+// Hooks
+import { useCreateAuction } from "@/hooks/useAuction";
+
+// Components
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { useCreateAuction } from "@/hooks/useAuction";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-
-const auctionSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  basePrice: z.coerce.number().positive("Base price must be greater than 0"),
-  minIncrement: z.coerce.number().positive("Minimum increment must be greater than 0"),
-  startTime: z.string(),
-  endTime: z.string(),
-}).refine((data) => {
-  const start = new Date(data.startTime).getTime();
-  const end = new Date(data.endTime).getTime();
-  const now = Date.now();
-  return start > now && end > start;
-}, {
-  message: "Start time must be in the future and before end time",
-  path: ["startTime"],
-});
-
-type AuctionFormData = z.infer<typeof auctionSchema>;
 
 export function CreateAuctionForm() {
   const router = useRouter();

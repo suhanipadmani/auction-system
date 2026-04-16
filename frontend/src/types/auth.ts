@@ -3,7 +3,7 @@ export interface IUser {
   name: string;
   email: string;
   role: string;
-  status?: "active" | "deactivated";
+  status?: "active" | "inactive" | "deleted";
   createdAt?: string;
 }
 
@@ -11,6 +11,8 @@ export interface IAuthState {
   user: IUser | null;
   token: string | null;
   isAuthenticated: boolean;
+  _hasHydrated: boolean;
   login: (user: IUser, token: string) => void;
   logout: () => void;
+  setHasHydrated: (state: boolean) => void;
 }

@@ -1,8 +1,9 @@
 "use client";
 
+import { ITableSkeletonProps } from "@/types/components";
+
 import { TableRow, TableCell } from "@/components/ui/Table";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { ITableSkeletonProps } from "@/types/components";
 
 export function TableSkeleton({ rows = 5, columns = 5 }: ITableSkeletonProps) {
   return Array.from({ length: rows }).map((_, i) => (

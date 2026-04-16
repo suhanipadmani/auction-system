@@ -1,4 +1,4 @@
-import { IAuction, AuctionStatus } from "@/types/auction";
+import { AuctionStatus } from "@/types/auction";
 
 const statusColors: Record<AuctionStatus, string> = {
   pending: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",

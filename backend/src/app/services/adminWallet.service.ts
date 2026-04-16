@@ -1,10 +1,14 @@
-import { WalletModel } from "../models/wallet";
-import { TransactionModel } from "../models/transaction";
-import { DepositRequestModel } from "../models/depositRequest";
-import { UserModel } from "../models/user";
-import { getOrCreateWallet } from "./wallet.service";
-import mongoose, { Types } from "mongoose";
+import { Types } from "mongoose";
+
+import { DEPOSIT_STATUSES, TRANSACTION_TYPES, TRANSACTION_STATUSES, TRANSACTION_SOURCES } from "../enums";
+
 import { runInTransaction } from "../utils/transaction";
+
+import { getOrCreateWallet } from "./wallet.service";
+
+import { UserModel } from "../models/user";
+import { DepositRequestModel } from "../models/depositRequest";
+import { TransactionModel } from "../models/transaction";
 import { AuditLogModel } from "../models/auditLog";
 
 /**
@@ -22,7 +26,7 @@ export const getDepositRequests = async (status?: string) => {
  */
 export const processDepositRequest = async (
   requestId: string, 
-  status: "approved" | "rejected", 
+  status: DEPOSIT_STATUSES.APPROVED | DEPOSIT_STATUSES.REJECTED, 
   adminId: string,
   adminNote?: string
 ) => {
@@ -38,7 +42,7 @@ export const processDepositRequest = async (
     request.adminNote = adminNote || "";
     await request.save({ session });
 
-    if (status === "approved") {
+    if (status === DEPOSIT_STATUSES.APPROVED) {
       const wallet = await getOrCreateWallet(request.userId.toString());
       
       // Block if Wallet Frozen
@@ -66,9 +70,9 @@ export const processDepositRequest = async (
  * Manually adjusts a user's balance (Admin Override)
  */
 export const adjustUserBalance = async (
-  userId: string, 
-  amount: number, 
-  type: "credit" | "debit", 
+  userId: string,
+  amount: number,
+  type: TRANSACTION_TYPES.CREDIT | TRANSACTION_TYPES.DEBIT,
   adminId: string,
   note: string
 ) => {
@@ -80,7 +84,7 @@ export const adjustUserBalance = async (
       throw new Error("Cannot adjust balance: Wallet is frozen");
     }
     
-    if (type === "debit") {
+    if (type === TRANSACTION_TYPES.DEBIT) {
       if (wallet.balance < amount) throw new Error("Insufficient balance");
       wallet.balance -= amount;
     } else {
@@ -94,10 +98,10 @@ export const adjustUserBalance = async (
       userId: new Types.ObjectId(userId),
       type: type,
       amount: amount,
-      status: "success",
+      status: TRANSACTION_STATUSES.SUCCESS,
       adminId: new Types.ObjectId(adminId),
       note: note,
-      source: "admin"
+      source: TRANSACTION_SOURCES.ADMIN
     }], { session });
 
     return wallet;

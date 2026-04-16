@@ -1,4 +1,4 @@
-import { InferSchemaType, Schema, Types, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 export const walletSchema = new Schema(
   {

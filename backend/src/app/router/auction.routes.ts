@@ -1,9 +1,16 @@
 import { Router } from "express";
-import { AuctionController } from "../controllers/auction.controller";
+
+// Middlewares
 import { authenticate } from "../middleware/auth.middleware";
 import { authorize } from "../middleware/role.middleware";
 import { validate } from "../middleware/validate.middleware";
+
+// Validators 
 import { createAuctionSchema, updateAuctionSchema, adminActionSchema } from "../validators/auction.validator";
+
+// Controllers
+import { AuctionController } from "../controllers/auction.controller";
+
 
 export const auctionRoutes = Router();
 
@@ -12,41 +19,20 @@ auctionRoutes.get("/", AuctionController.getAll);
 auctionRoutes.get("/:id", AuctionController.getById);
 
 // Seller Routes
-auctionRoutes.post(
-  "/",
-  authenticate,
-  authorize(["seller"]),
-  validate(createAuctionSchema),
-  AuctionController.create
-);
+const sellerRoutes = Router();
+sellerRoutes.use(authenticate, authorize(["seller"]));
 
-auctionRoutes.patch(
-  "/:id",
-  authenticate,
-  authorize(["seller"]),
-  validate(updateAuctionSchema),
-  AuctionController.update
-);
+sellerRoutes.post("/", validate(createAuctionSchema), AuctionController.create);
+sellerRoutes.patch("/:id", validate(updateAuctionSchema), AuctionController.update);
+sellerRoutes.delete("/:id", AuctionController.cancel);
 
-auctionRoutes.delete(
-  "/:id",
-  authenticate,
-  authorize(["seller"]),
-  AuctionController.cancel
-);
+auctionRoutes.use(sellerRoutes);
 
 // Admin Routes
-auctionRoutes.patch(
-  "/:id/approve",
-  authenticate,
-  authorize(["admin"]),
-  validate(adminActionSchema),
-  AuctionController.adminApproveAction
-);
+const adminRoutes = Router();
+adminRoutes.use(authenticate, authorize(["admin"]));
 
-auctionRoutes.patch(
-  "/:id/force-action",
-  authenticate,
-  authorize(["admin"]),
-  AuctionController.adminForceAction
-);
+adminRoutes.patch("/:id/approve", validate(adminActionSchema), AuctionController.adminApproveAction);
+adminRoutes.patch("/:id/force-action", AuctionController.adminForceAction);
+
+auctionRoutes.use(adminRoutes);

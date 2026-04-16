@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 import { Gavel } from "lucide-react";
 
 import { IAuthLayoutProps } from "@/types/components";

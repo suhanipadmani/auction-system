@@ -9,9 +9,14 @@ export const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    try {
+      const raw = localStorage.getItem("auth-storage");
+      const token = raw ? JSON.parse(raw)?.state?.token : null;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch {
+      // ignore
     }
   }
   return config;
@@ -21,7 +26,7 @@ axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
-      localStorage.removeItem("token");
+      localStorage.removeItem("auth-storage");
     }
     return Promise.reject(error);
   }

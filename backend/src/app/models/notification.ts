@@ -1,6 +1,5 @@
-import { InferSchemaType, Schema, Types, model } from "mongoose";
-
-export const NOTIFICATION_TYPES = ["outbid", "win", "loss", "auction_end"] as const;
+import { Schema, Types, model } from "mongoose";
+import { NOTIFICATION_TYPES } from "../enums";
 
 export const notificationSchema = new Schema(
   {
@@ -13,7 +12,7 @@ export const notificationSchema = new Schema(
 
     type: { 
       type: String, 
-      enum: NOTIFICATION_TYPES, 
+      enum: Object.values(NOTIFICATION_TYPES), 
       required: true 
     },
 

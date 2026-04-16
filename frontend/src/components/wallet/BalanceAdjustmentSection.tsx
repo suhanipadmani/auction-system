@@ -1,9 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import {
+  RefreshCcw,
+  Search,
+  CheckCircle2,
+  Lock,
+  ShieldAlert,
+  IndianRupee
+} from "lucide-react";
+
+// Hooks
 import { useUsers } from "@/hooks/useUsers";
 import { useUserWallet, useToggleFreeze } from "@/hooks/useWallet";
+
+// Utils
 import { formatCurrency } from "@/lib/utils";
+
+// Components
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
@@ -15,14 +29,6 @@ import {
   SelectContent,
   SelectItem
 } from "@/components/ui/Select";
-import {
-  RefreshCcw,
-  Search,
-  CheckCircle2,
-  Lock,
-  ShieldAlert,
-  IndianRupee
-} from "lucide-react";
 
 interface BalanceAdjustmentSectionProps {
   onReviewClick: (data: {

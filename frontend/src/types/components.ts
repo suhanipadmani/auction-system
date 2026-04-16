@@ -6,8 +6,14 @@ export interface IUsersTableProps {
   currentUser: IUser | null;
   updateRole: (data: { id: string; role: string }) => void;
   deactivateUser: (id: string) => void;
+  activateUser: (id: string) => void;
+  deleteUser: (id: string) => void;
+  restoreUser: (id: string) => void;
   isUpdatingRole: boolean;
   isDeactivating: boolean;
+  isActivating: boolean;
+  isDeleting: boolean;
+  isRestoring: boolean;
 }
 
 export interface IEmptyStateProps {

@@ -1,28 +1,23 @@
 "use client";
 
-import { Menu, User, Bell } from "lucide-react";
-import { useAuthStore } from "@/store/auth.store";
-
+import { Menu, Bell } from "lucide-react";
 import { IHeaderProps } from "@/types/components";
+import { useAuthStore } from "@/store/auth.store";
 
 export function Header({ onMenuClick }: IHeaderProps) {
   const user = useAuthStore((state) => state.user);
 
   return (
-    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6 sticky top-0 z-30 lg:hidden text-foreground">
+    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6 sticky top-0 z-30 lg:ml-64 text-foreground">
       <button 
         onClick={onMenuClick}
-        className="p-2 hover:bg-muted rounded-lg text-muted-foreground transition-colors"
+        className="p-2 hover:bg-muted rounded-lg text-muted-foreground transition-colors lg:hidden"
       >
         <Menu className="w-6 h-6" />
       </button>
 
-      <div className="flex items-center gap-4">
-        <button className="p-2 text-muted-foreground hover:text-foreground transition-colors relative">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border border-background"></span>
-        </button>
-        <div className="flex items-center gap-2 pl-4 border-l border-border">
+      <div className="flex items-center gap-4 ml-auto">
+        <div className="flex items-center gap-2">
           <div className="text-right hidden sm:block">
             <p className="text-sm font-medium text-foreground">{user?.name}</p>
             <p className="text-xs text-muted-foreground capitalize">{user?.role}</p>

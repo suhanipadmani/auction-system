@@ -1,16 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { usePendingDeposits, useProcessDeposit } from "@/hooks/useWallet";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/Table";
 import { ArrowUpCircle } from "lucide-react";
 
-// Common & Modular Components
+// Types
+import { IDepositRequest } from "@/types/wallet";
+
+// Hooks
+import { usePendingDeposits, useProcessDeposit } from "@/hooks/useWallet";
+
+// Components
 import { TableSkeleton } from "@/components/common/TableSkeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { DepositRow } from "./DepositRow";
-import { IDepositRequest } from "@/types/wallet";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+import { Table, TableHeader, TableBody, TableHead, TableRow } from "@/components/ui/Table";
 
 interface DepositRequestsSectionProps {
   onProcessClick: (req: IDepositRequest, type: "approved" | "rejected") => void;

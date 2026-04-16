@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuthStore } from "@/store/auth.store";
 import { LogOut } from "lucide-react";
+
+import { ISidebarProps } from "@/types/components";
+
+import { useAuthStore } from "@/store/auth.store";
+
 import { useLogout } from "@/hooks/useAuth";
 import { getVisibleLinks } from "@/config/navigation";
 
-import { ISidebarProps } from "@/types/components";
 
 export function Sidebar({ isMobile, onClose }: ISidebarProps) {
   const pathname = usePathname();

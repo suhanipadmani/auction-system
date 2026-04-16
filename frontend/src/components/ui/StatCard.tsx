@@ -1,7 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
-
 import { IStatCardProps } from "@/types/components";
 
 export function StatCard({ title, value, icon, iconContainerClass }: IStatCardProps) {

@@ -1,25 +1,30 @@
 "use client";
 
+import Link from "next/link";
+
+// External
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+
+// Types
+import { IRegisterForm } from "@/types/forms";
+
+// Validation
+import { registerSchema } from "@/validations/auth.validation"
+
+// Hooks
 import { useRegister } from "@/hooks/useAuth";
-import Link from "next/link";
-import { Mail, Lock, User } from "lucide-react";
+
+// UI Components
 import { AuthLayout } from "@/components/layout/AuthLayout";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
-const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  role: z.enum(["bidder", "seller"]),
-});
-
-import { IRegisterForm } from "@/types/forms";
 
 export default function RegisterPage() {
+  const [showPassword, setShowPassword] = useState(false);
   const { mutate: registerUser, isPending, error } = useRegister();
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<IRegisterForm>({
@@ -81,9 +86,23 @@ export default function RegisterPage() {
 
         <Input
           label="Password"
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="••••••••"
           icon={<Lock className="h-5 w-5" />}
+          rightElement={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="p-2 hover:text-white transition-colors outline-none"
+              tabIndex={-1}
+            >
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
+          }
           error={errors.password?.message}
           {...register("password")}
         />

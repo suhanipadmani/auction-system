@@ -1,5 +1,6 @@
-import { AuctionModel } from "../models/auction";
 import { Types } from "mongoose";
+import { AUCTION_STATUSES } from "../enums";
+import { AuctionModel } from "../models/auction";
 
 export class AuctionService {
   static async createAuction(userId: string, data: any) {
@@ -46,7 +47,7 @@ export class AuctionService {
       throw new Error("Cannot cancel an active auction");
     }
 
-    auction.status = "cancelled";
+    auction.status = AUCTION_STATUSES.CANCELLED;
     await auction.save();
     return auction;
   }
@@ -89,7 +90,7 @@ export class AuctionService {
       throw new Error(`Auction is already ${auction.status}`);
     }
 
-    auction.status = action === "approve" ? "approved" : "rejected";
+    auction.status = action === "approve" ? AUCTION_STATUSES.APPROVED : AUCTION_STATUSES.REJECTED;
     await auction.save();
     return auction;
   }
@@ -118,10 +119,10 @@ export class AuctionService {
 
     if (action === "start") {
       if (auction.status !== "approved") throw new Error("Only approved auctions can be started");
-      auction.status = "active";
+      auction.status = AUCTION_STATUSES.ACTIVE;
     } else {
       if (auction.status !== "active") throw new Error("Only active auctions can be ended");
-      auction.status = "ended";
+      auction.status = AUCTION_STATUSES.ENDED;
     }
 
     await auction.save();

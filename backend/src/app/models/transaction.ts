@@ -1,8 +1,5 @@
-import { InferSchemaType, Schema, Types, model } from "mongoose";
-
-export const TRANSACTION_TYPES = ["credit", "debit", "lock", "unlock"] as const;
-export const TRANSACTION_SOURCES = ["deposit", "admin", "bid"] as const;
-export const TRANSACTION_STATUSES = ["success", "failed"] as const;
+import { Schema, Types, model } from "mongoose";
+import { TRANSACTION_TYPES, TRANSACTION_SOURCES, TRANSACTION_STATUSES } from "../enums";
 
 export const transactionSchema = new Schema(
   {
@@ -15,7 +12,7 @@ export const transactionSchema = new Schema(
 
     type: { 
       type: String, 
-      enum: TRANSACTION_TYPES, 
+      enum: Object.values(TRANSACTION_TYPES), 
       required: true 
     },
 
@@ -27,9 +24,9 @@ export const transactionSchema = new Schema(
 
     status: { 
       type: String, 
-      enum: TRANSACTION_STATUSES, 
+      enum: Object.values(TRANSACTION_STATUSES), 
       required: true, 
-      default: "success" 
+      default: TRANSACTION_STATUSES.SUCCESS 
     },
 
     referenceId: { 
@@ -51,9 +48,9 @@ export const transactionSchema = new Schema(
 
     source: {
       type: String,
-      enum: TRANSACTION_SOURCES,
+      enum: Object.values(TRANSACTION_SOURCES),
       required: true,
-      default: "admin",
+      default: TRANSACTION_SOURCES.ADMIN,
       index: true
     },
     

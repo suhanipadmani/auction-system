@@ -21,7 +21,7 @@ export const NAV_LINKS: INavLink[] = [
     roles: ["bidder"] 
   },
   { 
-    name: "Seller Wallet", 
+    name: "Wallet", 
     href: "/user/wallet", 
     icon: Wallet, 
     roles: ["seller"] 
@@ -45,10 +45,16 @@ export const NAV_LINKS: INavLink[] = [
     roles: ["admin"] 
   },
   { 
+    name: "Marketplace", 
+    href: "/user/auctions", 
+    icon: Gavel, 
+    roles: ["seller", "bidder"] 
+  },
+  { 
     name: "My Auctions", 
     href: "/seller/auctions", 
     icon: Gavel, 
-    roles: ["seller", "bidder"] 
+    roles: ["seller"] 
   },
 ];
 

@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { walletApi } from "../api/wallet.api";
 import { toast } from "react-hot-toast";
 
-// --- Bidder Hooks ---
+import { walletApi } from "../api/wallet.api";
+
+// Bidder Hooks
 
 export const useBalance = () => useQuery({
   queryKey: ["wallet-balance"],
@@ -50,7 +51,7 @@ export const useWallet = () => {
 };
 
 
-// --- Admin Hooks ---
+// Admin Hooks
 
 export const usePendingDeposits = (status?: string) => useQuery({
   queryKey: ["admin-pending-deposits", status],

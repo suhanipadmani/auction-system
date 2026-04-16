@@ -1,7 +1,8 @@
+import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
+
 import { authApi } from '../api/auth.api';
 import { useAuthStore } from '../store/auth.store';
-import { useRouter } from 'next/navigation';
 
 export const useLogin = () => {
   const loginFn = useAuthStore((state) => state.login);

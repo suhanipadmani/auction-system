@@ -1,24 +1,30 @@
 "use client";
 
+import Link from "next/link";
+
+// External
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+
+// Types
+import { ILoginForm } from "@/types/forms";
+
+// Validation
+import { loginSchema } from "@/validations/auth.validation";
+
+// Hooks
 import { useLogin } from "@/hooks/useAuth";
-import Link from "next/link";
-import { Mail, Lock } from "lucide-react";
+
+// UI Components
 import { AuthLayout } from "@/components/layout/AuthLayout";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email"),
-  password: z.string().min(1, "Password is required"),
-  role: z.enum(["bidder", "seller"]),
-});
-
-import { ILoginForm } from "@/types/forms";
 
 export default function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
   const { mutate: login, isPending, error } = useLogin();
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<ILoginForm>({
@@ -71,9 +77,23 @@ export default function LoginPage() {
 
         <Input
           label="Password"
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="••••••••"
           icon={<Lock className="h-5 w-5" />}
+          rightElement={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="p-2 hover:text-white transition-colors outline-none"
+              tabIndex={-1}
+            >
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
+          }
           error={errors.password?.message}
           {...register("password")}
         />

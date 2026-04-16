@@ -1,9 +1,13 @@
 "use client";
 
 import { History, Search, ShieldAlert } from "lucide-react";
-import { StatCard } from "@/components/ui/StatCard";
+
+// Hooks
 import { usePendingDeposits } from "@/hooks/useWallet";
 import { useUsers } from "@/hooks/useUsers";
+
+// Components
+import { StatCard } from "@/components/ui/StatCard";
 
 export function WalletStats() {
   const { data: pendingData, isLoading: isPendingLoading } = usePendingDeposits("pending");
