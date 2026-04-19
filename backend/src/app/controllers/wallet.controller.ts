@@ -1,21 +1,17 @@
 import { Request, Response } from "express";
-
-// Utils 
-import { asyncHandler } from "../utils/asyncHandler";
+import * as WalletService from "../services/wallet.service";
 import { sendSuccess } from "../utils/apiResponse";
 import { AppError } from "../utils/AppError";
+import { getPagingMeta } from "../utils/pagination";
 
-// Services 
-import * as WalletService from "../services/wallet.service";
-
-export const getWallet = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
+export const getWallet = async (req: Request, res: Response) => {
+  const userId = req.user!.id;
   const wallet = await WalletService.getOrCreateWallet(userId);
   sendSuccess(res, "Wallet retrieved", wallet);
-});
+};
 
-export const requestDeposit = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
+export const requestDeposit = async (req: Request, res: Response) => {
+  const userId = req.user!.id;
   const { amount } = req.body;
   
   if (!amount || amount <= 0) {
@@ -24,16 +20,20 @@ export const requestDeposit = asyncHandler(async (req: Request, res: Response) =
 
   const request = await WalletService.createDepositRequest(userId, amount);
   sendSuccess(res, "Deposit request submitted", request, 201);
-});
+};
 
-export const getTransactions = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  const transactions = await WalletService.getTransactionHistory(userId);
-  sendSuccess(res, "Transactions retrieved", transactions);
-});
+export const getTransactions = async (req: Request, res: Response) => {
+  const userId = req.user!.id;
+  const { page, limit } = (req as any).pagination;
+  
+  const result = await WalletService.getTransactionHistory(userId, { page, limit });
+  sendSuccess(res, "Transactions retrieved", result.data, 200, getPagingMeta(result.total, page, limit));
+};
 
-export const getMyRequests = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  const requests = await WalletService.getDepositRequests(userId);
-  sendSuccess(res, "Deposit requests retrieved", requests);
-});
+export const getMyRequests = async (req: Request, res: Response) => {
+  const userId = req.user!.id;
+  const { page, limit } = (req as any).pagination;
+
+  const result = await WalletService.getDepositRequests(userId, { page, limit });
+  sendSuccess(res, "Deposit requests retrieved", result.data, 200, getPagingMeta(result.total, page, limit));
+};

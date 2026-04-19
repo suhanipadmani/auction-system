@@ -31,7 +31,8 @@ export const bidSchema = new Schema(
     autoBidLimit: { 
       type: Number, 
       default: null, 
-      min: 0 
+      min: 0,
+      select: false
     },
 
     status: { 

@@ -1,13 +1,13 @@
 "use client";
 
 // External
-import { Tags, Gavel, PlusCircle, LayoutDashboard, BadgeIndianRupee, ArrowUpRight } from "lucide-react";
+import { Tags, Gavel, PlusCircle, LayoutDashboard, BadgeIndianRupee, ArrowUpRight, Target, TrendingUp, Award, IndianRupee } from "lucide-react";
+import { AnalyticsSection, AnalyticsCard } from "@/components/dashboard/AnalyticsSection";
 
 // State (Auth Store)
 import { useAuthStore } from "@/store/auth.store";
 
 // Components
-import { DashboardStatCard } from "@/components/dashboard/DashboardStatCard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { QuickActionCard } from "@/components/dashboard/QuickActionCard";
 
@@ -24,7 +24,10 @@ export default function SellerDashboardPage() {
   const stats = statsResponse?.data || {
     totalEarnings: 0,
     activeListings: 0,
-    completedSales: 0
+    completedSales: 0,
+    successRate: 0,
+    avgHighestBid: 0,
+    maxBidReceived: 0
   };
 
   return (
@@ -36,62 +39,98 @@ export default function SellerDashboardPage() {
         statusValue="Verified Seller"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <DashboardStatCard
-          title="Total Earnings"
-          value={isLoading ? "..." : formatCurrency(stats.totalEarnings)}
-          icon={<BadgeIndianRupee className="w-6 h-6" />}
-          color="emerald"
-        />
-        <DashboardStatCard
+      {/* Seller Performance Analytics */}
+      <AnalyticsSection title="Seller Performance" description="Insights into your auction success and market value.">
+        <AnalyticsCard
           title="Active Listings"
           value={isLoading ? "..." : stats.activeListings.toString()}
-          icon={<Tags className="w-6 h-6" />}
+          subtitle="currently live for bidding"
+          icon={<Tags className="w-5 h-5" />}
           color="indigo"
         />
-        <DashboardStatCard
+        <AnalyticsCard
           title="Completed Sales"
           value={isLoading ? "..." : stats.completedSales.toString()}
-          icon={<Gavel className="w-6 h-6" />}
+          subtitle="successfully ended auctions"
+          icon={<Gavel className="w-5 h-5" />}
           color="purple"
         />
-      </div>
-
-
-      {/* Seller Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <QuickActionCard
-          title="List New Item"
-          description="Create a new auction listing for bidders"
-          icon={<PlusCircle className="w-10 h-10" />}
-          href="/seller/create"
-          color="indigo"
-        />
-
-        <QuickActionCard
-          title="Auctions"
-          description="Manage your active and pending listings"
-          icon={<Gavel className="w-8 h-8" />}
-          href="/seller/auctions"
-          color="purple"
-        />
-
-        <QuickActionCard
-          title="Explore Auctions"
-          description="Browse live and upcoming auctions"
-          icon={<ArrowUpRight className="w-8 h-8" />}
-          href="/user/auctions"
+        <AnalyticsCard
+          title="Success Rate"
+          value={`${stats.successRate}%`}
+          subtitle="Auctions sold vs listed"
+          icon={<Target className="w-5 h-5" />}
+          percentage={stats.successRate}
           color="emerald"
         />
-
-        <QuickActionCard
-          title="Payout Account"
-          description="Manage where your earnings are deposited"
-          icon={<LayoutDashboard className="w-6 h-6" />}
-          href="/user/wallet"
-          color="blue"
+        <AnalyticsCard
+          title="Average High Bid"
+          value={formatCurrency(stats.avgHighestBid)}
+          subtitle="per auction with bids"
+          icon={<TrendingUp className="w-5 h-5" />}
+          color="indigo"
         />
-      </div>
+        <AnalyticsCard
+          title="Highest Bid Ever"
+          value={formatCurrency(stats.maxBidReceived)}
+          subtitle="your personal record"
+          icon={<Award className="w-5 h-5" />}
+          color="amber"
+        />
+        <AnalyticsCard
+          title="Total Proceeds"
+          value={formatCurrency(stats.totalEarnings)}
+          subtitle="lifetime earnings"
+          icon={<IndianRupee className="w-5 h-5" />}
+          color="teal"
+        />
+      </AnalyticsSection>
+
+
+      {/* Tools & Operations */}
+      <section className="space-y-6">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+            <span className="w-2 h-8 bg-purple-500 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)]" />
+            Tools & Operations
+          </h2>
+          <p className="text-gray-500 text-sm">Create auctions, manage listings, and view your records.</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+          <QuickActionCard
+            title="List New Item"
+            description="Create a new auction listing for bidders"
+            icon={<PlusCircle className="w-10 h-10" />}
+            href="/seller/create"
+            color="indigo"
+          />
+
+          <QuickActionCard
+            title="My Auctions"
+            description="Manage your active and pending listings"
+            icon={<Gavel className="w-8 h-8" />}
+            href="/seller/auctions"
+            color="purple"
+          />
+
+          <QuickActionCard
+            title="Explore Global"
+            description="Browse all live and upcoming auctions"
+            icon={<ArrowUpRight className="w-8 h-8" />}
+            href="/user/auctions"
+            color="emerald"
+          />
+
+          <QuickActionCard
+            title="Payout Account"
+            description="Manage where your earnings are deposited"
+            icon={<LayoutDashboard className="w-6 h-6" />}
+            href="/user/wallet"
+            color="blue"
+          />
+        </div>
+      </section>
     </div>
   );
 }

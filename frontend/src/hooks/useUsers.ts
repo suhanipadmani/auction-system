@@ -2,17 +2,17 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { userApi } from '../api/user.api';
 
 export const USER_KEYS = {
-  all: (includeDeleted = false) => ['users', { includeDeleted }] as const,
+  all: (includeDeleted = false, page = 1, limit = 20, search = "") => ['users', { includeDeleted, page, limit, search }] as const,
 };
 
 const invalidateUsers = (queryClient: ReturnType<typeof useQueryClient>) => {
   queryClient.invalidateQueries({ queryKey: ['users'] });
 };
 
-export const useUsers = (includeDeleted = false) => {
+export const useUsers = (includeDeleted = false, page = 1, limit = 20, search = "") => {
   return useQuery({
-    queryKey: USER_KEYS.all(includeDeleted),
-    queryFn: () => userApi.getAllUsers(includeDeleted),
+    queryKey: USER_KEYS.all(includeDeleted, page, limit, search),
+    queryFn: () => userApi.getAllUsers(includeDeleted, page, limit, search),
   });
 };
 

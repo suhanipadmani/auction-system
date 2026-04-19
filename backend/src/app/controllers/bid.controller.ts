@@ -1,75 +1,43 @@
 import { Request, Response } from "express";
 import { BidService } from "../services/bid.service";
+import { sendSuccess } from "../utils/apiResponse";
 
-export class BidController {
-  /**
-   * Place a manual bid.
-   */
-  static async placeBid(req: Request, res: Response) {
-    try {
-      const { auctionId, amount } = req.body;
-      const bidderId = req.user?.id;
+/**
+ * Place a manual bid.
+ */
+export const placeBid = async (req: Request, res: Response) => {
+  const { auctionId, amount } = req.body;
+  const bidderId = req.user!.id;
+  const bid = await BidService.placeBid(bidderId, auctionId, amount);
+  sendSuccess(res, "Bid placed successfully", bid, 201);
+};
 
-      if (!bidderId) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
+/**
+ * Setup auto-bidding.
+ */
+export const setupAutoBid = async (req: Request, res: Response) => {
+  const { auctionId, limit } = req.body;
+  const bidderId = req.user!.id;
+  const autoBid = await BidService.setupAutoBid(bidderId, auctionId, limit);
+  sendSuccess(res, "Auto-bid setup successfully", autoBid, 201);
+};
 
-      const bid = await BidService.placeBid(bidderId, auctionId, amount);
-      
-      res.status(201).json({
-        success: true,
-        message: "Bid placed successfully",
-        data: bid
-      });
-    } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message });
-    }
-  }
+/**
+ * Get bid status for current user on an auction.
+ */
+export const getBidStatus = async (req: Request, res: Response) => {
+  const { auctionId } = req.params;
+  const bidderId = req.user!.id;
+  const status = await BidService.getBidStatus(bidderId, auctionId as string);
+  sendSuccess(res, "Bid status retrieved", status);
+};
 
-  /**
-   * Setup auto-bidding.
-   */
-  static async setupAutoBid(req: Request, res: Response) {
-    try {
-      const { auctionId, limit } = req.body;
-      const bidderId = req.user?.id;
-
-      if (!bidderId) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-
-      const autoBid = await BidService.setupAutoBid(bidderId, auctionId, limit);
-
-      res.status(201).json({
-        success: true,
-        message: "Auto-bid setup successfully",
-        data: autoBid
-      });
-    } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message });
-    }
-  }
-
-  /**
-   * Get bid status for current user on an auction.
-   */
-  static async getBidStatus(req: Request, res: Response) {
-    try {
-      const { auctionId } = req.params;
-      const bidderId = req.user?.id;
-
-      if (!bidderId) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-
-      const status = await BidService.getBidStatus(bidderId, auctionId as string);
-
-      res.status(200).json({
-        success: true,
-        data: status
-      });
-    } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message });
-    }
-  }
-}
+/**
+ * Admin-only: Remove a bid.
+ */
+export const removeBid = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const adminId = req.user!.id;
+  const result = await BidService.removeBid(id as string, adminId);
+  sendSuccess(res, "Bid removed successfully", result);
+};

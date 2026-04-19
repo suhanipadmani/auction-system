@@ -92,10 +92,10 @@ export const useFinalizeAuction = () => {
   });
 };
 
-export const useMyBiddingActivity = () => {
+export const useMyBiddingActivity = (params: { page?: number; limit?: number; tab?: string } = {}) => {
   return useQuery({
-    queryKey: AUCTION_KEYS.list({ activity: 'my' }),
-    queryFn: () => auctionApi.getMyBiddingActivity(),
+    queryKey: [...AUCTION_KEYS.all, 'my-activity', params],
+    queryFn: () => auctionApi.getMyBiddingActivity(params),
   });
 };
 
@@ -117,6 +117,30 @@ export const useAdminInventory = (filters: IAuctionFilters = {}) => {
   return useQuery({
     queryKey: [...AUCTION_KEYS.all, 'admin-inventory', filters],
     queryFn: () => auctionApi.getAdminInventory(filters),
+  });
+};
+
+export const useAuctionBids = (id: string, enabled = true) => {
+  return useQuery({
+    queryKey: ['bids', id],
+    queryFn: () => auctionApi.getAuctionBids(id),
+    enabled: !!id && enabled,
+  });
+};
+
+export const useBidStatus = (id: string, enabled = true) => {
+  return useQuery({
+    queryKey: ['bid-status', id],
+    queryFn: () => auctionApi.getBidStatus(id),
+    enabled: !!id && enabled,
+  });
+};
+
+export const usePublicStats = () => {
+  return useQuery({
+    queryKey: [...AUCTION_KEYS.all, 'public-stats'],
+    queryFn: () => auctionApi.getPublicStats(),
+    refetchInterval: 60000, // Refresh every minute for the landing page
   });
 };
 

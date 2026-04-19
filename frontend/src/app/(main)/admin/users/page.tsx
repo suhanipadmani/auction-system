@@ -7,6 +7,8 @@ import { Loader2, ShieldAlert, Search, Eye, EyeOff } from "lucide-react";
 
 // Hooks
 import { useUsers, useUpdateRole, useDeleteUser, useRestoreUser, useDeactivateUser, useActivateUser } from "@/hooks/useUsers";
+import { useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // State (Auth Store)
 import { useAuthStore } from "@/store/auth.store";
@@ -19,9 +21,20 @@ import { Button } from "@/components/ui/Button";
 export default function AdminUsersPage() {
   const currentUser = useAuthStore((state) => state.user);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [showDeleted, setShowDeleted] = useState(false);
+  const [page, setPage] = useState(1);
 
-  const { data: response, isLoading, error } = useUsers(showDeleted);
+  // Debounce search 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setPage(1); // Reset to first page on search
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const { data: response, isLoading, error } = useUsers(showDeleted, page, 20, debouncedSearch);
   const { mutate: updateRole, isPending: isUpdatingRole } = useUpdateRole();
   const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
   const { mutate: restoreUser, isPending: isRestoring } = useRestoreUser();
@@ -29,17 +42,15 @@ export default function AdminUsersPage() {
   const { mutate: activateUser, isPending: isActivating } = useActivateUser();
 
   const users = response?.data || [];
+  const totalPages = response?.totalPages || 1;
+  const totalUsers = response?.total || 0;
 
-  // Filter by search query 
-  const filteredUsers = users.filter((u: any) => {
-    const matchesSearch = u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      u.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const isNotAdmin = u.role !== "admin";
-    return matchesSearch && isNotAdmin;
-  });
+  // Filtering logic now happens mainly on backend, 
+  // but we still filter out admins for safety if needed
+  const displayUsers = users.filter((u: any) => u.role !== "admin");
 
-  const activeCount  = filteredUsers.filter((u: any) => u.status !== "deleted").length;
-  const deletedCount = filteredUsers.filter((u: any) => u.status === "deleted").length;
+  const activeCount = users.filter((u: any) => u.status !== "deleted").length;
+  const deletedCount = users.filter((u: any) => u.status === "deleted").length;
 
   if (isLoading) {
     return (
@@ -106,7 +117,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {/* ── Summary chips ── */}
+      {/* Summary chips */}
       <div className="flex items-center gap-4 -mt-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
@@ -122,7 +133,7 @@ export default function AdminUsersPage() {
 
       {/*  Table */}
       <UsersTable
-        users={filteredUsers}
+        users={displayUsers}
         currentUser={currentUser}
         updateRole={updateRole}
         deleteUser={deleteUser}
@@ -135,6 +146,38 @@ export default function AdminUsersPage() {
         isDeactivating={isDeactivating}
         isActivating={isActivating}
       />
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-6 py-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm">
+          <p className="text-sm text-gray-500">
+            Showing <span className="text-white font-medium">{displayUsers.length}</span> of <span className="text-white font-medium">{totalUsers}</span> users
+          </p>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="border-gray-800 text-gray-400"
+            >
+              <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+            </Button>
+            <div className="text-sm text-gray-400 px-4">
+              Page <span className="text-white font-bold">{page}</span> of {totalPages}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="border-gray-800 text-gray-400"
+            >
+              Next <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -10,14 +10,14 @@ export const useBalance = () => useQuery({
   queryFn: walletApi.getBalance
 });
 
-export const useTransactions = () => useQuery({
-  queryKey: ["wallet-transactions"],
-  queryFn: walletApi.getTransactions
+export const useTransactions = (page = 1, limit = 20) => useQuery({
+  queryKey: ["wallet-transactions", page, limit],
+  queryFn: () => walletApi.getTransactions(page, limit)
 });
 
-export const useMyRequests = () => useQuery({
-  queryKey: ["wallet-requests"],
-  queryFn: walletApi.getMyRequests
+export const useMyRequests = (page = 1, limit = 20) => useQuery({
+  queryKey: ["wallet-requests", page, limit],
+  queryFn: () => walletApi.getMyRequests(page, limit)
 });
 
 export const useRequestDeposit = () => {
@@ -53,15 +53,18 @@ export const useWallet = () => {
 
 // Admin Hooks
 
-export const usePendingDeposits = (status?: string) => useQuery({
-  queryKey: ["admin-pending-deposits", status],
-  queryFn: () => walletApi.getPendingDeposits(status)
+export const usePendingDeposits = (status?: string, page = 1, limit = 20) => useQuery({
+  queryKey: ["admin-pending-deposits", status, page, limit],
+  queryFn: () => walletApi.getPendingDeposits(status, page, limit)
 });
 
-export const useAllTransactions = (params?: any) => useQuery({
-  queryKey: ["admin-all-transactions", params],
-  queryFn: () => walletApi.getAllTransactions(params)
-});
+export const useAllTransactions = (params: any = {}) => {
+  const { page = 1, limit = 20, ...rest } = params;
+  return useQuery({
+    queryKey: ["admin-all-transactions", { page, limit, ...rest }],
+    queryFn: () => walletApi.getAllTransactions({ page, limit, ...rest })
+  });
+};
 
 export const useUserWallet = (userId: string) => useQuery({
   queryKey: ["admin-user-wallet", userId],

@@ -1,11 +1,13 @@
 import { axiosClient } from "@/lib/axios";
 
 export const userApi = {
-  getAllUsers: async (includeDeleted = false) => {
-    const response = await axiosClient.get("/users", {
-      params: includeDeleted ? { includeDeleted: "true" } : {},
-    });
-    return response.data;
+  getAllUsers: async (includeDeleted = false, page = 1, limit = 20, search = "") => {
+    const params: any = { page, limit };
+    if (includeDeleted) params.includeDeleted = "true";
+    if (search) params.search = search;
+    
+    const response = await axiosClient.get("/users", { params });
+    return response.data.data;
   },
 
   createUser: async (data: { name: string; email: string; password?: string; role: string }) => {

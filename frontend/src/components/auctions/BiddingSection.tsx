@@ -8,6 +8,7 @@ import { toast } from "sonner";
 // Hooks
 import { useAuctionSocket } from "@/hooks/useAuctionSocket";
 import { useBidding } from "@/hooks/useBidding";
+import { useBidStatus } from "@/hooks/useAuction";
 import { useAuthStore } from "@/store/auth.store";
 import { useBudgets, useAssignAuctionToBudget } from "@/hooks/useBudget";
 import { formatCurrency, cn } from "@/lib/utils";
@@ -86,12 +87,13 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
   const minRequired = currentBid + auction.minIncrement;
 
   const { placeBid, isPlacingBid, setupAutoBid, isSettingAutoBid } = useBidding();
+  const { data: statusResponse } = useBidStatus(auction._id as string, !!user);
   const { data: budgetsResponse } = useBudgets();
   const { mutate: assignToGoal } = useAssignAuctionToBudget();
 
+  const userStatus = statusResponse?.data;
   const budgets = budgetsResponse?.data || [];
   
-  // Robust search for assigned goal (handles both ID strings and populated objects)
   const assignedGoal = budgets.find(b => 
     b.auctionIds.some((id: any) => (typeof id === 'string' ? id : id._id) === auction._id)
   );
@@ -105,7 +107,7 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
     }
   }, [assignedGoal]);
 
-  // Budget validation logic
+  // Budget validation 
   const numericAmount = parseFloat(bidAmount) || 0;
   const isOverBudget = assignedGoal && (assignedGoal.currentExposure + (numericAmount - (isHighestBidder ? currentBid : 0)) > assignedGoal.maxBudget);
   const remainingInGoal = assignedGoal ? assignedGoal.maxBudget - assignedGoal.currentExposure + (isHighestBidder ? currentBid : 0) : 0;
@@ -124,11 +126,9 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
     }
 
     // Use socket for real-time bid
-    placeBidSocket(user._id, amount);
-    // Don't clear immediately anymore
+    placeBidSocket(amount);
   };
 
-  // Effect to clear input only when the bid is confirmed as highest
   useEffect(() => {
     if (isHighestBidder) {
       setBidAmount("");
@@ -152,8 +152,6 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
            toast.success("Auto-bid setup successfully!");
            setIsAutoBid(false);
            setAutoBidLimit("");
-           // Invalidate budgets to refresh exposure bars
-           // Since useBidding might not know about budgets
         },
         onError: (err: any) => {
            toast.error(err.response?.data?.message || "Failed to setup auto-bid");
@@ -218,41 +216,59 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
             </span>
           </div>
 
-          <div className="space-y-4 pt-2">
-            <div className="relative group">
-               <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                  <span className="text-muted-foreground font-bold">₹</span>
-               </div>
-               <Input
-                 type="number"
-                 placeholder={`Min. ${minRequired}`}
-                 value={bidAmount}
-                 onChange={(e) => setBidAmount(e.target.value)}
-                 className={cn(
-                    "pl-8 h-14 bg-black/40 border-white/10 rounded-xl font-bold focus:ring-indigo-500 focus:border-indigo-500",
-                    isOverBudget && "border-red-500 focus:ring-red-500 focus:border-red-500"
-                 )}
-                 disabled={auction.status !== "active" || isHighestBidder || isOwner}
-               />
-               {isOverBudget && (
-                 <p className="mt-1.5 text-xs font-bold text-red-500 flex items-center gap-1 animate-pulse">
-                    <AlertTriangle className="w-3 h-3" />
-                    Bid exceeds goal budget: {formatCurrency(remainingInGoal)} left
-                 </p>
-               )}
-            </div>
+            {user ? (
+               <>
+                  <div className="relative group">
+                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                        <span className="text-muted-foreground font-bold">₹</span>
+                     </div>
+                     <Input
+                       type="number"
+                       placeholder={`Min. ${minRequired}`}
+                       value={bidAmount}
+                       onChange={(e) => setBidAmount(e.target.value)}
+                       className={cn(
+                          "pl-8 h-14 bg-black/40 border-white/10 rounded-xl font-bold focus:ring-indigo-500 focus:border-indigo-500",
+                          isOverBudget && "border-red-500 focus:ring-red-500 focus:border-red-500"
+                       )}
+                       disabled={auction.status !== "active" || isHighestBidder || isOwner}
+                     />
+                     {isOverBudget && (
+                       <p className="mt-1.5 text-xs font-bold text-red-500 flex items-center gap-1 animate-pulse">
+                          <AlertTriangle className="w-3 h-3" />
+                          Bid exceeds goal budget: {formatCurrency(remainingInGoal)} left
+                       </p>
+                     )}
+                  </div>
 
-            <Button
-              onClick={handleManualBid}
-              className={cn(
-                "w-full h-14 text-lg font-black shadow-xl rounded-xl transition-all active:scale-95 disabled:opacity-50",
-                isOverBudget ? "bg-red-600 hover:bg-red-700 shadow-red-500/20" : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20"
-              )}
-              disabled={auction.status !== "active" || isHighestBidder || isOwner || isPending || isOverBudget}
-            >
-              {isPending ? "Processing..." : isOwner ? "Your Listing" : isHighestBidder ? "Highest Bidder" : isOverBudget ? "Limit Exceeded" : "Place Bid"}
-            </Button>
-          </div>
+                  <Button
+                    onClick={handleManualBid}
+                    className={cn(
+                      "w-full h-14 text-lg font-black shadow-xl rounded-xl transition-all active:scale-95 disabled:opacity-50",
+                      isOverBudget ? "bg-red-600 hover:bg-red-700 shadow-red-500/20" : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20"
+                    )}
+                    disabled={auction.status !== "active" || isHighestBidder || isOwner || isPending || isOverBudget}
+                  >
+                    {isPending ? "Processing..." : isOwner ? "Your Listing" : isHighestBidder ? "Highest Bidder" : isOverBudget ? "Limit Exceeded" : "Place Bid"}
+                  </Button>
+               </>
+            ) : (
+               <div className="p-6 bg-white/5 rounded-2xl border border-white/10 text-center space-y-4">
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Want to participate in this auction?
+                  </p>
+                  <Button 
+                    variant="default" 
+                    className="w-full h-12 font-bold"
+                    onClick={() => window.location.href = '/login'}
+                  >
+                    Sign in to Bid
+                  </Button>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">
+                    Registration is required to place bids
+                  </p>
+               </div>
+            )}
 
           {/* Budget Goal Assignment */}
           {user && !isOwner && (
@@ -288,8 +304,8 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
             </div>
           )}
 
-          {/* Auto Bid Section - Hide for Owner */}
-          {!isOwner && (
+          {/* Auto Bid Section - Hide for Owner and Guests */}
+          {!isOwner && user && (
             <div className="pt-4 border-t border-white/5">
                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
@@ -303,6 +319,13 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
                     disabled={auction.status !== "active" || isHighestBidder}
                   />
                </div>
+               
+               {userStatus?.autoBidLimit && !isAutoBid && (
+                  <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider">Active Auto-Bid</span>
+                    <span className="text-xs font-black text-white">{formatCurrency(userStatus.autoBidLimit)}</span>
+                  </div>
+               )}
                
                {isAutoBid && (
                  <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">

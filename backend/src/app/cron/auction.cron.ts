@@ -8,7 +8,8 @@ import { AuctionService } from "../services/auction.service";
  * Runs every minute
  */
 export const initAuctionCron = () => {
-  cron.schedule("* * * * *", async () => {
+  // Run every 10 seconds to ensure real-time status transitions
+  cron.schedule("*/10 * * * * *", async () => {
     try {
       const result = await AuctionService.autoTransition();
       if (result.startedCount > 0 || result.endedCount > 0 || (result as any).expiredCount > 0) {

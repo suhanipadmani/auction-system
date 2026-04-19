@@ -10,7 +10,7 @@ export const auctionApi = {
     if (filters.limit) params.append("limit", filters.limit.toString());
     
     const response = await axiosClient.get(`/auctions?${params.toString()}`);
-    return response.data;
+    return response.data.data;
   },
 
   getAuctionById: async (id: string): Promise<{ success: boolean; data: IAuction }> => {
@@ -48,17 +48,41 @@ export const auctionApi = {
     return response.data;
   },
 
-  getMyBiddingActivity: async (): Promise<{ success: boolean; data: IAuction[]; stats: any }> => {
-    const response = await axiosClient.get("/auctions/my-activity");
-    return response.data;
+  getMyBiddingActivity: async (params?: { page?: number; limit?: number; tab?: string }): Promise<{ 
+    success: boolean; 
+    data: IAuction[]; 
+    total?: number;
+    page?: number;
+    totalPages?: number;
+    stats: { 
+      activeWinningCount: number; 
+      activeOutbidCount: number; 
+      wonCount: number;
+      lossCount: number;
+      totalSpent: number;
+    } 
+  }> => {
+    const response = await axiosClient.get("/auctions/my-activity", { params });
+    return response.data.data;
   },
   
-  getSellerStats: async (): Promise<{ success: boolean; data: { activeListings: number; completedSales: number; totalEarnings: number } }> => {
+  getSellerStats: async (): Promise<{ success: boolean; data: { 
+    activeListings: number; 
+    completedSales: number; 
+    totalEarnings: number;
+    successRate: number;
+    avgHighestBid: number;
+    maxBidReceived: number;
+  } }> => {
     const response = await axiosClient.get("/auctions/seller-stats");
     return response.data;
   },
 
-  getAdminStats: async (): Promise<{ success: boolean; data: { totalAuctions: number; systemRevenue: number; bidsToday: number } }> => {
+  getAdminStats: async (): Promise<{ success: boolean; data: { 
+    totalAuctions: number; 
+    systemRevenue: number; 
+    activeUsersCount: number;
+  } }> => {
     const response = await axiosClient.get("/auctions/admin-stats");
     return response.data;
   },
@@ -72,6 +96,27 @@ export const auctionApi = {
     if (filters.limit) params.append("limit", filters.limit.toString());
 
     const response = await axiosClient.get(`/auctions/admin/inventory?${params.toString()}`);
+    return response.data.data;
+  },
+
+  getAuctionBids: async (id: string): Promise<{ success: boolean; data: any[] }> => {
+    const response = await axiosClient.get(`/auctions/${id}/bids`);
+    return response.data;
+  },
+
+  getBidStatus: async (id: string): Promise<{ success: boolean; data: any }> => {
+    const response = await axiosClient.get(`/bids/status/${id}`);
+    return response.data;
+  },
+
+  getPublicStats: async (): Promise<{ success: boolean; data: { 
+    totalAuctions: number; 
+    activeAuctions: number; 
+    activeBidders: number;
+    totalBids: number;
+    totalVolume: number;
+  } }> => {
+    const response = await axiosClient.get("/auctions/public-stats");
     return response.data;
   }
 };

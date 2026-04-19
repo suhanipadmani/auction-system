@@ -25,6 +25,7 @@ export interface IAuction {
 
   createdAt: string;
   updatedAt: string;
+  bidCount?: number;
 }
 
 export interface ICreateAuctionDTO {
@@ -45,6 +46,8 @@ export interface IAuctionFilters {
   activity?: "my";
   page?: number;
   limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }
 
 export interface IAuctionResponse {

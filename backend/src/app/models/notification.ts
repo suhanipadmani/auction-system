@@ -27,6 +27,11 @@ export const notificationSchema = new Schema(
       default: false 
     },
     
+    link: {
+      type: String,
+      trim: true
+    }
+    
   },
   { timestamps: true },
 );

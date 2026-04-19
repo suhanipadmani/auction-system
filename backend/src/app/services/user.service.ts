@@ -24,9 +24,38 @@ export const createUser = async (data: ICreateUserData) => {
  * By default excludes DELETED users (hidden from system).
  * INACTIVE users are always visible — they are blocked but not hidden.
  */
-export const getAllUsers = async (includeDeleted = false) => {
-  const filter = includeDeleted ? {} : { status: { $ne: USER_STATUSES.DELETED } };
-  return await UserModel.find(filter).select("-password").sort({ createdAt: -1 });
+export const getAllUsers = async (includeDeleted = false, options: { page?: number; limit?: number; search?: string; role?: string } = {}) => {
+  const { page = 1, limit = 20, search, role } = options;
+  const skip = (page - 1) * limit;
+
+  const filter: any = includeDeleted ? {} : { status: { $ne: USER_STATUSES.DELETED } };
+  
+  if (role) {
+    filter.role = role;
+  }
+
+  if (search) {
+    filter.$or = [
+      { name: { $regex: search, $options: "i" } },
+      { email: { $regex: search, $options: "i" } }
+    ];
+  }
+  
+  const [data, total] = await Promise.all([
+    UserModel.find(filter)
+      .select("-password")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    UserModel.countDocuments(filter),
+  ]);
+
+  return {
+    data,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
 };
 
 export const updateUserRole = async (id: string, role: string) => {

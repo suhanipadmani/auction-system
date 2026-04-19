@@ -27,7 +27,7 @@ export default function SellerAuctionsPage() {
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <DashboardHeader
-          userName="Auctions"
+          title="Auction Management"
           subtitle="Manage your listed items and track their status."
         />
         <Link
@@ -43,7 +43,7 @@ export default function SellerAuctionsPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-      ) : response?.data.length === 0 ? (
+      ) : (response?.data?.length === 0 || !response?.data) ? (
         <div className="flex flex-col items-center justify-center min-h-[400px] border-2 border-dashed border-white/5 rounded-2xl bg-white/[0.02]">
           <p className="text-muted-foreground mb-4">You haven't created any auctions yet.</p>
           <Link
@@ -55,7 +55,7 @@ export default function SellerAuctionsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
-          {response?.data.map((auction) => (
+          {response?.data?.map((auction) => (
             <AuctionCard key={auction._id} auction={auction} showActions />
           ))}
         </div>

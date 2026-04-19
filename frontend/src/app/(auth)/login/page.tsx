@@ -44,24 +44,24 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-foreground/80 mb-3">Login As</label>
-          <div className="flex gap-4">
-            <label className={`flex-1 cursor-pointer flex flex-col items-center justify-center py-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <label className={`flex-1 cursor-pointer flex flex-col items-center justify-center py-3 sm:py-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${
               watch("role") === "bidder" || !watch("role") 
                 ? "bg-primary/10 border-primary text-primary shadow-[0_0_20px_rgba(99,102,241,0.2)]"
                 : "bg-background border-border text-muted-foreground hover:border-primary/30"
             }`}>
               <div className={`absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity ${watch("role") === "bidder" ? 'opacity-100' : ''}`} />
               <input type="radio" value="bidder" {...register("role")} className="hidden" />
-              <span className="font-bold text-lg relative z-10">Bidder</span>
+              <span className="font-bold text-base sm:text-lg relative z-10">Bidder</span>
             </label>
-            <label className={`flex-1 cursor-pointer flex flex-col items-center justify-center py-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${
+            <label className={`flex-1 cursor-pointer flex flex-col items-center justify-center py-3 sm:py-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${
               watch("role") === "seller" 
                 ? "bg-primary/10 border-primary text-primary shadow-[0_0_20px_rgba(99,102,241,0.2)]"
                 : "bg-background border-border text-muted-foreground hover:border-primary/30"
             }`}>
               <div className={`absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity ${watch("role") === "seller" ? 'opacity-100' : ''}`} />
               <input type="radio" value="seller" {...register("role")} className="hidden" />
-              <span className="font-bold text-lg relative z-10">Seller</span>
+              <span className="font-bold text-base sm:text-lg relative z-10">Seller</span>
             </label>
           </div>
         </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpCircle } from "lucide-react";
+import { ArrowUpCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 // Types
 import { IDepositRequestsSectionProps } from "@/types/components";
@@ -22,8 +23,12 @@ import { Table, TableHeader, TableBody, TableHead, TableRow } from "@/components
 export function DepositRequestsSection({ onProcessClick, processingId }: IDepositRequestsSectionProps) {
 
   const [depositFilter, setDepositFilter] = useState<"pending" | "approved" | "rejected">("pending");
-  const { data: pendingData, isLoading: isPendingLoading } = usePendingDeposits(depositFilter);
+  const [page, setPage] = useState(1);
+  const { data: pendingData, isLoading: isPendingLoading } = usePendingDeposits(depositFilter, page, 20);
   const processDeposit = useProcessDeposit();
+
+  const totalPages = (pendingData as any)?.totalPages || 1;
+  const totalItems = (pendingData as any)?.total || 0;
 
   const renderTableBody = () => {
     if (isPendingLoading) {
@@ -63,7 +68,10 @@ export function DepositRequestsSection({ onProcessClick, processingId }: IDeposi
             {(['pending', 'approved', 'rejected'] as const).map((status) => (
               <button
                 key={status}
-                onClick={() => setDepositFilter(status)}
+                onClick={() => {
+                  setDepositFilter(status);
+                  setPage(1);
+                }}
                 className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all capitalize ${depositFilter === status
                   ? 'bg-primary text-white shadow-md'
                   : 'text-muted-foreground hover:text-white'
@@ -91,6 +99,36 @@ export function DepositRequestsSection({ onProcessClick, processingId }: IDeposi
               </TableBody>
             </Table>
           </div>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-6 py-4 bg-white/[0.02] border-t border-border/40">
+              <p className="text-xs text-muted-foreground">
+                Showing <span className="text-white">{(pendingData?.data as any[])?.length || 0}</span> of <span className="text-white">{totalItems}</span> requests
+              </p>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="text-muted-foreground hover:text-white"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+                </Button>
+                <span className="text-xs font-medium text-gray-500">
+                  Page <span className="text-primary">{page}</span> of {totalPages}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="text-muted-foreground hover:text-white"
+                >
+                  Next <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

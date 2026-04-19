@@ -152,11 +152,11 @@ export function UsersTable({
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent border-none">
-                <TableHead className="px-6 py-5">User Info</TableHead>
-                <TableHead className="px-6 py-5">Role</TableHead>
-                <TableHead className="px-6 py-5">Status</TableHead>
-                <TableHead className="px-6 py-5">Joined</TableHead>
-                <TableHead className="px-6 py-5 text-right">Actions</TableHead>
+                <TableHead className="px-4 sm:px-6 py-5">User Info</TableHead>
+                <TableHead className="px-4 sm:px-6 py-5">Role</TableHead>
+                <TableHead className="px-4 sm:px-6 py-5 hidden min-[450px]:table-cell">Status</TableHead>
+                <TableHead className="px-6 py-5 hidden md:table-cell">Joined</TableHead>
+                <TableHead className="px-4 sm:px-6 py-5 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -171,20 +171,20 @@ export function UsersTable({
                     className={`hover:bg-muted/50 transition-colors border-border ${isDeleted ? "opacity-60" : ""}`}
                   >
                     {/* User info */}
-                    <TableCell className="px-6 py-4">
-                      <div className="flex items-center gap-3">
+                    <TableCell className="px-4 sm:px-6 py-4">
+                      <div className="flex items-center gap-2 sm:gap-3">
                         {/* Mini avatar */}
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs flex-shrink-0 ${
+                        <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-semibold text-[10px] sm:text-xs flex-shrink-0 ${
                           isDeleted
                             ? "bg-red-500/10 text-red-400"
                             : "bg-indigo-500/20 text-indigo-300"
                         }`}>
                           {user.name.charAt(0).toUpperCase()}
                         </div>
-                        <div>
-                          <div className="font-medium text-foreground">{user.name}</div>
-                          <div className="flex items-center gap-1.5 text-xs mt-0.5 text-muted-foreground">
-                            <Mail className="w-3.5 h-3.5" />
+                        <div className="min-w-0">
+                          <div className="font-medium text-foreground text-sm sm:text-base truncate max-w-[100px] sm:max-w-none">{user.name}</div>
+                          <div className="flex items-center gap-1.5 text-[10px] sm:text-xs mt-0.5 text-muted-foreground truncate max-w-[120px] sm:max-w-none">
+                            <Mail className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                             {user.email}
                           </div>
                         </div>
@@ -192,20 +192,20 @@ export function UsersTable({
                     </TableCell>
 
                     {/* Role */}
-                    <TableCell className="px-6 py-4">
+                    <TableCell className="px-4 sm:px-6 py-4">
                       {isAdmin ? (
-                        <Badge variant="outline" className="gap-1.5 px-3 py-1.5 bg-primary/10 text-primary border-primary/20">
+                        <Badge variant="outline" className="gap-1.5 px-3 py-1.5 bg-primary/10 text-primary border-primary/20 whitespace-nowrap">
                           <ShieldCheck className="w-3.5 h-3.5" />
                           Admin
                         </Badge>
                       ) : (
-                        <div className="w-40">
+                        <div className="w-28 sm:w-40">
                           <Select
                             value={user.role}
                             onValueChange={(value) => value && updateRole({ id: user._id, role: value })}
                             disabled={isUpdatingRole || isSelf || isDeleted}
                           >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full text-xs sm:text-sm h-9 sm:h-10">
                               <SelectValue placeholder="Select role" />
                             </SelectTrigger>
                             <SelectContent>
@@ -219,19 +219,19 @@ export function UsersTable({
                     </TableCell>
 
                     {/* Status */}
-                    <TableCell className="px-6 py-4">
+                    <TableCell className="px-4 sm:px-6 py-4 hidden min-[450px]:table-cell">
                       {isDeleted ? (
-                        <Badge variant="outline" className="gap-1.5 bg-red-500/10 text-red-400 border-red-500/20">
+                        <Badge variant="outline" className="gap-1.5 bg-red-500/10 text-red-400 border-red-500/20 whitespace-nowrap">
                           <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
                           Deleted
                         </Badge>
                       ) : user.status === "inactive" ? (
-                        <Badge variant="outline" className="gap-1.5 bg-amber-500/10 text-amber-400 border-amber-500/20">
+                        <Badge variant="outline" className="gap-1.5 bg-amber-500/10 text-amber-400 border-amber-500/20 whitespace-nowrap">
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                          Deactivated
+                          Inactive
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="gap-1.5 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                        <Badge variant="outline" className="gap-1.5 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 whitespace-nowrap">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           Active
                         </Badge>
@@ -239,7 +239,7 @@ export function UsersTable({
                     </TableCell>
 
                     {/* Joined */}
-                    <TableCell className="px-6 py-4">
+                    <TableCell className="px-6 py-4 hidden md:table-cell">
                       <div className="flex items-center gap-2 text-muted-foreground whitespace-nowrap">
                         <Calendar className="w-4 h-4" />
                         {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}

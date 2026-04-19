@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 
 // External
-import { Loader2, Check, X, Eye, History, ClipboardList, Search, Filter } from "lucide-react";
+import { Loader2, Check, X, Eye, History, ClipboardList, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -44,10 +44,12 @@ export default function AdminAuctionManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
+      setPage(1);
     }, 500);
     return () => clearTimeout(timer);
   }, [searchQuery]);
@@ -65,7 +67,9 @@ export default function AdminAuctionManagementPage() {
   const { data: pendingResponse, isLoading: loadingPending } = useAuctions({ status: "pending" as any });
   const { data: historyResponse, isLoading: loadingHistory } = useAdminInventory({ 
     status: statusFilter === "all" ? undefined : statusFilter as any,
-    search: debouncedSearch || undefined
+    search: debouncedSearch || undefined,
+    page,
+    limit: 20
   });
   
   const { mutate: approve, isPending: isApproving } = useAdminApprove();
@@ -100,7 +104,7 @@ export default function AdminAuctionManagementPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-10">
       <DashboardHeader
-        userName="Auction Management"
+        title="Auction Management"
         subtitle="Review approvals and monitor global auction inventory."
       />
 
@@ -118,7 +122,7 @@ export default function AdminAuctionManagementPage() {
           >
             <ClipboardList className="w-4 h-4" />
             Pending Review
-            {pendingResponse?.data.length ? (
+            {pendingResponse?.data?.length ? (
               <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-white/20 rounded-full">
                 {pendingResponse.data.length}
               </span>
@@ -169,14 +173,14 @@ export default function AdminAuctionManagementPage() {
             <div className="flex items-center justify-center min-h-[400px]">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
-          ) : !pendingResponse?.data.length ? (
+          ) : !pendingResponse?.data?.length ? (
             <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-400 space-y-4">
               <ClipboardList className="w-12 h-12 opacity-20" />
               <p>No auctions pending review</p>
             </div>
           ) : (
             <ApprovalTable 
-                data={pendingResponse.data} 
+                data={pendingResponse?.data || []} 
                 onAction={handleAction} 
                 isProcessing={isApproving}
             />
@@ -192,7 +196,41 @@ export default function AdminAuctionManagementPage() {
               <p>No auctions found in inventory</p>
             </div>
           ) : (
-            <InventoryTable data={inventoryData} />
+            <div className="space-y-4">
+              <InventoryTable data={inventoryData} />
+              
+              {/* Pagination UI */}
+              {historyResponse?.totalPages && historyResponse.totalPages > 1 && (
+                <div className="flex items-center justify-between px-6 py-4 bg-black/20 border-t border-white/5">
+                  <p className="text-sm text-gray-500">
+                    Showing <span className="text-white font-medium">{inventoryData.length}</span> of <span className="text-white font-medium">{historyResponse?.total || 0}</span> auctions
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                      className="border-white/10 text-gray-400 h-9"
+                    >
+                      <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+                    </Button>
+                    <div className="text-sm text-gray-400 px-2 font-medium">
+                      Page <span className="text-white font-bold">{page}</span> of {historyResponse.totalPages}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPage(p => Math.min(historyResponse.totalPages || 1, p + 1))}
+                      disabled={page === historyResponse.totalPages}
+                      className="border-white/10 text-gray-400 h-9"
+                    >
+                      Next <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
           )
         )}
       </div>

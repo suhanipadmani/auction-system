@@ -8,21 +8,35 @@ import { Gavel, Calendar, Search, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IDiscoveryTabType } from "@/types/auction";
 import { Input } from "@/components/ui/Input";
+import { useEffect } from "react";
+import { Button } from "@/components/ui/Button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function AuctionDiscoveryPage() {
     const [activeTab, setActiveTab] = useState<IDiscoveryTabType>("live");
     const [searchQuery, setSearchQuery] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [page, setPage] = useState(1);
+
+    // Debounce search 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+            setPage(1); // Reset page on search
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
 
     const { data: response, isLoading } = useAuctions({
-        status: activeTab === "live" ? "active" : "approved"
+        status: activeTab === "live" ? "active" : "approved",
+        search: debouncedSearch || undefined,
+        page,
+        limit: 20
     });
 
     const auctions = response?.data || [];
-    
-    const filteredBySearch = auctions.filter(auction => 
-        auction.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        auction.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const totalPages = response?.totalPages || 1;
+    const totalAuctions = response?.total || 0;
 
     const tabs = [
         { id: "live" as IDiscoveryTabType, label: "Live Now", icon: <Gavel className="w-4 h-4" /> },
@@ -32,7 +46,7 @@ export default function AuctionDiscoveryPage() {
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <DashboardHeader
-                userName="Explore"
+                title="Explore Marketplace"
                 subtitle="Discover live bidding wars and bookmark upcoming gems"
                 statusValue="Marketplace"
             />
@@ -78,11 +92,45 @@ export default function AuctionDiscoveryPage() {
                     </div>
                     <p className="text-muted-foreground font-medium">Scanning the marketplace...</p>
                 </div>
-            ) : filteredBySearch.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
-                    {filteredBySearch.map((auction) => (
-                        <AuctionCard key={auction._id} auction={auction} />
-                    ))}
+            ) : auctions.length > 0 ? (
+                <div className="space-y-10 pb-20">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {auctions.map((auction) => (
+                            <AuctionCard key={auction._id} auction={auction} />
+                        ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-between px-6 py-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm">
+                            <p className="text-sm text-gray-400">
+                                Showing <span className="text-white font-medium">{auctions.length}</span> of <span className="text-white font-medium">{totalAuctions}</span> auctions
+                            </p>
+                            <div className="flex items-center gap-3">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                                    disabled={page === 1}
+                                    className="border-white/10 text-gray-300"
+                                >
+                                    <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+                                </Button>
+                                <div className="text-sm text-gray-400 px-2 font-medium">
+                                    Page <span className="text-white font-bold">{page}</span> of {totalPages}
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={page === totalPages}
+                                    className="border-white/10 text-gray-300"
+                                >
+                                    Next <ChevronRight className="w-4 h-4 ml-1" />
+                                </Button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div className="flex flex-col items-center justify-center py-24 bg-white/5 border border-dashed border-white/10 rounded-3xl gap-6 animate-in zoom-in-95 duration-500">

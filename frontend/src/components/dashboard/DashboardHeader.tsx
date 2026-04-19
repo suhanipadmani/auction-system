@@ -9,13 +9,20 @@ export function DashboardHeader({
   subtitle = "Your Dashboard & Portfolio",
   statusLabel = "Status",
   statusValue = "Active",
+  title,
   children
 }: IDashboardHeaderProps) {
   return (
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-white/10">
       <div>
         <h1 className="text-4xl font-bold font-heading text-white tracking-tight">
-          Welcome, <span className="text-primary">{userName?.split(" ")[0]}</span>
+          {title ? (
+            title
+          ) : (
+            <>
+              Welcome, <span className="text-primary">{userName?.split(" ")[0]}</span>
+            </>
+          )}
         </h1>
         <p className="text-gray-400 mt-2 font-medium flex items-center gap-2">
           <LayoutDashboard className="w-4 h-4 text-primary/60" />

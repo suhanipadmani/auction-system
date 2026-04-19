@@ -12,8 +12,8 @@ export function AuthLayout({ children, title, subtitle }: IAuthLayoutProps) {
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
 
       <div className="w-full max-w-md z-10">
-        <div className="bg-card/80 backdrop-blur-xl rounded-3xl p-10 border border-border shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)]">
-          <div className="text-center mb-10">
+        <div className="bg-card/80 backdrop-blur-xl rounded-3xl p-6 sm:p-10 border border-border shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)]">
+          <div className="text-center mb-8 sm:mb-10">
             <div className="flex justify-center mb-6">
               <div className="bg-primary/10 p-4 rounded-2xl border border-primary/20 ring-4 ring-primary/5">
                 <Gavel className="w-8 h-8 text-primary" />

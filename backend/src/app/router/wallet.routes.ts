@@ -1,16 +1,17 @@
 import { Router } from "express";
-
-// Middlewares
 import { authenticate } from "../middleware/auth.middleware";
-
-// Controllers
+import { validate } from "../middleware/validate.middleware";
+import { paginationMiddleware } from "../middleware/pagination.middleware";
+import { asyncHandler } from "../utils/asyncHandler";
+import { depositRequestSchema } from "../validators/wallet.validator";
 import * as walletController from "../controllers/wallet.controller";
 
 export const walletRoutes = Router();
 
 walletRoutes.use(authenticate);
 
-walletRoutes.get("/balance", walletController.getWallet);
-walletRoutes.post("/deposit", walletController.requestDeposit);
-walletRoutes.get("/transactions", walletController.getTransactions);
-walletRoutes.get("/requests", walletController.getMyRequests);
+walletRoutes.get("/balance", asyncHandler(walletController.getWallet));
+walletRoutes.post("/deposit", validate(depositRequestSchema), asyncHandler(walletController.requestDeposit));
+walletRoutes.get("/transactions", paginationMiddleware, asyncHandler(walletController.getTransactions));
+walletRoutes.get("/requests", paginationMiddleware, asyncHandler(walletController.getMyRequests));
+

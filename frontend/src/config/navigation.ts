@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Wallet, Gavel, ShieldAlert } from "lucide-react";
+import { LayoutDashboard, Users, Wallet, Gavel, ShieldAlert, History } from "lucide-react";
 import { INavLink } from "@/types/navigation";
 
 
@@ -50,6 +50,12 @@ export const NAV_LINKS: INavLink[] = [
     href: "/seller/auctions", 
     icon: Gavel, 
     roles: ["seller"] 
+  },
+  { 
+    name: "Audit Logs", 
+    href: "/admin/audit-logs", 
+    icon: History, 
+    roles: ["admin"] 
   },
 ];
 

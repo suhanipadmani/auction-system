@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { History, Search } from "lucide-react";
+import { History, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 // Types
 import { ITransaction } from "@/types/wallet";
@@ -30,13 +31,19 @@ export function TransactionLogSection() {
   const [txSearch, setTxSearch] = useState("");
   const [txStartDate, setTxStartDate] = useState("");
   const [txEndDate, setTxEndDate] = useState("");
+  const [page, setPage] = useState(1);
 
   const { data: allTransactionsData, isLoading: isAllTransactionsLoading } = useAllTransactions({
     type: txType,
     search: txSearch,
     startDate: txStartDate,
-    endDate: txEndDate
+    endDate: txEndDate,
+    page,
+    limit: 20
   });
+
+  const totalPages = (allTransactionsData as any)?.totalPages || 1;
+  const totalItems = (allTransactionsData as any)?.total || 0;
 
   const renderTableBody = () => {
     if (isAllTransactionsLoading) {
@@ -80,7 +87,10 @@ export function TransactionLogSection() {
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">Transaction Type</label>
-              <Select value={txType} onValueChange={(val: string | null) => setTxType(val || "all")}>
+              <Select value={txType} onValueChange={(val: string | null) => {
+                setTxType(val || "all");
+                setPage(1);
+              }}>
                 <SelectTrigger className="h-9 text-xs bg-background/50">
                   <SelectValue placeholder="All Types" />
                 </SelectTrigger>
@@ -131,6 +141,37 @@ export function TransactionLogSection() {
               </TableBody>
             </Table>
           </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-6 py-4 bg-white/[0.02] border-t border-border/40">
+              <p className="text-xs text-muted-foreground">
+                Showing <span className="text-white">{(allTransactionsData?.data as any[])?.length || 0}</span> of <span className="text-white">{totalItems}</span> transactions
+              </p>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="text-muted-foreground hover:text-white"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+                </Button>
+                <span className="text-xs font-medium text-gray-500">
+                  Page <span className="text-primary">{page}</span> of {totalPages}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="text-muted-foreground hover:text-white"
+                >
+                  Next <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

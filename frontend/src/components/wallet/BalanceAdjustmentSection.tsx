@@ -48,8 +48,9 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
 
   const selectedUser = usersData?.data?.find((u: any) => u._id === selectedUserId);
   const filteredUsers = usersData?.data?.filter((u: any) =>
-    u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchTerm.toLowerCase())
+    (u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    u.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    u.role !== "admin"
   ) || [];
 
   const handleReview = () => {
@@ -127,7 +128,7 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Type</label>
                 <Select

@@ -63,6 +63,7 @@ export interface IDashboardHeaderProps {
   statusLabel?: string;
   statusValue?: string;
   children?: ReactNode;
+  title?: string;
 }
 
 export interface ISidebarProps {
@@ -166,7 +167,7 @@ export interface IBiddingSectionProps {
     highestBid: number | null;
     highestBidderId: string | null;
     isPending: boolean;
-    placeBid: (bidderId: string, amount: number) => void;
+    placeBid: (amount: number) => void;
   };
 }
 

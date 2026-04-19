@@ -65,6 +65,17 @@ export const auctionSchema = new Schema(
       default: null 
     },
     
+    endingSoonNotified: {
+      type: Boolean,
+      default: false
+    },
+
+    bidCount: {
+      type: Number,
+      default: 0,
+      index: true
+    },
+    
   },
   { timestamps: true },
 );

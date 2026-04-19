@@ -1,16 +1,11 @@
 import { Router } from "express";
-
-// Middlewares
 import { validate } from "../middleware/validate.middleware";
 import { authenticate } from "../middleware/auth.middleware";
 import { authorize } from "../middleware/role.middleware";
-
-// Validator
+import { paginationMiddleware } from "../middleware/pagination.middleware";
+import { asyncHandler } from "../utils/asyncHandler";
 import { createUserSchema, updateUserRoleSchema } from "../validators/user.validator";
-
-// Controller
 import * as userController from "../controllers/user.controller";
-
 
 export const userRoutes = Router();
 
@@ -18,12 +13,12 @@ export const userRoutes = Router();
 userRoutes.use(authenticate);
 userRoutes.use(authorize(["admin"]));
 
-userRoutes.post("/", validate(createUserSchema), userController.create);
-userRoutes.get("/", userController.getAll);
-userRoutes.patch("/:id/role", validate(updateUserRoleSchema), userController.updateRole);
+userRoutes.post("/", validate(createUserSchema), asyncHandler(userController.create));
+userRoutes.get("/", paginationMiddleware, asyncHandler(userController.getAll));
+userRoutes.patch("/:id/role", validate(updateUserRoleSchema), asyncHandler(userController.updateRole));
 
 // Status management
-userRoutes.patch("/:id/deactivate", userController.deactivate);  // block login (inactive)
-userRoutes.patch("/:id/activate", userController.activate);    // restore login
-userRoutes.delete("/:id", userController.softDelete);  // hide from system (deleted)
-userRoutes.patch("/:id/restore", userController.restore);     // un-hide (active)
+userRoutes.patch("/:id/deactivate", asyncHandler(userController.deactivate));
+userRoutes.patch("/:id/activate", asyncHandler(userController.activate));
+userRoutes.delete("/:id", asyncHandler(userController.softDelete));
+userRoutes.patch("/:id/restore", asyncHandler(userController.restore));

@@ -22,17 +22,45 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/Card"
 import { Badge } from "@/components/ui/Badge";
 import { Button, buttonVariants } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 
 
 export function AuctionCard({ auction, href, showActions }: IAuctionCardProps) {
-  const { colorClass, isLive, label } = useAuctionStatus(auction.status);
+  const { colorClass, isLive, label } = useAuctionStatus(auction.status, auction.endTime);
   const { formatRaw, symbol } = useCurrency();
   const { mutate: cancelAuction, isPending: isCancelling } = useCancelAuction();
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   const canCancel = showActions && !["active", "ended", "cancelled"].includes(auction.status);
+
+  // Countdown Timer Logic
+  const [timeLeft, setTimeLeft] = useState<string>("");
+
+  useEffect(() => {
+    if (auction.status !== "active" || !auction.endTime) return;
+
+    const updateTimer = () => {
+      const end = new Date(auction.endTime).getTime();
+      const now = new Date().getTime();
+      const diff = end - now;
+
+      if (diff <= 0) {
+        setTimeLeft("Ended");
+        return;
+      }
+
+      const h = Math.floor(diff / (1000 * 60 * 60));
+      const m = Math.floor((diff / (1000 * 60)) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+
+      setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [auction.endTime, auction.status]);
 
   return (
     <>
@@ -72,12 +100,25 @@ export function AuctionCard({ auction, href, showActions }: IAuctionCardProps) {
         </div>
       </Modal>
 
-      <Card className="group border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-300 overflow-hidden">
-      <CardHeader className="p-4 flex flex-row items-center justify-between border-b border-white/5">
-        <Badge variant="outline" className={cn("capitalize font-medium", colorClass)}>
-          {label}
-        </Badge>
+      <Card className="group border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-500 overflow-hidden hover:scale-[1.03] hover:shadow-2xl hover:shadow-primary/20 hover:ring-1 hover:ring-primary/30">
+      <CardHeader className="p-4 flex flex-row items-center justify-between border-b border-white/5 bg-white/[0.02]">
         <div className="flex items-center gap-2">
+          <Badge variant="outline" className={cn("capitalize font-bold text-[10px] tracking-widest", colorClass)}>
+            {label}
+          </Badge>
+          {isLive && (
+            <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 animate-pulse flex items-center gap-1 px-1.5 py-0">
+               <span className="h-1 w-1 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+               <span className="text-[9px] font-black">LIVE</span>
+            </Badge>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {auction.bidCount !== undefined && (
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tighter">
+              {auction.bidCount} Bids
+            </span>
+          )}
           {auction.currentUserStatus && (
             <Badge 
               variant="secondary" 
@@ -90,12 +131,6 @@ export function AuctionCard({ auction, href, showActions }: IAuctionCardProps) {
             >
               {auction.currentUserStatus}
             </Badge>
-          )}
-          {isLive && (
-            <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-500 animate-pulse">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              LIVE
-            </span>
           )}
         </div>
       </CardHeader>
@@ -112,21 +147,24 @@ export function AuctionCard({ auction, href, showActions }: IAuctionCardProps) {
 
         <div className="grid grid-cols-2 gap-4 pt-2">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
               {auction.highestBid > 0 ? "Current Bid" : "Base Price"}
             </span>
-            <div className="flex items-center gap-1.5 text-lg font-bold text-white">
-              <span className="text-primary">{symbol}</span>
+            <div className="flex items-center gap-1.5 text-xl font-black text-white italic">
+              <span className="text-primary not-italic">₹</span>
               {formatRaw(auction.highestBid > 0 ? auction.highestBid : auction.basePrice)}
             </div>
           </div>
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-              Starts
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-right block">
+              {auction.status === "active" ? "Ending In" : "Starts"}
             </span>
-            <div className="flex items-center gap-1.5 text-sm font-medium text-white/80">
-              <Clock className="w-3.5 h-3.5 text-primary/60" />
-              {format(new Date(auction.startTime), "MMM d, HH:mm")}
+            <div className={cn(
+              "flex items-center justify-end gap-1.5 text-sm font-black transition-colors duration-500",
+              auction.status === "active" ? (timeLeft.startsWith("00:0") ? "text-rose-500 animate-pulse" : "text-indigo-400") : "text-white/80"
+            )}>
+              <Clock className="w-3.5 h-3.5 opacity-60" />
+              {auction.status === "active" ? timeLeft : format(new Date(auction.startTime), "MMM d, HH:mm")}
             </div>
           </div>
         </div>

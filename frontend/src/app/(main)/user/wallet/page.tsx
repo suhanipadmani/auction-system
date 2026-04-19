@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // External
-import { Wallet, History, PlusCircle, Lock, Loader2, ArrowUpCircle, ArrowDownCircle, RefreshCcw } from "lucide-react";
+import { Wallet, History, PlusCircle, Lock, Loader2, ArrowUpCircle, ArrowDownCircle, RefreshCcw, ChevronLeft, ChevronRight } from "lucide-react";
 
 // State (Auth Store)
 import { useAuthStore } from "@/store/auth.store";
@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useBalance, useTransactions, useMyRequests, useRequestDeposit } from "@/hooks/useWallet";
 
 // Components
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { StatCard } from "@/components/ui/StatCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -34,10 +35,16 @@ export default function UserWalletPage() {
 
   if (user?.role === "admin") return null;
 
+  const [txPage, setTxPage] = useState(1);
+  const [reqPage, setReqPage] = useState(1);
+
   const { data: balanceData, isLoading: isBalanceLoading } = useBalance();
-  const { data: transactionsData, isLoading: isTransactionsLoading } = useTransactions();
-  const { data: requestsData, isLoading: isRequestsLoading } = useMyRequests();
+  const { data: transactionsData, isLoading: isTransactionsLoading } = useTransactions(txPage, 20);
+  const { data: requestsData, isLoading: isRequestsLoading } = useMyRequests(reqPage, 20);
   const requestDeposit = useRequestDeposit();
+
+  const totalTxPages = (transactionsData as any)?.totalPages || 1;
+  const totalReqPages = (requestsData as any)?.totalPages || 1;
 
   const [depositAmount, setDepositAmount] = useState("");
 
@@ -69,10 +76,12 @@ export default function UserWalletPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header */}
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold font-heading">My Wallet</h1>
-        <p className="text-muted-foreground font-medium">Manage your balance and track your transaction history.</p>
-      </div>
+      <DashboardHeader
+        title="My Wallet"
+        subtitle="Manage your balance and track your transaction history."
+        statusLabel="Account Status"
+        statusValue="Verified"
+      />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -172,6 +181,35 @@ export default function UserWalletPage() {
                   )}
                 </TableBody>
               </Table>
+
+              {/* Transaction Pagination */}
+              {totalTxPages > 1 && (
+                <div className="flex items-center justify-between mt-4 px-2 py-2 border-t border-border/40">
+                  <div className="text-xs text-muted-foreground">
+                    Page <span className="text-foreground font-bold">{txPage}</span> of {totalTxPages}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setTxPage(p => Math.max(1, p - 1))}
+                      disabled={txPage === 1}
+                      className="h-8 px-2"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setTxPage(p => Math.min(totalTxPages, p + 1))}
+                      disabled={txPage === totalTxPages}
+                      className="h-8 px-2"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -219,6 +257,35 @@ export default function UserWalletPage() {
                   ))
                 )}
               </div>
+
+              {/* Request Pagination */}
+              {totalReqPages > 1 && (
+                <div className="flex items-center justify-between mt-6 px-1 py-2 border-t border-border/40">
+                  <div className="text-xs text-muted-foreground font-medium">
+                    Page <span className="text-foreground">{reqPage}</span> of {totalReqPages}
+                  </div>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setReqPage(p => Math.max(1, p - 1))}
+                      disabled={reqPage === 1}
+                      className="h-7 w-7 p-0"
+                    >
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setReqPage(p => Math.min(totalReqPages, p + 1))}
+                      disabled={reqPage === totalReqPages}
+                      className="h-7 w-7 p-0"
+                    >
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
