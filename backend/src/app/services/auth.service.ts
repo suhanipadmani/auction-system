@@ -3,6 +3,8 @@ import { generateToken } from "../utils/jwt";
 import { UserModel } from "../models/user";
 import { IRegisterData, ILoginData, IAuthResponse } from "../types/auth";
 
+import crypto from "crypto";
+
 export const registerUser = async (data: IRegisterData) => {
   const existingUser = await UserModel.findOne({ email: data.email });
   if (existingUser) {
@@ -44,5 +46,51 @@ export const loginUser = async (data: ILoginData): Promise<IAuthResponse> => {
   });
 
   return { user, token };
+};
+
+export const forgotPassword = async (email: string) => {
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    throw new Error("User with this email does not exist");
+  }
+
+  // Generate Reset Token
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+  // Save to User
+  user.resetPasswordToken = hashedToken;
+  user.resetPasswordExpires = new Date(Date.now() + 30 * 60 * 1000) as any; // 30 mins
+  await user.save();
+
+  // MOCK: Log to console instead of sending real email
+  console.log("-----------------------------------------");
+  console.log(`[AUTH-SERVICE] Password Reset Token for ${email}:`);
+  console.log(`Token: ${resetToken}`);
+  console.log(`Reset URL: http://localhost:3000/reset-password?token=${resetToken}`);
+  console.log("-----------------------------------------");
+
+  return { message: "Reset token generated and logged to console" };
+};
+
+export const resetPassword = async (token: string, password: string) => {
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  const user = await UserModel.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    throw new Error("Token is invalid or has expired");
+  }
+
+  // Set new password
+  user.password = password;
+  user.resetPasswordToken = null;
+  user.resetPasswordExpires = null;
+  await user.save();
+
+  return { message: "Password has been reset successfully" };
 };
 

@@ -114,13 +114,6 @@ export default function SellerDashboardPage() {
             color="purple"
           />
 
-          <QuickActionCard
-            title="Explore Global"
-            description="Browse all live and upcoming auctions"
-            icon={<ArrowUpRight className="w-8 h-8" />}
-            href="/user/auctions"
-            color="emerald"
-          />
 
           <QuickActionCard
             title="Payout Account"

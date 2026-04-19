@@ -47,20 +47,22 @@ export class AuctionStatsService {
    * Aggregates administrative stats for the entire platform.
    */
   static async getAdminStats() {
-    const [totalAuctions, revenueResult, activeUsersCount] = await Promise.all([
+    const [totalAuctions, revenueResult, activeUsersCount, totalUsersCount] = await Promise.all([
       AuctionModel.countDocuments(),
       AuctionModel.aggregate([
         { $match: { status: AUCTION_STATUSES.SOLD } },
         { $group: { _id: null, total: { $sum: "$highestBid" } } }
       ]),
       // Utilizing the model from mongoose here as it might not be imported/exported correctly elsewhere
-      (AuctionModel as any).db.model("User").countDocuments({ status: "active", role: { $ne: "admin" } })
+      (AuctionModel as any).db.model("User").countDocuments({ status: "active", role: { $ne: "admin" } }),
+      (AuctionModel as any).db.model("User").countDocuments({ role: { $ne: "admin" } })
     ]);
 
     return {
       totalAuctions,
       systemRevenue: revenueResult[0]?.total || 0,
-      activeUsersCount
+      activeUsersCount,
+      totalUsersCount
     };
   }
 

@@ -23,8 +23,8 @@ import { QuickActionCard } from "@/components/dashboard/QuickActionCard";
 
 export default function UserDashboardPage() {
     const user = useAuthStore((state) => state.user);
-    const { data: balanceResponse } = useBalance();
-    const { data: activityResponse } = useMyBiddingActivity();
+    const { data: balanceResponse, isLoading: isBalanceLoading } = useBalance();
+    const { data: activityResponse, isLoading: isActivityLoading } = useMyBiddingActivity();
 
     const balance = balanceResponse?.data?.balance || 0;
     const stats = activityResponse?.stats || { 
@@ -37,6 +37,8 @@ export default function UserDashboardPage() {
     const totalActive = stats.activeWinningCount + stats.activeOutbidCount;
     const totalCompleted = stats.wonCount + stats.lossCount;
     const winRate = totalCompleted > 0 ? Math.round((stats.wonCount / totalCompleted) * 100) : 0;
+
+    const isLoading = isBalanceLoading || isActivityLoading;
 
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -51,35 +53,35 @@ export default function UserDashboardPage() {
             <AnalyticsSection title="Bidding Insights" description="Detailed performance metrics for your bidding activity.">
                 <AnalyticsCard
                     title="Available Balance"
-                    value={formatCurrency(balance)}
+                    value={isBalanceLoading ? "..." : formatCurrency(balance)}
                     subtitle="ready for new bids"
                     icon={<Wallet className="w-5 h-5" />}
                     color="emerald"
                 />
                 <AnalyticsCard
                     title="Active Bids"
-                    value={totalActive.toString()}
+                    value={isActivityLoading ? "..." : totalActive.toString()}
                     subtitle="current ongoing bids"
                     icon={<Gavel className="w-5 h-5" />}
                     color="indigo"
                 />
                 <AnalyticsCard
                     title="Auctions Won"
-                    value={stats.wonCount.toString()}
+                    value={isActivityLoading ? "..." : stats.wonCount.toString()}
                     subtitle="successfully acquired items"
                     icon={<Trophy className="w-5 h-5" />}
                     color="amber"
                 />
                 <AnalyticsCard
                     title="Total Spent"
-                    value={formatCurrency(stats.totalSpent)}
+                    value={isActivityLoading ? "..." : formatCurrency(stats.totalSpent)}
                     subtitle="across all won auctions"
                     icon={<IndianRupee className="w-5 h-5" />}
                     color="emerald"
                 />
                 <AnalyticsCard
                     title="Win Rate"
-                    value={`${winRate}%`}
+                    value={isActivityLoading ? "..." : `${winRate}%`}
                     subtitle={`${stats.wonCount} won vs ${stats.lossCount} lost`}
                     icon={<TrendingUp className="w-5 h-5" />}
                     percentage={winRate}

@@ -10,12 +10,12 @@ export const walletApi = {
   
   getTransactions: async (page = 1, limit = 20) => {
     const response = await axiosClient.get("/wallet/transactions", { params: { page, limit } });
-    return response.data.data;
+    return { data: response.data.data, ...response.data.meta };
   },
   
   getMyRequests: async (page = 1, limit = 20) => {
     const response = await axiosClient.get("/wallet/requests", { params: { page, limit } });
-    return response.data.data;
+    return { data: response.data.data, ...response.data.meta };
   },
   
   requestDeposit: async (amount: number) => {
@@ -28,12 +28,12 @@ export const walletApi = {
     const response = await axiosClient.get("/admin/wallet/pending-deposits", { 
       params: { status, page, limit } 
     });
-    return response.data.data;
+    return { data: response.data.data, ...response.data.meta };
   },
 
   getAllTransactions: async (params?: any) => {
     const response = await axiosClient.get("/admin/wallet/transactions", { params });
-    return response.data.data;
+    return { data: response.data.data, ...response.data.meta };
   },
 
   getUserWallet: async (userId: string) => {

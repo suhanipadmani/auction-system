@@ -11,6 +11,9 @@ export class AuditLogService {
    */
   static async log(userId: string | Types.ObjectId, action: AUDIT_ACTIONS, metadata: any = {}) {
     try {
+      // Basic validation: ensure action is in enum if we want to be strict
+      // but Mongoose schema will handle this anyway if enabled.
+      
       await AuditLogModel.create({
         userId: new Types.ObjectId(userId),
         action,
@@ -19,9 +22,10 @@ export class AuditLogService {
           timestamp: new Date(),
         },
       });
-    } catch (error) {
-      console.error("[AUDIT_LOG_SERVICE] Failed to create audit log:", error);
-      // We don't throw here to avoid disrupting the main application flow
+    } catch (error: any) {
+      // In production, we don't want to crash for a logging failure, 
+      // but we definitely want to know about it.
+      console.error(`[AUDIT_LOG_ERROR] Action: ${action} | User: ${userId} | Error: ${error.message}`);
     }
   }
 

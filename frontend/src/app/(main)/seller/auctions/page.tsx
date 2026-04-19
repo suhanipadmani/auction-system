@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
 // External
@@ -7,6 +8,9 @@ import { Loader2, Plus } from "lucide-react";
 
 // State (Auth Store)
 import { useAuthStore } from "@/store/auth.store";
+
+// Types
+import { AuctionStatus } from "@/types/auction";
 
 // Hooks
 import { useAuctions } from "@/hooks/useAuction";
@@ -21,7 +25,20 @@ import { buttonVariants } from "@/components/ui/Button";
 
 export default function SellerAuctionsPage() {
   const user = useAuthStore((state) => state.user);
-  const { data: response, isLoading } = useAuctions({ sellerId: user?._id });
+  const [status, setStatus] = useState<AuctionStatus | "all">("all");
+  const { data: response, isLoading } = useAuctions({ 
+    sellerId: user?._id,
+    status: status === "all" ? undefined : status 
+  });
+
+  const auctions = response?.data || [];
+
+  const TABS = [
+    { id: "all", label: "All Listings" },
+    { id: "active", label: "Live" },
+    { id: "pending", label: "Pending" },
+    { id: "past", label: "History" },
+  ] as const;
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -39,23 +56,45 @@ export default function SellerAuctionsPage() {
         </Link>
       </div>
 
+      {/* Tabs Filter */}
+      <div className="flex items-center gap-2 p-1 bg-white/5 border border-white/10 rounded-xl w-fit">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setStatus(tab.id)}
+            className={cn(
+              "px-4 py-2 text-xs font-medium rounded-lg transition-all",
+              status === tab.id
+                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+                : "text-gray-400 hover:text-white hover:bg-white/5"
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {isLoading ? (
         <div className="flex items-center justify-center min-h-[400px]">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-      ) : (response?.data?.length === 0 || !response?.data) ? (
+      ) : auctions.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[400px] border-2 border-dashed border-white/5 rounded-2xl bg-white/[0.02]">
-          <p className="text-muted-foreground mb-4">You haven't created any auctions yet.</p>
-          <Link
-            href="/seller/create"
-            className={buttonVariants({ variant: "outline" })}
-          >
-            Start your first listing
-          </Link>
+          <p className="text-muted-foreground mb-4">
+            {status === "all" ? "You haven't created any auctions yet." : `No ${status} auctions found.`}
+          </p>
+          {status === "all" && (
+            <Link
+              href="/seller/create"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Start your first listing
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
-          {response?.data?.map((auction) => (
+          {auctions.map((auction) => (
             <AuctionCard key={auction._id} auction={auction} showActions />
           ))}
         </div>

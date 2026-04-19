@@ -36,6 +36,15 @@ export const userSchema = new Schema(
       default: USER_STATUSES.ACTIVE, 
       required: true 
     },
+
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
+    },
     
   },
   { timestamps: true },

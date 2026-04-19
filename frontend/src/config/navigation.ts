@@ -40,7 +40,7 @@ export const NAV_LINKS: INavLink[] = [
     roles: ["admin"] 
   },
   { 
-    name: "Marketplace", 
+    name: "Bidding history", 
     href: "/user/auctions", 
     icon: Gavel, 
     roles: ["bidder"] 

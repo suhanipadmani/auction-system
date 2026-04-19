@@ -43,6 +43,6 @@ export const auditApi = {
     if (filters.limit) params.append("limit", filters.limit.toString());
 
     const response = await axiosClient.get(`/admin/audit-logs?${params.toString()}`);
-    return response.data.data;
+    return { data: response.data.data, ...response.data.meta };
   }
 };

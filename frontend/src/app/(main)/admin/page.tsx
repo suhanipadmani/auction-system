@@ -9,9 +9,6 @@ import { AnalyticsSection, AnalyticsCard } from "@/components/dashboard/Analytic
 
 // State (Auth Store)
 import { useAuthStore } from "@/store/auth.store";
-
-// Hooks
-import { useUsers } from "@/hooks/useUsers";
 import { useAdminStats } from "@/hooks/useAuction";
 
 // UI Components
@@ -20,16 +17,13 @@ import { QuickActionCard } from "@/components/dashboard/QuickActionCard";
 
 export default function AdminPage() {
   const user = useAuthStore((state) => state.user);
-  const { data: usersResponse } = useUsers();
   const { data: statsResponse } = useAdminStats();
-
-  const allUsers = usersResponse?.data || [];
-  const users = allUsers.filter((u: any) => u.role !== "admin");
 
   const stats = statsResponse?.data || {
     totalAuctions: 0,
     systemRevenue: 0,
-    activeUsersCount: 0
+    activeUsersCount: 0,
+    totalUsersCount: 0
   };
 
   return (
@@ -46,7 +40,7 @@ export default function AdminPage() {
       <AnalyticsSection title="Platform Analytics" description="System-wide performance and financial overview.">
         <AnalyticsCard
           title="Total Users"
-          value={users.length}
+          value={stats.totalUsersCount}
           subtitle="registered on platform"
           icon={<UsersRound className="w-5 h-5" />}
           color="indigo"
@@ -56,7 +50,7 @@ export default function AdminPage() {
           value={stats.activeUsersCount}
           subtitle="users with active status"
           icon={<UserCheck className="w-5 h-5" />}
-          percentage={Math.round((stats.activeUsersCount / (users.length || 1)) * 100)}
+          percentage={Math.round((stats.activeUsersCount / (stats.totalUsersCount || 1)) * 100)}
           color="emerald"
         />
         <AnalyticsCard

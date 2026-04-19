@@ -129,6 +129,16 @@ export const lockFunds = async (userId: string, amount: number, session?: Client
     newLockedBalance: wallet.lockedBalance
   });
 
+  // Create Transaction Record for visible history
+  await TransactionModel.create([{
+    userId: new Types.ObjectId(userId),
+    amount,
+    type: TRANSACTION_TYPES.LOCK,
+    source: TRANSACTION_SOURCES.BID,
+    status: TRANSACTION_STATUSES.SUCCESS,
+    note: "Funds locked for bidding"
+  }], { session });
+
   return wallet;
 };
 
@@ -156,6 +166,16 @@ export const unlockFunds = async (userId: string, amount: number, session?: Clie
     newBalance: wallet.balance,
     newLockedBalance: wallet.lockedBalance
   });
+
+  // Create Transaction Record for visible history
+  await TransactionModel.create([{
+    userId: new Types.ObjectId(userId),
+    amount: actualToUnlock,
+    type: TRANSACTION_TYPES.UNLOCK,
+    source: TRANSACTION_SOURCES.BID,
+    status: TRANSACTION_STATUSES.SUCCESS,
+    note: "Funds unlocked (Outbid/Ended)"
+  }], { session });
 
   return wallet;
 };

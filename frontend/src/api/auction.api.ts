@@ -10,7 +10,7 @@ export const auctionApi = {
     if (filters.limit) params.append("limit", filters.limit.toString());
     
     const response = await axiosClient.get(`/auctions?${params.toString()}`);
-    return response.data.data;
+    return { data: response.data.data, ...response.data.meta };
   },
 
   getAuctionById: async (id: string): Promise<{ success: boolean; data: IAuction }> => {
@@ -63,7 +63,7 @@ export const auctionApi = {
     } 
   }> => {
     const response = await axiosClient.get("/auctions/my-activity", { params });
-    return response.data.data;
+    return { ...response.data.data, ...response.data.meta };
   },
   
   getSellerStats: async (): Promise<{ success: boolean; data: { 
@@ -82,6 +82,7 @@ export const auctionApi = {
     totalAuctions: number; 
     systemRevenue: number; 
     activeUsersCount: number;
+    totalUsersCount: number;
   } }> => {
     const response = await axiosClient.get("/auctions/admin-stats");
     return response.data;
@@ -96,7 +97,7 @@ export const auctionApi = {
     if (filters.limit) params.append("limit", filters.limit.toString());
 
     const response = await axiosClient.get(`/auctions/admin/inventory?${params.toString()}`);
-    return response.data.data;
+    return { data: response.data.data, ...response.data.meta };
   },
 
   getAuctionBids: async (id: string): Promise<{ success: boolean; data: any[] }> => {

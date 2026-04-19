@@ -7,6 +7,7 @@ export const AUCTION_STATUS = {
   REJECTED: "rejected",
   CANCELLED: "cancelled",
   EXPIRED: "expired",
+  PAST: "past",
 } as const;
 
 export type AuctionStatus = typeof AUCTION_STATUS[keyof typeof AUCTION_STATUS];

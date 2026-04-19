@@ -9,16 +9,22 @@ import * as userController from "../controllers/user.controller";
 
 export const userRoutes = Router();
 
-// All user routes require authentication and admin role
+// All user routes require authentication
 userRoutes.use(authenticate);
+
+// Profile and security (Any authenticated user)
+userRoutes.patch("/me", userController.updateMe);
+userRoutes.patch("/me/password", userController.changePassword);
+
+// Admin-only routes
 userRoutes.use(authorize(["admin"]));
 
-userRoutes.post("/", validate(createUserSchema), asyncHandler(userController.create));
-userRoutes.get("/", paginationMiddleware, asyncHandler(userController.getAll));
-userRoutes.patch("/:id/role", validate(updateUserRoleSchema), asyncHandler(userController.updateRole));
+userRoutes.post("/", validate(createUserSchema), userController.create);
+userRoutes.get("/", paginationMiddleware, userController.getAll);
+userRoutes.patch("/:id/role", validate(updateUserRoleSchema), userController.updateRole);
 
 // Status management
-userRoutes.patch("/:id/deactivate", asyncHandler(userController.deactivate));
-userRoutes.patch("/:id/activate", asyncHandler(userController.activate));
-userRoutes.delete("/:id", asyncHandler(userController.softDelete));
-userRoutes.patch("/:id/restore", asyncHandler(userController.restore));
+userRoutes.patch("/:id/deactivate", userController.deactivate);
+userRoutes.patch("/:id/activate", userController.activate);
+userRoutes.delete("/:id", userController.softDelete);
+userRoutes.patch("/:id/restore", userController.restore);

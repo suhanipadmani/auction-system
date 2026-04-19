@@ -116,3 +116,29 @@ export const restoreUser = async (id: string) => {
   if (!user) throw new Error("User not found");
   return user;
 };
+
+export const updateProfile = async (id: string, name: string) => {
+  const user = await UserModel.findByIdAndUpdate(
+    id,
+    { name },
+    { returnDocument: "after" }
+  ).select("-password");
+
+  if (!user) throw new Error("User not found");
+  return user;
+};
+
+export const updatePassword = async (id: string, currentPassword: string, newPassword: string) => {
+  const user = await UserModel.findById(id);
+  if (!user) throw new Error("User not found");
+
+  const isPasswordValid = await (user as any).comparePassword(currentPassword);
+  if (!isPasswordValid) {
+    throw new Error("Invalid current password");
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  return { message: "Password updated successfully" };
+};

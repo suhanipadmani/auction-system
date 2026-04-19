@@ -153,6 +153,11 @@ export class AuctionService {
       query.status = { $in: ["approved", "active"] };
     }
 
+    // Handle "past" status alias
+    if (query.status === "past") {
+      query.status = { $in: [AUCTION_STATUSES.ENDED, AUCTION_STATUSES.SOLD, AUCTION_STATUSES.EXPIRED, AUCTION_STATUSES.CANCELLED] };
+    }
+
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: "i" } },

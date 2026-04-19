@@ -66,7 +66,7 @@ export const getMyActivity = async (req: Request, res: Response) => {
     limit: Number(limit) || 20,
     tab: tab as string
   });
-  sendSuccess(res, "Bidding activity retrieved", result.data, 200, getPagingMeta(result.total, result.page, 20)); // limit fixed to 20 or as per result
+  sendSuccess(res, "Bidding activity retrieved", result, 200, getPagingMeta(result.total, result.page, 20)); // limit fixed to 20 or as per result
 };
 
 export const getSellerStats = async (req: Request, res: Response) => {
