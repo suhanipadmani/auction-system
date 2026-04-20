@@ -1,3 +1,4 @@
+import { TRANSACTION_STATUSES, TRANSACTION_TYPES } from "@/enums/wallet.enum";
 import { axiosClient } from "../lib/axios";
 
 export const walletApi = {
@@ -34,14 +35,14 @@ export const walletApi = {
   },
 
   // Admin operations
-  getPendingDeposits: async (status?: string, page = 1, limit = 20) => {
+  getPendingDeposits: async (status?: string | TRANSACTION_STATUSES, page = 1, limit = 20) => {
     const response = await axiosClient.get("/admin/wallet/pending-deposits", { 
       params: { status, page, limit } 
     });
     return { data: response.data.data, ...response.data.meta };
   },
 
-  getPendingPayouts: async (status?: string, page = 1, limit = 20) => {
+  getPendingPayouts: async (status?: string | TRANSACTION_STATUSES, page = 1, limit = 20) => {
     const response = await axiosClient.get("/admin/wallet/pending-payouts", { 
       params: { status, page, limit } 
     });
@@ -58,17 +59,17 @@ export const walletApi = {
     return response.data;
   },
   
-  processDeposit: async (data: { requestId: string; status: "approved" | "rejected"; adminNote?: string }) => {
+  processDeposit: async (data: { requestId: string; status: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED; adminNote?: string }) => {
     const response = await axiosClient.post("/admin/wallet/process-deposit", data);
     return response.data;
   },
 
-  processPayout: async (data: { requestId: string; status: "approved" | "rejected"; adminNote?: string }) => {
+  processPayout: async (data: { requestId: string; status: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED; adminNote?: string }) => {
     const response = await axiosClient.post("/admin/wallet/process-payout", data);
     return response.data;
   },
   
-  adjustBalance: async (data: { userId: string; amount: number; type: "credit" | "debit"; note: string }) => {
+  adjustBalance: async (data: { userId: string; amount: number; type: TRANSACTION_TYPES.CREDIT | TRANSACTION_TYPES.DEBIT; note: string }) => {
     const response = await axiosClient.post("/admin/wallet/adjust-balance", data);
     return response.data;
   },

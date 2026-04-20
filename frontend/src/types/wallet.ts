@@ -1,7 +1,9 @@
-export type TransactionType = "credit" | "debit" | "lock" | "unlock";
-export type TransactionStatus = "success" | "pending" | "failed";
-export type TransactionSource = "deposit" | "admin" | "auction" | "withdrawal" | "manual";
-export type IViewType = "overview" | "manual" | "history";
+import { TRANSACTION_TYPES, TRANSACTION_STATUSES, TRANSACTION_SOURCES, WALLET_VIEW_TYPES } from "@/enums/wallet.enum";
+
+export type TransactionType = TRANSACTION_TYPES;
+export type TransactionStatus = TRANSACTION_STATUSES;
+export type TransactionSource = TRANSACTION_SOURCES;
+export type IViewType = WALLET_VIEW_TYPES;
 
 
 export interface IUserMinimal {

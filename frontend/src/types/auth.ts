@@ -1,9 +1,11 @@
+import { USER_STATUSES } from "@/enums/user.enum";
+
 export interface IUser {
   _id: string;
   name: string;
   email: string;
   role: string;
-  status?: "active" | "inactive" | "deleted";
+  status?: USER_STATUSES;
   createdAt?: string;
 }
 

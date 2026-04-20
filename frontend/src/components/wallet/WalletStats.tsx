@@ -8,8 +8,10 @@ import { usePendingDeposits } from "@/hooks/useWallet";
 // Components
 import { StatCard } from "@/components/ui/StatCard";
 
+import { TRANSACTION_STATUSES } from "@/enums";
+
 export function WalletStats() {
-  const { data: pendingData, isLoading: isPendingLoading } = usePendingDeposits("pending");
+  const { data: pendingData, isLoading: isPendingLoading } = usePendingDeposits(TRANSACTION_STATUSES.PENDING);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

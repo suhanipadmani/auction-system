@@ -9,6 +9,7 @@ import { ITransaction } from "@/types/wallet";
 
 // Hooks
 import { useAllTransactions } from "@/hooks/useWallet";
+import { TRANSACTION_TYPES } from "@/enums";
 
 // Components
 import { Input } from "@/components/ui/Input";
@@ -96,10 +97,10 @@ export function TransactionLogSection() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="credit">Credit</SelectItem>
-                  <SelectItem value="debit">Debit</SelectItem>
-                  <SelectItem value="lock">Lock</SelectItem>
-                  <SelectItem value="unlock">Unlock</SelectItem>
+                  <SelectItem value={TRANSACTION_TYPES.CREDIT}>Credit</SelectItem>
+                  <SelectItem value={TRANSACTION_TYPES.DEBIT}>Debit</SelectItem>
+                  <SelectItem value={TRANSACTION_TYPES.LOCK}>Lock</SelectItem>
+                  <SelectItem value={TRANSACTION_TYPES.UNLOCK}>Unlock</SelectItem>
                 </SelectContent>
               </Select>
             </div>

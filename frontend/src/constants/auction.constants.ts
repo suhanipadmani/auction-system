@@ -1,47 +1,38 @@
-export const AUCTION_STATUS = {
-  PENDING: "pending",
-  APPROVED: "approved",
-  ACTIVE: "active",
-  ENDED: "ended",
-  SOLD: "sold",
-  REJECTED: "rejected",
-  CANCELLED: "cancelled",
-  EXPIRED: "expired",
-  PAST: "past",
-} as const;
+import { AUCTION_STATUSES } from "@/enums/auction.enum";
 
-export type AuctionStatus = typeof AUCTION_STATUS[keyof typeof AUCTION_STATUS];
+export { AUCTION_STATUSES as AUCTION_STATUS };
+export type AuctionStatus = AUCTION_STATUSES;
 
 export const AUCTION_STATUS_CONFIG = {
-  [AUCTION_STATUS.PENDING]: {
+  [AUCTION_STATUSES.PENDING]: {
     label: "Pending",
     colorClass: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
   },
-  [AUCTION_STATUS.APPROVED]: {
+  [AUCTION_STATUSES.APPROVED]: {
     label: "Approved",
     colorClass: "bg-blue-500/10 text-blue-500 border-blue-500/20",
   },
-  [AUCTION_STATUS.REJECTED]: {
+  [AUCTION_STATUSES.REJECTED]: {
     label: "Rejected",
     colorClass: "bg-red-500/10 text-red-500 border-red-500/20",
   },
-  [AUCTION_STATUS.ACTIVE]: {
+  [AUCTION_STATUSES.ACTIVE]: {
     label: "Active",
     colorClass: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
   },
-  [AUCTION_STATUS.ENDED]: {
+  [AUCTION_STATUSES.ENDED]: {
     label: "Ended",
     colorClass: "bg-gray-500/10 text-gray-400 border-gray-500/20",
   },
-  [AUCTION_STATUS.CANCELLED]: {
+  [AUCTION_STATUSES.CANCELLED]: {
     label: "Cancelled",
     colorClass: "bg-orange-500/10 text-orange-500 border-orange-500/20",
   },
-  [AUCTION_STATUS.SOLD]: {
+  [AUCTION_STATUSES.SOLD]: {
     label: "Sold",
     colorClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
   },
-  [AUCTION_STATUS.EXPIRED]: {
+  [AUCTION_STATUSES.EXPIRED]: {
     label: "Expired",
     colorClass: "bg-zinc-500/10 text-zinc-400 border-zinc-500/20",
   },

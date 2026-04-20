@@ -3,6 +3,8 @@ import { Switch as SwitchPrimitives } from "@base-ui/react/switch";
 import { IUser } from "./auth";
 import { IAuction } from "./auction";
 import { IViewType, ITransaction, IDepositRequest } from "./wallet";
+import { USER_ACTIONS } from "@/enums/user.enum";
+import { TRANSACTION_STATUSES, TRANSACTION_TYPES } from "@/enums/wallet.enum";
 
 
 export interface IUsersTableProps {
@@ -98,7 +100,7 @@ export interface IDashboardStatCardProps {
 export interface IAdjustmentData {
   userId: string;
   amount: number;
-  type: "credit" | "debit";
+  type: TRANSACTION_TYPES.CREDIT | TRANSACTION_TYPES.DEBIT;
   note: string;
   userName: string;
 }
@@ -115,8 +117,8 @@ export interface IWalletModalsProps {
   isDepositOpen: boolean;
   onDepositClose: () => void;
   selectedRequest: any;
-  actionType: "approved" | "rejected";
-  onDepositConfirm: (id: string, status: "approved" | "rejected") => void;
+  actionType: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED;
+  onDepositConfirm: (id: string, status: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED) => void;
   isProcessing: boolean;
 }
 
@@ -131,13 +133,13 @@ export interface ITransactionLogRowProps {
 
 export interface IDepositRowProps {
   req: IDepositRequest;
-  onProcessClick: (req: IDepositRequest, type: "approved" | "rejected") => void;
+  onProcessClick: (req: IDepositRequest, type: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED) => void;
   isLoading: boolean;
   processingId?: string;
 }
 
 export interface IDepositRequestsSectionProps {
-  onProcessClick: (req: IDepositRequest, type: "approved" | "rejected") => void;
+  onProcessClick: (req: IDepositRequest, type: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED) => void;
   processingId?: string;
 }
 
@@ -148,7 +150,7 @@ export interface IBalanceAdjustmentSectionProps {
 
 export interface IConfirmModalProps {
   user: IUser | null;
-  action: "delete" | "restore" | "deactivate" | "activate" | null;
+  action: USER_ACTIONS | null;
   onConfirm: () => void;
   onCancel: () => void;
   isLoading: boolean;
