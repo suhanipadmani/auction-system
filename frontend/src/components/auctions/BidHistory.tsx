@@ -35,13 +35,15 @@ export const BidHistory = ({ auctionId }: BidHistoryProps) => {
             <History className="h-4 w-4 text-primary" />
             Bid History
           </CardTitle>
-          <button 
-            onClick={() => setIsFullHistoryOpen(true)}
-            className="group flex items-center gap-1.5 text-[10px] font-bold text-primary hover:text-white transition-colors uppercase tracking-widest"
-          >
-            View All
-            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-          </button>
+          {bids.length > 0 && (
+            <button 
+              onClick={() => setIsFullHistoryOpen(true)}
+              className="group flex items-center gap-1.5 text-[10px] font-bold text-primary hover:text-white transition-colors uppercase tracking-widest"
+            >
+              View All
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+            </button>
+          )}
         </CardHeader>
         <CardContent className="p-0 custom-scrollbar">
           {bids.length === 0 ? (

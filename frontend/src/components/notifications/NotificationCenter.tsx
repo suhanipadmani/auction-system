@@ -119,11 +119,13 @@ export const NotificationCenter = () => {
               )}
             </div>
 
-            <div className="p-3 border-t border-zinc-100 dark:border-zinc-800 text-center bg-zinc-50/50 dark:bg-zinc-800/50">
-               <button className="text-xs font-bold text-zinc-500 hover:text-indigo-600 transition-colors">
-                  View all activity
-               </button>
-            </div>
+            {notifications.length > 0 && (
+              <div className="p-3 border-t border-zinc-100 dark:border-zinc-800 text-center bg-zinc-50/50 dark:bg-zinc-800/50">
+                 <button className="text-xs font-bold text-zinc-500 hover:text-indigo-600 transition-colors">
+                    View all activity
+                 </button>
+              </div>
+            )}
           </div>
         </>
       )}

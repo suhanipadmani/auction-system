@@ -168,13 +168,15 @@ export default function UserWalletPage() {
                 <History className="h-5 w-5 text-indigo-400" />
                 Latest Transactions
               </CardTitle>
-              <Link 
-                href="/user/wallet/transactions" 
-                className="group flex items-center gap-1.5 text-xs text-muted-foreground hover:text-indigo-400 transition-colors"
-              >
-                View All
-                <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              {transactionsData?.data?.length > 0 && (
+                <Link 
+                  href="/user/wallet/transactions" 
+                  className="group flex items-center gap-1.5 text-xs text-muted-foreground hover:text-indigo-400 transition-colors"
+                >
+                  View All
+                  <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              )}
             </CardHeader>
             <CardContent>
               <Table>
@@ -236,13 +238,15 @@ export default function UserWalletPage() {
                 <ArrowUpCircle className="h-4 w-4 text-emerald-400" />
                 Deposit History
               </CardTitle>
-              <Link 
-                href="/user/wallet/deposits" 
-                className="group flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-emerald-400 transition-colors uppercase tracking-wider font-semibold"
-              >
-                All
-                <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
+              {requestsData?.data?.length > 0 && (
+                <Link 
+                  href="/user/wallet/deposits" 
+                  className="group flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-emerald-400 transition-colors uppercase tracking-wider font-semibold"
+                >
+                  All
+                  <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              )}
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -283,13 +287,15 @@ export default function UserWalletPage() {
                 <ArrowDownCircle className="h-4 w-4 text-rose-400" />
                 Withdrawal History
               </CardTitle>
-              <Link 
-                href="/user/wallet/withdrawals" 
-                className="group flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-rose-400 transition-colors uppercase tracking-wider font-semibold"
-              >
-                All
-                <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
+              {payoutRequestsData?.data?.length > 0 && (
+                <Link 
+                  href="/user/wallet/withdrawals" 
+                  className="group flex items-center gap-1.5 text-[10px] text-muted-foreground hover:text-rose-400 transition-colors uppercase tracking-wider font-semibold"
+                >
+                  All
+                  <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              )}
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
