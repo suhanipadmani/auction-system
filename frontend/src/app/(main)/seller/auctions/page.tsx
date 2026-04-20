@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 // External
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 
 // State (Auth Store)
 import { useAuthStore } from "@/store/auth.store";
@@ -21,17 +21,23 @@ import { cn } from "@/lib/utils";
 // Components
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { AuctionCard } from "@/components/auctions/AuctionCard";
-import { buttonVariants } from "@/components/ui/Button";
+import { Button, buttonVariants } from "@/components/ui/Button";
 
 export default function SellerAuctionsPage() {
   const user = useAuthStore((state) => state.user);
   const [status, setStatus] = useState<AuctionStatus | "all">("all");
+  const [page, setPage] = useState(1);
+
   const { data: response, isLoading } = useAuctions({ 
     sellerId: user?._id,
-    status: status === "all" ? undefined : status 
+    status: status === "all" ? undefined : status,
+    page,
+    limit: 12
   });
 
   const auctions = response?.data || [];
+  const totalPages = response?.totalPages || 1;
+  const totalItems = response?.total || 0;
 
   const TABS = [
     { id: "all", label: "All Listings" },
@@ -39,6 +45,11 @@ export default function SellerAuctionsPage() {
     { id: "pending", label: "Pending" },
     { id: "past", label: "History" },
   ] as const;
+
+  const handleStatusChange = (newStatus: AuctionStatus | "all") => {
+    setStatus(newStatus);
+    setPage(1); // Reset to first page on status change
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -61,7 +72,7 @@ export default function SellerAuctionsPage() {
         {TABS.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setStatus(tab.id)}
+            onClick={() => handleStatusChange(tab.id as any)}
             className={cn(
               "px-4 py-2 text-xs font-medium rounded-lg transition-all",
               status === tab.id
@@ -93,10 +104,44 @@ export default function SellerAuctionsPage() {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
-          {auctions.map((auction) => (
-            <AuctionCard key={auction._id} auction={auction} showActions />
-          ))}
+        <div className="space-y-10 pb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {auctions.map((auction) => (
+              <AuctionCard key={auction._id} auction={auction} showActions />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-6 py-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm">
+                <p className="text-sm text-gray-400">
+                    Showing <span className="text-white font-medium">{auctions.length}</span> of <span className="text-white font-medium">{totalItems}</span> auctions
+                </p>
+                <div className="flex items-center gap-3">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="border-white/10 text-gray-300"
+                    >
+                        <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+                    </Button>
+                    <div className="text-sm text-gray-400 px-2 font-medium">
+                        Page <span className="text-white font-bold">{page}</span> of {totalPages}
+                    </div>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                        className="border-white/10 text-gray-300"
+                    >
+                        Next <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
+                </div>
+            </div>
+          )}
         </div>
       )}
     </div>

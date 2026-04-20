@@ -115,7 +115,7 @@ export default function UserDashboardPage() {
                         color="indigo"
                     />
                     <QuickActionCard
-                        title="Explore Auctions"
+                        title="Marketplace"
                         description="View live and upcoming items"
                         icon={<Gavel className="w-5 h-5 text-primary group-hover:text-primary" />}
                         href="/auctions"

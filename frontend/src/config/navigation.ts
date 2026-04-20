@@ -10,21 +10,27 @@ export const NAV_LINKS: INavLink[] = [
     roles: ["admin", "seller", "bidder"] 
   },
   { 
+    name: "Marketplace", 
+    href: "/auctions", 
+    icon: Gavel, 
+    roles: ["bidder"] 
+  },
+  { 
     name: "My Wallet", 
     href: "/user/wallet", 
     icon: Wallet, 
     roles: ["bidder"] 
   },
   { 
-    name: "Wallet", 
-    href: "/user/wallet", 
-    icon: Wallet, 
-    roles: ["seller"] 
-  },
-  { 
     name: "Wallet Control", 
     href: "/admin/wallet", 
     icon: ShieldAlert, 
+    roles: ["admin"] 
+  },
+  { 
+    name: "Payout Requests", 
+    href: "/admin/payouts", 
+    icon: Wallet, 
     roles: ["admin"] 
   },
   { 
@@ -49,6 +55,12 @@ export const NAV_LINKS: INavLink[] = [
     name: "My Auctions", 
     href: "/seller/auctions", 
     icon: Gavel, 
+    roles: ["seller"] 
+  },
+  { 
+    name: "Payout Account", 
+    href: "/user/wallet", 
+    icon: Wallet, 
     roles: ["seller"] 
   },
   { 

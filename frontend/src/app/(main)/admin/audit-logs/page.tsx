@@ -4,10 +4,11 @@ import { useState } from "react";
 import { 
   History, Search, Filter, Calendar, 
   Download, ChevronLeft, ChevronRight,
-  User, Activity, Wallet, Gavel
+  User, Activity, Wallet, Gavel, X, Check
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 // Hooks
 import { useAuditLogs } from "@/hooks/useAudit";
@@ -17,8 +18,14 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 
 const ACTION_MAP: Record<string, { label: string; icon: any; color: string }> = {
   BID_PLACED: { label: "Bid Placed", icon: Gavel, color: "text-blue-400 bg-blue-400/10" },
+  BID_REMOVED: { label: "Bid Removed", icon: X, color: "text-red-400 bg-red-400/10" },
   AUCTION_CREATED: { label: "Auction Created", icon: Activity, color: "text-purple-400 bg-purple-400/10" },
+  AUCTION_UPDATED: { label: "Auction Updated", icon: Activity, color: "text-amber-400 bg-amber-400/10" },
+  AUCTION_CANCELLED: { label: "Auction Cancelled", icon: X, color: "text-red-400 bg-red-400/10" },
   WALLET_UPDATED: { label: "Wallet Change", icon: Wallet, color: "text-emerald-400 bg-emerald-400/10" },
+  DEPOSIT_REQUESTED: { label: "Deposit Requested", icon: Download, color: "text-blue-400 bg-blue-400/10" },
+  DEPOSIT_APPROVED: { label: "Deposit Approved", icon: Check, color: "text-emerald-400 bg-emerald-400/10" },
+  DEPOSIT_REJECTED: { label: "Deposit Rejected", icon: X, color: "text-red-400 bg-red-400/10" },
 };
 
 export default function AuditLogsPage() {
@@ -53,7 +60,7 @@ export default function AuditLogsPage() {
     
     // Format rows
     const rows = logs.map(log => {
-      const timestamp = format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss");
+      const timestamp = format(new Date(log.createdAt), "yyyy-MM-dd h:mm:ss a");
       const action = ACTION_MAP[log.action]?.label || log.action;
       const userName = log.userId?.name || "Unknown";
       const userEmail = log.userId?.email || "N/A";
@@ -96,7 +103,7 @@ export default function AuditLogsPage() {
     if (metadata.type === "LOCKED_FUNDS") {
        return (
          <div className="text-xs space-y-1">
-            <p className="text-gray-400">Funds Locked: <span className="text-white">₹{metadata.amount}</span></p>
+            <p className="text-gray-400">Funds Locked: <span className="text-white font-medium">₹{metadata.amount}</span></p>
             <p className="text-gray-500 italic">{metadata.reason}</p>
          </div>
        );
@@ -105,16 +112,25 @@ export default function AuditLogsPage() {
     if (metadata.type === "UNLOCKED_FUNDS") {
       return (
         <div className="text-xs space-y-1">
-           <p className="text-gray-400">Funds Unlocked: <span className="text-white">₹{metadata.amount}</span></p>
+           <p className="text-gray-400">Funds Unlocked: <span className="text-white font-medium">₹{metadata.amount}</span></p>
            <p className="text-gray-500 italic">{metadata.reason}</p>
         </div>
       );
    }
 
-    if (metadata.type?.startsWith("AUCTION_SETTLEMENT")) {
+    if (metadata.type === "AUCTION_SETTLEMENT_PAYMENT") {
       return (
         <div className="text-xs space-y-1">
-           <p className="text-gray-400">Settlement: <span className="text-white">₹{metadata.amount}</span></p>
+           <p className="text-gray-400 font-medium text-red-400/80">Auction Payment: <span className="text-white">₹{metadata.amount}</span></p>
+           <p className="text-gray-500 italic">{metadata.auctionTitle}</p>
+        </div>
+      );
+    }
+
+    if (metadata.type === "AUCTION_SETTLEMENT_RECEIPT") {
+      return (
+        <div className="text-xs space-y-1">
+           <p className="text-gray-400 font-medium text-emerald-400/80">Auction Sale Receipt: <span className="text-white">₹{metadata.amount}</span></p>
            <p className="text-gray-500 italic">{metadata.auctionTitle}</p>
         </div>
       );
@@ -123,7 +139,26 @@ export default function AuditLogsPage() {
     if (metadata.type === "DEPOSIT_APPROVED") {
       return (
         <div className="text-xs space-y-1">
-           <p className="text-gray-400">Deposit Approved: <span className="text-white">₹{metadata.amount}</span></p>
+           <p className="text-emerald-400 font-medium">Deposit Approved: <span className="text-white">₹{metadata.amount}</span></p>
+           {metadata.newBalance && <p className="text-gray-500">New Balance: ₹{metadata.newBalance}</p>}
+        </div>
+      );
+    }
+
+    if (metadata.type === "PAYOUT_APPROVED") {
+      return (
+        <div className="text-xs space-y-1">
+           <p className="text-amber-400 font-medium">Payout Approved: <span className="text-white">₹{metadata.amount}</span></p>
+           {metadata.newLockedBalance !== undefined && <p className="text-gray-500 text-[10px]">Remaining Locked: ₹{metadata.newLockedBalance}</p>}
+        </div>
+      );
+    }
+
+    if (metadata.type === "PAYOUT_REJECTED") {
+      return (
+        <div className="text-xs space-y-1">
+           <p className="text-red-400 font-medium">Payout Rejected: <span className="text-white">₹{metadata.amount}</span></p>
+           {metadata.note && <p className="text-gray-500 italic">Reason: {metadata.note}</p>}
         </div>
       );
     }
@@ -131,24 +166,37 @@ export default function AuditLogsPage() {
     if (metadata.type === "MANUAL_ADJUSTMENT") {
       return (
         <div className="text-xs space-y-1">
-           <p className="text-gray-400">Manual {metadata.adjustmentType}: <span className="text-white">₹{metadata.amount}</span></p>
-           <p className="text-gray-500 italic">{metadata.note}</p>
+           <p className="text-indigo-400 font-medium">Manual {metadata.adjustmentType}: <span className="text-white font-bold">₹{metadata.amount}</span></p>
+           <p className="text-gray-500 italic">Note: {metadata.note}</p>
+        </div>
+      );
+    }
+
+    if (metadata.type === "WALLET_FREEZE_TOGGLE") {
+      return (
+        <div className="text-xs">
+          <p className={cn(
+            "font-black tracking-tight underline py-1",
+            metadata.newValue ? "text-red-400" : "text-emerald-400"
+          )}>
+            WALLET {metadata.newValue ? "FROZEN" : "UNFROZEN"}
+          </p>
         </div>
       );
     }
 
     if (metadata.auctionId) {
       return (
-        <div className="text-xs">
-          <p className="text-gray-400">Auction: <span className="text-white">{metadata.auctionTitle || metadata.title}</span></p>
-          {metadata.amount && <p className="text-gray-400">Amount: <span className="text-white">₹{metadata.amount}</span></p>}
+        <div className="text-xs space-y-1">
+          <p className="text-gray-400">Auction: <span className="text-white font-medium">{metadata.auctionTitle || metadata.title}</span></p>
+          {metadata.amount && <p className="text-gray-400">Bid Amount: <span className="text-white">₹{metadata.amount}</span></p>}
         </div>
       );
     }
 
     return (
-      <div className="text-xs text-gray-500">
-        {JSON.stringify(metadata)}
+      <div className="text-[10px] text-gray-600 bg-black/20 p-2 rounded border border-white/5 font-mono break-all max-h-20 overflow-y-auto">
+        {JSON.stringify(metadata, null, 2)}
       </div>
     );
   };
@@ -275,7 +323,7 @@ export default function AuditLogsPage() {
                     <tr key={log._id} className="group hover:bg-white/[0.02] transition-colors">
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-300">{format(new Date(log.createdAt), "MMM d, yyyy")}</div>
-                        <div className="text-xs text-gray-500">{format(new Date(log.createdAt), "HH:mm:ss")}</div>
+                        <div className="text-xs text-gray-500">{format(new Date(log.createdAt), "h:mm:ss a")}</div>
                       </td>
                       <td className="px-6 py-4">
                         <div className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium ${config.color}`}>

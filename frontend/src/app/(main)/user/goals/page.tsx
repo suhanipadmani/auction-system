@@ -9,11 +9,12 @@ import {
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
-import { PlusCircle, Target, Trash2, TrendingUp, Info } from "lucide-react";
+import { PlusCircle, Target, Trash2, TrendingUp, Info, ArrowLeft } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { Modal } from "@/components/ui/Modal";
 import { Label } from "@/components/ui/Label";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export default function MyGoalsPage() {
     const { data: budgetsResponse, isLoading } = useBudgets();
@@ -40,11 +41,19 @@ export default function MyGoalsPage() {
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <DashboardHeader
-                    title="Bidding Goals"
-                    subtitle="Organize your bids and prevent overspending"
-                    statusValue="Strategy"
-                />
+                <div className="flex items-center gap-4">
+                    <Link 
+                        href="/auctions" 
+                        className="p-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all hover:scale-110 active:scale-95 group"
+                    >
+                        <ArrowLeft className="w-5 h-5 text-white/50 group-hover:text-white transition-colors" />
+                    </Link>
+                    <DashboardHeader
+                        title="Bidding Goals"
+                        subtitle="Organize your bids and prevent overspending"
+                        statusValue="Strategy"
+                    />
+                </div>
                 <Button 
                     onClick={() => setIsCreateModalOpen(true)}
                     className="w-full md:w-auto gap-2 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"

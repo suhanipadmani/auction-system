@@ -22,7 +22,7 @@ auctionRoutes.get("/admin-stats", authenticate, authorize(["admin"]), asyncHandl
 
 // Get by ID must be after concrete routes
 auctionRoutes.get("/:id", asyncHandler(AuctionController.getAuctionById));
-auctionRoutes.get("/:id/bids", asyncHandler(AuctionController.getAuctionBids));
+auctionRoutes.get("/:id/bids", paginationMiddleware, asyncHandler(AuctionController.getAuctionBids));
 
 auctionRoutes.post("/", authenticate, authorize(["seller"]), validate(createAuctionSchema), asyncHandler(AuctionController.createAuction));
 auctionRoutes.patch("/:id", authenticate, authorize(["seller"]), validate(updateAuctionSchema), asyncHandler(AuctionController.updateAuction));

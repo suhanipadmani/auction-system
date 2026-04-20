@@ -5,10 +5,10 @@ export const NOTIFICATION_KEYS = {
   all: ["notifications"] as const,
 };
 
-export const useNotifications = () => {
+export const useNotifications = (params: { page?: number; limit?: number } = {}) => {
   return useQuery({
-    queryKey: NOTIFICATION_KEYS.all,
-    queryFn: notificationApi.getMyNotifications,
+    queryKey: [...NOTIFICATION_KEYS.all, params],
+    queryFn: () => notificationApi.getMyNotifications(params),
   });
 };
 

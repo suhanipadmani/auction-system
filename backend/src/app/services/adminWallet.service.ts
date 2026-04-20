@@ -1,17 +1,15 @@
 import { Types } from "mongoose";
 
-import { DEPOSIT_STATUSES, TRANSACTION_TYPES, TRANSACTION_STATUSES, TRANSACTION_SOURCES } from "../enums";
-
+import { DEPOSIT_STATUSES, TRANSACTION_TYPES, TRANSACTION_STATUSES, TRANSACTION_SOURCES, AUDIT_ACTIONS, PAYOUT_STATUSES } from "../enums";
 import { runInTransaction } from "../utils/transaction";
-
-import { getOrCreateWallet } from "./wallet.service";
-
+import { getOrCreateWallet, unlockFunds } from "./wallet.service";
 import { UserModel } from "../models/user";
 import { DepositRequestModel } from "../models/depositRequest";
+import { PayoutRequestModel } from "../models/payoutRequest";
 import { TransactionModel } from "../models/transaction";
-import { AuditLogModel } from "../models/auditLog";
 import { AuditLogService } from "./auditLog.service";
-import { AUDIT_ACTIONS } from "../enums";
+import { NotificationService } from "./notification.service";
+import { NOTIFICATION_TYPES } from "../enums/notification.enum";
 
 /**
  * Lists deposit requests for admin review with optional status filtering
@@ -86,6 +84,22 @@ export const processDepositRequest = async (
         requestId: request._id,
         newBalance: wallet.balance
       });
+
+      // Notify User
+      await NotificationService.sendNotification(
+        request.userId.toString(),
+        NOTIFICATION_TYPES.DEPOSIT_APPROVED,
+        `Your deposit request of ₹${request.amount} has been approved!`,
+        `/user/wallet`
+      );
+    } else {
+      // Notify User of Rejection
+      await NotificationService.sendNotification(
+        request.userId.toString(),
+        NOTIFICATION_TYPES.DEPOSIT_REJECTED,
+        `Your deposit request of ₹${request.amount} was rejected.${adminNote ? ` Reason: ${adminNote}` : ""}`,
+        `/user/wallet`
+      );
     }
 
     return request;
@@ -239,4 +253,106 @@ export const toggleWalletStatus = async (userId: string, isFrozen: boolean, admi
  */
 export const getUserWalletDetail = async (userId: string) => {
   return await getOrCreateWallet(userId);
+};
+
+/**
+ * Lists payout requests for admin review with optional status filtering
+ */
+export const getPayoutRequests = async (status?: string, options: { page?: number; limit?: number } = {}) => {
+  const { page = 1, limit = 20 } = options;
+  const skip = (page - 1) * limit;
+  const query = status ? { status } : {};
+
+  const [data, total] = await Promise.all([
+    PayoutRequestModel.find(query)
+      .populate("userId", "name email")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    PayoutRequestModel.countDocuments(query),
+  ]);
+
+  return {
+    data,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
+};
+
+/**
+ * Processes a payout request (Approve/Reject)
+ */
+export const processPayoutRequest = async (
+  requestId: string,
+  status: PAYOUT_STATUSES.APPROVED | PAYOUT_STATUSES.REJECTED,
+  adminId: string,
+  adminNote?: string
+) => {
+  return await runInTransaction(async (session) => {
+    const request = await PayoutRequestModel.findById(requestId).session(session);
+    if (!request) throw new Error("Payout request not found");
+    if (request.status !== PAYOUT_STATUSES.PENDING) throw new Error("Already processed");
+
+    request.status = status;
+    request.adminId = new Types.ObjectId(adminId);
+    request.adminNote = adminNote || "";
+    await request.save({ session });
+
+    if (status === PAYOUT_STATUSES.APPROVED) {
+      const wallet = await getOrCreateWallet(request.userId.toString(), session);
+      
+      // Permanently deduct from locked balance (it was already locked during request)
+      wallet.lockedBalance = Math.max(0, wallet.lockedBalance - request.amount);
+      await wallet.save({ session });
+
+      await TransactionModel.create([{
+        userId: request.userId,
+        type: TRANSACTION_TYPES.DEBIT,
+        status: TRANSACTION_STATUSES.SUCCESS,
+        amount: request.amount,
+        source: TRANSACTION_SOURCES.DEPOSIT,
+        note: `Payout request approved and processed.`,
+        referenceId: request._id
+      }], { session });
+
+      await AuditLogService.log(adminId, AUDIT_ACTIONS.WALLET_UPDATED, {
+        type: "PAYOUT_APPROVED",
+        targetUserId: request.userId,
+        amount: request.amount,
+        requestId: request._id,
+        newLockedBalance: wallet.lockedBalance
+      });
+
+      // Notify User
+      await NotificationService.sendNotification(
+        request.userId.toString(),
+        NOTIFICATION_TYPES.PAYOUT_APPROVED,
+        `Your payout request of ₹${request.amount} has been approved and processed!`,
+        `/user/wallet`
+      );
+
+    } else if (status === PAYOUT_STATUSES.REJECTED) {
+      // Unlock funds back to available balance
+      await unlockFunds(request.userId.toString(), request.amount, session);
+
+      await AuditLogService.log(adminId, AUDIT_ACTIONS.WALLET_UPDATED, {
+        type: "PAYOUT_REJECTED",
+        targetUserId: request.userId,
+        amount: request.amount,
+        requestId: request._id,
+        note: adminNote
+      });
+
+      // Notify User
+      await NotificationService.sendNotification(
+        request.userId.toString(),
+        NOTIFICATION_TYPES.PAYOUT_REJECTED,
+        `Your payout request of ₹${request.amount} was rejected.${adminNote ? ` Reason: ${adminNote}` : ""}`,
+        `/user/wallet`
+      );
+    }
+
+    return request;
+  });
 };

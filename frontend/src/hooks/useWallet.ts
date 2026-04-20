@@ -20,6 +20,11 @@ export const useMyRequests = (page = 1, limit = 20) => useQuery({
   queryFn: () => walletApi.getMyRequests(page, limit)
 });
 
+export const useMyPayoutRequests = (page = 1, limit = 20) => useQuery({
+  queryKey: ["wallet-payout-requests", page, limit],
+  queryFn: () => walletApi.getMyPayoutRequests(page, limit)
+});
+
 export const useRequestDeposit = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -34,19 +39,38 @@ export const useRequestDeposit = () => {
   });
 };
 
+export const useRequestPayout = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: walletApi.requestPayout,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wallet-payout-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
+      toast.success("Withdrawal request submitted successfully! Amount moved to locked balance.");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to submit request");
+    }
+  });
+};
+
 export const useWallet = () => {
   const balance = useBalance();
   const transactions = useTransactions();
   const requests = useMyRequests();
+  const payoutRequests = useMyPayoutRequests();
   const requestDeposit = useRequestDeposit();
+  const requestPayout = useRequestPayout();
 
   return {
     balance,
     transactions,
     requests,
+    payoutRequests,
     requestDeposit,
-    isLoading: balance.isLoading || transactions.isLoading || requests.isLoading,
-    isError: balance.isError || transactions.isError || requests.isError,
+    requestPayout,
+    isLoading: balance.isLoading || transactions.isLoading || requests.isLoading || payoutRequests.isLoading,
+    isError: balance.isError || transactions.isError || requests.isError || payoutRequests.isError,
   };
 };
 
@@ -56,6 +80,11 @@ export const useWallet = () => {
 export const usePendingDeposits = (status?: string, page = 1, limit = 20) => useQuery({
   queryKey: ["admin-pending-deposits", status, page, limit],
   queryFn: () => walletApi.getPendingDeposits(status, page, limit)
+});
+
+export const usePendingPayouts = (status?: string, page = 1, limit = 20) => useQuery({
+  queryKey: ["admin-pending-payouts", status, page, limit],
+  queryFn: () => walletApi.getPendingPayouts(status, page, limit)
 });
 
 export const useAllTransactions = (params: any = {}) => {
@@ -84,6 +113,22 @@ export const useProcessDeposit = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to process deposit");
+    }
+  });
+};
+
+export const useProcessPayout = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: walletApi.processPayout,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-pending-payouts"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-all-transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
+      toast.success("Payout request processed!");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to process payout");
     }
   });
 };

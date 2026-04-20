@@ -96,7 +96,8 @@ export const getAdminInventory = async (req: Request, res: Response) => {
 
 export const getAuctionBids = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const bids = await AuctionService.getAuctionBids(id as string, req.user?.id, req.user?.role);
-  sendSuccess(res, "Bids retrieved", bids);
+  const { page, limit } = (req as any).pagination;
+  const result = await AuctionService.getAuctionBids(id as string, { page, limit }, req.user?.id, req.user?.role);
+  sendSuccess(res, "Bids retrieved", result.data, 200, getPagingMeta(result.total, page, limit));
 };
 

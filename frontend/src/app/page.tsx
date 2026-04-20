@@ -17,7 +17,6 @@ import {
 import { LandingHeader } from "@/components/layout/LandingHeader";
 import { LandingFooter } from "@/components/layout/LandingFooter";
 import { usePublicStats, useAuctions } from "@/hooks/useAuction";
-import { formatCurrency } from "@/lib/utils";
 import { AuctionCard } from "@/components/auctions/AuctionCard";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -36,11 +35,7 @@ function PublicStats() {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-      <div className="text-center space-y-2">
-        <div className="text-3xl font-black text-white">{formatCurrency(stats?.totalVolume || 0)}</div>
-        <div className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-black">Total Volume</div>
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
       <div className="text-center space-y-2">
         <div className="text-3xl font-black text-white">{stats?.activeAuctions || 0}</div>
         <div className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-black">Live Auctions</div>

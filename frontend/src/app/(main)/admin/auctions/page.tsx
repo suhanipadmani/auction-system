@@ -44,12 +44,14 @@ export default function AdminAuctionManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [page, setPage] = useState(1);
+  const [pendingPage, setPendingPage] = useState(1);
+  const [inventoryPage, setInventoryPage] = useState(1);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
-      setPage(1);
+      setPendingPage(1);
+      setInventoryPage(1);
     }, 500);
     return () => clearTimeout(timer);
   }, [searchQuery]);
@@ -64,12 +66,16 @@ export default function AdminAuctionManagementPage() {
     action: null,
   });
 
-  const { data: pendingResponse, isLoading: loadingPending } = useAuctions({ status: "pending" as any });
+  const { data: pendingResponse, isLoading: loadingPending } = useAuctions({ 
+    status: "pending" as any,
+    page: pendingPage,
+    limit: 10
+  });
   const { data: historyResponse, isLoading: loadingHistory } = useAdminInventory({ 
     status: statusFilter === "all" ? undefined : statusFilter as any,
     search: debouncedSearch || undefined,
-    page,
-    limit: 20
+    page: inventoryPage,
+    limit: 10
   });
   
   const { mutate: approve, isPending: isApproving } = useAdminApprove();
@@ -179,11 +185,45 @@ export default function AdminAuctionManagementPage() {
               <p>No auctions pending review</p>
             </div>
           ) : (
-            <ApprovalTable 
-                data={pendingResponse?.data || []} 
-                onAction={handleAction} 
-                isProcessing={isApproving}
-            />
+            <div className="space-y-4">
+              <ApprovalTable 
+                  data={pendingResponse?.data || []} 
+                  onAction={handleAction} 
+                  isProcessing={isApproving}
+              />
+              
+              {/* Pending Pagination UI */}
+              {pendingResponse?.totalPages && pendingResponse.totalPages > 1 && (
+                <div className="flex items-center justify-between px-6 py-4 bg-black/20 border-t border-white/5">
+                  <p className="text-sm text-gray-500">
+                    Showing <span className="text-white font-medium">{pendingResponse.data.length}</span> of <span className="text-white font-medium">{pendingResponse?.total || 0}</span> pending
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPendingPage(p => Math.max(1, p - 1))}
+                      disabled={pendingPage === 1}
+                      className="border-white/10 text-gray-400 h-9"
+                    >
+                      <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+                    </Button>
+                    <div className="text-sm text-gray-400 px-2 font-medium">
+                      Page <span className="text-white font-bold">{pendingPage}</span> of {pendingResponse.totalPages}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPendingPage(p => Math.min(pendingResponse.totalPages || 1, p + 1))}
+                      disabled={pendingPage === pendingResponse.totalPages}
+                      className="border-white/10 text-gray-400 h-9"
+                    >
+                      Next <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
           )
         ) : (
           loadingHistory ? (
@@ -199,7 +239,7 @@ export default function AdminAuctionManagementPage() {
             <div className="space-y-4">
               <InventoryTable data={inventoryData} />
               
-              {/* Pagination UI */}
+              {/* History Pagination UI */}
               {historyResponse?.totalPages && historyResponse.totalPages > 1 && (
                 <div className="flex items-center justify-between px-6 py-4 bg-black/20 border-t border-white/5">
                   <p className="text-sm text-gray-500">
@@ -209,20 +249,20 @@ export default function AdminAuctionManagementPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setPage(p => Math.max(1, p - 1))}
-                      disabled={page === 1}
+                      onClick={() => setInventoryPage(p => Math.max(1, p - 1))}
+                      disabled={inventoryPage === 1}
                       className="border-white/10 text-gray-400 h-9"
                     >
                       <ChevronLeft className="w-4 h-4 mr-1" /> Previous
                     </Button>
                     <div className="text-sm text-gray-400 px-2 font-medium">
-                      Page <span className="text-white font-bold">{page}</span> of {historyResponse.totalPages}
+                      Page <span className="text-white font-bold">{inventoryPage}</span> of {historyResponse.totalPages}
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setPage(p => Math.min(historyResponse.totalPages || 1, p + 1))}
-                      disabled={page === historyResponse.totalPages}
+                      onClick={() => setInventoryPage(p => Math.min(historyResponse.totalPages || 1, p + 1))}
+                      disabled={inventoryPage === historyResponse.totalPages}
                       className="border-white/10 text-gray-400 h-9"
                     >
                       Next <ChevronRight className="w-4 h-4 ml-1" />

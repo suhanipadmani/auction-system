@@ -113,15 +113,7 @@ export default function SellerDashboardPage() {
             href="/seller/auctions"
             color="purple"
           />
-
-
-          <QuickActionCard
-            title="Payout Account"
-            description="Manage where your earnings are deposited"
-            icon={<LayoutDashboard className="w-6 h-6" />}
-            href="/user/wallet"
-            color="blue"
-          />
+          
         </div>
       </section>
     </div>

@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { DEPOSIT_STATUSES, TRANSACTION_TYPES } from "../enums";
+import { DEPOSIT_STATUSES, TRANSACTION_TYPES, PAYOUT_STATUSES } from "../enums";
 import * as AdminWalletService from "../services/adminWallet.service";
 import { sendSuccess } from "../utils/apiResponse";
 import { AppError } from "../utils/AppError";
 import { getPagingMeta } from "../utils/pagination";
 
 const VALID_DEPOSIT_ACTIONS = [DEPOSIT_STATUSES.APPROVED, DEPOSIT_STATUSES.REJECTED] as const;
+const VALID_PAYOUT_ACTIONS = [PAYOUT_STATUSES.APPROVED, PAYOUT_STATUSES.REJECTED] as const;
 const VALID_ADJUSTMENT_TYPES = [TRANSACTION_TYPES.CREDIT, TRANSACTION_TYPES.DEBIT] as const;
 
 export const getPendingDeposits = async (req: Request, res: Response) => {
@@ -87,4 +88,31 @@ export const getUserAdminWallet = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const wallet = await AdminWalletService.getUserWalletDetail(userId as string);
   sendSuccess(res, "User wallet details retrieved", wallet);
+};
+
+export const getPayoutRequests = async (req: Request, res: Response) => {
+  const { status } = req.query;
+  const { page, limit } = (req as any).pagination;
+  const result = await AdminWalletService.getPayoutRequests(status as string, { page, limit });
+  sendSuccess(res, "Payout requests retrieved", result.data, 200, getPagingMeta(result.total, page, limit));
+};
+
+export const approveRejectPayout = async (req: Request, res: Response) => {
+  const { requestId, status, adminNote } = req.body;
+  const adminId = req.user!.id;
+
+  if (!requestId || !VALID_PAYOUT_ACTIONS.includes(status)) {
+    throw new AppError(
+      `Invalid request data. Status must be one of: ${VALID_PAYOUT_ACTIONS.join(", ")}`,
+      400
+    );
+  }
+
+  const result = await AdminWalletService.processPayoutRequest(
+    requestId,
+    status as PAYOUT_STATUSES.APPROVED | PAYOUT_STATUSES.REJECTED,
+    adminId,
+    adminNote
+  );
+  sendSuccess(res, "Payout request processed", result);
 };

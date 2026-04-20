@@ -13,13 +13,13 @@ export const AuctionTimeline = ({ startTime, endTime }: AuctionTimelineProps) =>
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">Start Time</span>
           <span className="text-sm font-medium text-white">
-            {format(new Date(startTime), "PPP p")}
+            {format(new Date(startTime), "PPP h:mm a")}
           </span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">End Time</span>
           <span className="text-sm font-medium text-white">
-            {format(new Date(endTime), "PPP p")}
+            {format(new Date(endTime), "PPP h:mm a")}
           </span>
         </div>
       </div>

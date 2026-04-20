@@ -37,3 +37,23 @@ export const getMyRequests = async (req: Request, res: Response) => {
   const result = await WalletService.getDepositRequests(userId, { page, limit });
   sendSuccess(res, "Deposit requests retrieved", result.data, 200, getPagingMeta(result.total, page, limit));
 };
+
+export const requestPayout = async (req: Request, res: Response) => {
+  const userId = req.user!.id;
+  const { amount } = req.body;
+  
+  if (!amount || amount <= 0) {
+    throw new AppError("Invalid payout amount", 400);
+  }
+
+  const request = await WalletService.createPayoutRequest(userId, amount);
+  sendSuccess(res, "Payout request submitted", request, 201);
+};
+
+export const getMyPayoutRequests = async (req: Request, res: Response) => {
+  const userId = req.user!.id;
+  const { page, limit } = (req as any).pagination;
+
+  const result = await WalletService.getPayoutRequests(userId, { page, limit });
+  sendSuccess(res, "Payout requests retrieved", result.data, 200, getPagingMeta(result.total, page, limit));
+};

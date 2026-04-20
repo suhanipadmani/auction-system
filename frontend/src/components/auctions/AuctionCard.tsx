@@ -164,7 +164,7 @@ export function AuctionCard({ auction, href, showActions }: IAuctionCardProps) {
               auction.status === "active" ? (timeLeft.startsWith("00:0") ? "text-rose-500 animate-pulse" : "text-indigo-400") : "text-white/80"
             )}>
               <Clock className="w-3.5 h-3.5 opacity-60" />
-              {auction.status === "active" ? timeLeft : format(new Date(auction.startTime), "MMM d, HH:mm")}
+              {auction.status === "active" ? timeLeft : format(new Date(auction.startTime), "MMM d, h:mm a")}
             </div>
           </div>
         </div>

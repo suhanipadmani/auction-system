@@ -23,13 +23,13 @@ import { Label } from "@/components/ui/Label";
 import { Progress } from "@/components/ui/Progress";
 
 // Types
-import { IAuction } from "@/types/auction";
 import { IBiddingSectionProps } from "@/types/components";
 
 
 export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) => {
 
   const user = useAuthStore((state) => state.user);
+  const isAdmin = user?.role === "admin";
   const { highestBid, highestBidderId, isPending, placeBid: placeBidSocket } = socketData;
   
   const [bidAmount, setBidAmount] = useState<string>("");
@@ -161,8 +161,8 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
 
   return (
     <div className="space-y-6">
-      {/* Budget Monitor Block */}
-      {assignedGoal && user && !isOwner && (
+      {/* Budget Monitor Block - Hide for Admin */}
+      {assignedGoal && user && !isOwner && !isAdmin && (
         <Card className="border-white/5 bg-white/5 overflow-hidden animate-in slide-in-from-top-4 duration-500">
            <div className="p-4 space-y-3">
               <div className="flex items-center justify-between">
@@ -201,7 +201,7 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
           <div className="mt-4 text-5xl font-black text-white tracking-tighter drop-shadow-2xl animate-in zoom-in-50 duration-500">
             {formatCurrency(currentBid)}
           </div>
-          {isHighestBidder && (
+          {isHighestBidder && !isAdmin && (
             <Badge className="mt-4 bg-emerald-500/20 text-emerald-400 border-emerald-500/30 font-bold px-4 py-1 animate-pulse">
               You are the highest bidder
             </Badge>
@@ -217,41 +217,43 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
           </div>
 
             {user ? (
-               <>
-                  <div className="relative group">
-                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                        <span className="text-muted-foreground font-bold">₹</span>
-                     </div>
-                     <Input
-                       type="number"
-                       placeholder={`Min. ${minRequired}`}
-                       value={bidAmount}
-                       onChange={(e) => setBidAmount(e.target.value)}
-                       className={cn(
-                          "pl-8 h-14 bg-black/40 border-white/10 rounded-xl font-bold focus:ring-indigo-500 focus:border-indigo-500",
-                          isOverBudget && "border-red-500 focus:ring-red-500 focus:border-red-500"
-                       )}
-                       disabled={auction.status !== "active" || isHighestBidder || isOwner}
-                     />
-                     {isOverBudget && (
-                       <p className="mt-1.5 text-xs font-bold text-red-500 flex items-center gap-1 animate-pulse">
-                          <AlertTriangle className="w-3 h-3" />
-                          Bid exceeds goal budget: {formatCurrency(remainingInGoal)} left
-                       </p>
-                     )}
-                  </div>
+               !isAdmin && !isOwner && (
+                <>
+                   <div className="relative group">
+                      <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                         <span className="text-muted-foreground font-bold">₹</span>
+                      </div>
+                      <Input
+                        type="number"
+                        placeholder={`Min. ${minRequired}`}
+                        value={bidAmount}
+                        onChange={(e) => setBidAmount(e.target.value)}
+                        className={cn(
+                           "pl-8 h-14 bg-black/40 border-white/10 rounded-xl font-bold focus:ring-indigo-500 focus:border-indigo-500",
+                           isOverBudget && "border-red-500 focus:ring-red-500 focus:border-red-500"
+                        )}
+                        disabled={auction.status !== "active" || isHighestBidder}
+                      />
+                      {isOverBudget && (
+                        <p className="mt-1.5 text-xs font-bold text-red-500 flex items-center gap-1 animate-pulse">
+                           <AlertTriangle className="w-3 h-3" />
+                           Bid exceeds goal budget: {formatCurrency(remainingInGoal)} left
+                        </p>
+                      )}
+                   </div>
 
-                  <Button
-                    onClick={handleManualBid}
-                    className={cn(
-                      "w-full h-14 text-lg font-black shadow-xl rounded-xl transition-all active:scale-95 disabled:opacity-50",
-                      isOverBudget ? "bg-red-600 hover:bg-red-700 shadow-red-500/20" : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20"
-                    )}
-                    disabled={auction.status !== "active" || isHighestBidder || isOwner || isPending || isOverBudget}
-                  >
-                    {isPending ? "Processing..." : isOwner ? "Your Listing" : isHighestBidder ? "Highest Bidder" : isOverBudget ? "Limit Exceeded" : "Place Bid"}
-                  </Button>
-               </>
+                   <Button
+                     onClick={handleManualBid}
+                     className={cn(
+                       "w-full h-14 text-lg font-black shadow-xl rounded-xl transition-all active:scale-95 disabled:opacity-50",
+                       isOverBudget ? "bg-red-600 hover:bg-red-700 shadow-red-500/20" : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20"
+                     )}
+                     disabled={auction.status !== "active" || isHighestBidder || isPending || isOverBudget}
+                   >
+                     {isPending ? "Processing..." : isHighestBidder ? "Highest Bidder" : isOverBudget ? "Limit Exceeded" : "Place Bid"}
+                   </Button>
+                </>
+               )
             ) : (
                <div className="p-6 bg-white/5 rounded-2xl border border-white/10 text-center space-y-4">
                   <p className="text-sm font-medium text-muted-foreground">
@@ -270,8 +272,8 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
                </div>
             )}
 
-          {/* Budget Goal Assignment */}
-          {user && !isOwner && (
+          {/* Budget Goal Assignment - Hide for Admin */}
+          {user && !isOwner && !isAdmin && (
             <div className="pt-4 border-t border-white/5 space-y-3">
                <div className="flex items-center justify-between">
                   <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Assign to Goal</Label>
@@ -304,8 +306,8 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
             </div>
           )}
 
-          {/* Auto Bid Section - Hide for Owner and Guests */}
-          {!isOwner && user && (
+          {/* Auto Bid Section - Hide for Admin, Owner and Guests */}
+          {!isOwner && user && !isAdmin && (
             <div className="pt-4 border-t border-white/5">
                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuctions } from "@/hooks/useAuction";
 import { AuctionCard } from "@/components/auctions/AuctionCard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
@@ -8,11 +8,13 @@ import { Gavel, Calendar, Search, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IDiscoveryTabType } from "@/types/auction";
 import { Input } from "@/components/ui/Input";
-import { useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { BiddingGoalsOverview } from "@/components/auctions/BiddingGoalsOverview";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function AuctionDiscoveryPage() {
+    const user = useAuthStore((state) => state.user);
     const [activeTab, setActiveTab] = useState<IDiscoveryTabType>("live");
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -43,6 +45,8 @@ export default function AuctionDiscoveryPage() {
         { id: "upcoming" as IDiscoveryTabType, label: "Upcoming", icon: <Calendar className="w-4 h-4" /> },
     ];
 
+    const isBidder = user?.role === "bidder";
+
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <DashboardHeader
@@ -50,6 +54,8 @@ export default function AuctionDiscoveryPage() {
                 subtitle="Discover live bidding wars and bookmark upcoming gems"
                 statusValue="Marketplace"
             />
+
+            {isBidder && <BiddingGoalsOverview />}
 
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                 {/* Tabs */}

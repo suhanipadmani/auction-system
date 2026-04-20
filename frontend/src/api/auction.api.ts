@@ -100,9 +100,15 @@ export const auctionApi = {
     return { data: response.data.data, ...response.data.meta };
   },
 
-  getAuctionBids: async (id: string): Promise<{ success: boolean; data: any[] }> => {
-    const response = await axiosClient.get(`/auctions/${id}/bids`);
-    return response.data;
+  getAuctionBids: async (id: string, params: { page?: number; limit?: number } = {}): Promise<{ 
+    success: boolean; 
+    data: any[]; 
+    total?: number;
+    page?: number;
+    totalPages?: number;
+  }> => {
+    const response = await axiosClient.get(`/auctions/${id}/bids`, { params });
+    return { data: response.data.data, ...response.data.meta };
   },
 
   getBidStatus: async (id: string): Promise<{ success: boolean; data: any }> => {

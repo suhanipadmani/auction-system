@@ -1,11 +1,14 @@
 import { Types, ClientSession } from "mongoose";
 import { WalletModel } from "../models/wallet";
+import { UserModel } from "../models/user";
 import { TransactionModel } from "../models/transaction";
 import { DepositRequestModel } from "../models/depositRequest";
-import { TRANSACTION_SOURCES, TRANSACTION_STATUSES, TRANSACTION_TYPES, AUDIT_ACTIONS, NOTIFICATION_TYPES } from "../enums";
+import { PayoutRequestModel } from "../models/payoutRequest";
+import { TRANSACTION_SOURCES, TRANSACTION_STATUSES, TRANSACTION_TYPES, AUDIT_ACTIONS, NOTIFICATION_TYPES, PAYOUT_STATUSES } from "../enums";
 import { AppError } from "../utils/AppError";
 import { AuditLogService } from "./auditLog.service";
 import { NotificationService } from "./notification.service";
+import { runInTransaction } from "../utils/transaction";
 
 /**
  * Ensures a user has a wallet and returns it
@@ -37,6 +40,7 @@ export const createDepositRequest = async (userId: string, amount: number) => {
   }
 
   const wallet = await getOrCreateWallet(userId);
+  const user = await UserModel.findById(userId).select("name");
   
   if (wallet.isFrozen) {
     throw new AppError("Wallet is frozen", 403);
@@ -51,7 +55,7 @@ export const createDepositRequest = async (userId: string, amount: number) => {
   // Notify ALL Admins for deposit review request
   await NotificationService.notifyAdmins(
     NOTIFICATION_TYPES.DEPOSIT_REQUEST,
-    `New Deposit Request: A user has requested $${amount} deposit approval.`,
+    `New Deposit Request: ${user?.name || "A user"} has requested ₹${amount} deposit approval.`,
     `/admin/wallet`
   );
 
@@ -251,4 +255,59 @@ export const completeTransfer = async (
     if (error instanceof AppError) throw error;
     throw new AppError(error.message || "Wallet transfer failed", error.statusCode || 500);
   }
+};
+
+/**
+ * Submits a new payout request for admin approval.
+ * Locks the requested amount in the user's wallet.
+ */
+export const createPayoutRequest = async (userId: string, amount: number) => {
+  if (amount <= 0) {
+    throw new AppError("Invalid payout amount", 400);
+  }
+
+  return await runInTransaction(async (session) => {
+    // 1. Lock funds
+    await lockFunds(userId, amount, session);
+
+    // 2. Create Request
+    const request = await PayoutRequestModel.create([{
+      userId: new Types.ObjectId(userId),
+      amount,
+      status: PAYOUT_STATUSES.PENDING
+    }], { session });
+
+    // 3. Notify Admins
+    const user = await UserModel.findById(userId).select("name role");
+    await NotificationService.notifyAdmins(
+      NOTIFICATION_TYPES.PAYOUT_REQUEST,
+      `New Payout Request: ${user?.name || "A user"} (${user?.role || "user"}) has requested a withdrawal of ₹${amount}.`,
+      `/admin/payouts`
+    );
+
+    return request[0];
+  });
+};
+
+/**
+ * Fetches payout requests for a user
+ */
+export const getPayoutRequests = async (userId: string, options: { page?: number; limit?: number } = {}) => {
+  const { page = 1, limit = 20 } = options;
+  const skip = (page - 1) * limit;
+
+  const [data, total] = await Promise.all([
+    PayoutRequestModel.find({ userId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    PayoutRequestModel.countDocuments({ userId }),
+  ]);
+
+  return {
+    data,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
 };

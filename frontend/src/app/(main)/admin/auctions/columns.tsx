@@ -50,7 +50,7 @@ export const getApprovalColumns = (
   },
   {
     header: "Scheduled Start",
-    render: (auction) => format(new Date(auction.startTime), "MMM d, HH:mm"),
+    render: (auction) => format(new Date(auction.startTime), "MMM d, h:mm a"),
     className: "text-gray-300",
   },
   {

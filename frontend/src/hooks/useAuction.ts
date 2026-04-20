@@ -120,10 +120,10 @@ export const useAdminInventory = (filters: IAuctionFilters = {}) => {
   });
 };
 
-export const useAuctionBids = (id: string, enabled = true) => {
+export const useAuctionBids = (id: string, params: { page?: number; limit?: number } = {}, enabled = true) => {
   return useQuery({
-    queryKey: ['bids', id],
-    queryFn: () => auctionApi.getAuctionBids(id),
+    queryKey: ['bids', id, params],
+    queryFn: () => auctionApi.getAuctionBids(id, params),
     enabled: !!id && enabled,
   });
 };

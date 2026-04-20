@@ -1,9 +1,9 @@
 import { axiosClient } from "../lib/axios";
 
 export const notificationApi = {
-  getMyNotifications: async () => {
-    const response = await axiosClient.get("/notifications");
-    return response.data;
+  getMyNotifications: async (params: { page?: number; limit?: number } = {}) => {
+    const response = await axiosClient.get("/notifications", { params });
+    return { data: response.data.data, ...response.data.meta };
   },
 
   markRead: async (id: string) => {

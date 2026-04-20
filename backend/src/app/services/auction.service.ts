@@ -530,13 +530,20 @@ export class AuctionService {
     };
   }
 
-  static async getAuctionBids(auctionId: string, requesterId?: string, requesterRole?: string) {
-    const bids = await BidModel.find({ auctionId })
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .populate("bidderId", "name");
+  static async getAuctionBids(auctionId: string, options: { page?: number; limit?: number } = {}, requesterId?: string, requesterRole?: string) {
+    const { page = 1, limit = 10 } = options;
+    const skip = (page - 1) * limit;
 
-    return bids.map(bid => {
+    const [bids, total] = await Promise.all([
+      BidModel.find({ auctionId })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("bidderId", "name"),
+      BidModel.countDocuments({ auctionId })
+    ]);
+
+    const formattedBids = bids.map(bid => {
       const bidder = bid.bidderId as any;
       const bidderIdStr = bidder?._id?.toString();
       const isOwner = requesterId && bidderIdStr === requesterId;
@@ -556,5 +563,7 @@ export class AuctionService {
         isMine: isOwner
       };
     });
+
+    return { data: formattedBids, total };
   }
 }

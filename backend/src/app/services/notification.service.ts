@@ -53,10 +53,19 @@ export class NotificationService {
     }
   }
 
-  static async getNotifications(userId: string, limit = 20) {
-    return await NotificationModel.find({ userId })
-      .sort({ createdAt: -1 })
-      .limit(limit);
+  static async getNotifications(userId: string, options: { page?: number; limit?: number } = {}) {
+    const { page = 1, limit = 20 } = options;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      NotificationModel.find({ userId })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      NotificationModel.countDocuments({ userId })
+    ]);
+
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   static async markAsRead(notificationId: string, userId: string) {

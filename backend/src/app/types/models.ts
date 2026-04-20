@@ -7,6 +7,7 @@ import { auditLogSchema } from "../models/auditLog";
 import { bidSchema } from "../models/bid";
 import { budgetSchema } from "../models/budget";
 import { depositRequestSchema } from "../models/depositRequest";
+import { payoutRequestSchema } from "../models/payoutRequest";
 import { notificationSchema } from "../models/notification";
 
 export type IUserDocument = InferSchemaType<typeof userSchema>;
@@ -17,4 +18,5 @@ export type IAuditLogDocument = InferSchemaType<typeof auditLogSchema>;
 export type IBidDocument = InferSchemaType<typeof bidSchema>;
 export type IBudgetDocument = InferSchemaType<typeof budgetSchema>;
 export type IDepositRequestDocument = InferSchemaType<typeof depositRequestSchema>;
+export type IPayoutRequestDocument = InferSchemaType<typeof payoutRequestSchema>;
 export type INotificationDocument = InferSchemaType<typeof notificationSchema>;

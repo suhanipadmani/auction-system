@@ -12,6 +12,8 @@ walletRoutes.use(authenticate);
 
 walletRoutes.get("/balance", asyncHandler(walletController.getWallet));
 walletRoutes.post("/deposit", validate(depositRequestSchema), asyncHandler(walletController.requestDeposit));
+walletRoutes.post("/payout", asyncHandler(walletController.requestPayout));
 walletRoutes.get("/transactions", paginationMiddleware, asyncHandler(walletController.getTransactions));
 walletRoutes.get("/requests", paginationMiddleware, asyncHandler(walletController.getMyRequests));
+walletRoutes.get("/payout-requests", paginationMiddleware, asyncHandler(walletController.getMyPayoutRequests));
 

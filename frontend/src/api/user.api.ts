@@ -7,11 +7,11 @@ export const userApi = {
     if (search) params.search = search;
     
     const response = await axiosClient.get("/users", { params });
-    return response.data.data;
+    return { data: response.data.data, ...response.data.meta };
   },
 
   createUser: async (data: { name: string; email: string; password?: string; role: string }) => {
-    const payload = { ...data, password: data.password || "defaultPass123" };
+    const payload = { ...data, password: data.password };
     const response = await axiosClient.post("/users", payload);
     return response.data;
   },

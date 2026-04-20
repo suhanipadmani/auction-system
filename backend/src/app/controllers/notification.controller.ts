@@ -5,8 +5,23 @@ import { AppError } from "../utils/AppError";
 
 export const getMyNotifications = async (req: Request, res: Response) => {
   const userId = req.user!.id;
-  const notifications = await NotificationService.getNotifications(userId);
-  sendSuccess(res, "Notifications retrieved", notifications);
+  const { page, limit } = req.query;
+  const result = await NotificationService.getNotifications(userId, { 
+    page: page ? Number(page) : 1, 
+    limit: limit ? Number(limit) : 20 
+  });
+  
+  // Backward compatibility: If it's a simple list, return it as data. 
+  // But wait, the standard is { data, meta }. 
+  // I should check if frontend expects a flat array or { data, meta }.
+  // NotificationCenter.tsx has: const notifications = response?.data || [];
+  // So it expects response.data to be the array.
+  
+  sendSuccess(res, "Notifications retrieved", result.data, 200, {
+    total: result.total,
+    page: result.page,
+    totalPages: result.totalPages
+  });
 };
 
 export const markRead = async (req: Request, res: Response) => {

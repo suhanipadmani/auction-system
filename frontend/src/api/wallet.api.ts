@@ -23,9 +23,26 @@ export const walletApi = {
     return response.data;
   },
 
+  requestPayout: async (amount: number) => {
+    const response = await axiosClient.post("/wallet/payout", { amount });
+    return response.data;
+  },
+
+  getMyPayoutRequests: async (page = 1, limit = 20) => {
+    const response = await axiosClient.get("/wallet/payout-requests", { params: { page, limit } });
+    return { data: response.data.data, ...response.data.meta };
+  },
+
   // Admin operations
   getPendingDeposits: async (status?: string, page = 1, limit = 20) => {
     const response = await axiosClient.get("/admin/wallet/pending-deposits", { 
+      params: { status, page, limit } 
+    });
+    return { data: response.data.data, ...response.data.meta };
+  },
+
+  getPendingPayouts: async (status?: string, page = 1, limit = 20) => {
+    const response = await axiosClient.get("/admin/wallet/pending-payouts", { 
       params: { status, page, limit } 
     });
     return { data: response.data.data, ...response.data.meta };
@@ -43,6 +60,11 @@ export const walletApi = {
   
   processDeposit: async (data: { requestId: string; status: "approved" | "rejected"; adminNote?: string }) => {
     const response = await axiosClient.post("/admin/wallet/process-deposit", data);
+    return response.data;
+  },
+
+  processPayout: async (data: { requestId: string; status: "approved" | "rejected"; adminNote?: string }) => {
+    const response = await axiosClient.post("/admin/wallet/process-payout", data);
     return response.data;
   },
   
