@@ -1,23 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMyBiddingActivity } from "@/hooks/useAuction";
 import { AuctionCard } from "@/components/auctions/AuctionCard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { Gavel, Trophy, History, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Gavel, Trophy, History, Loader2, ChevronLeft, ChevronRight, Search, ListFilter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IAuctionTabType } from "@/types/auction";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/Select";
 
 
 export default function MyBiddingActivityPage() {
     const [activeTab, setActiveTab] = useState<IAuctionTabType>("active");
     const [page, setPage] = useState(1);
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [sortConfig, setSortConfig] = useState("endTime-desc");
+
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 500);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    const [sortBy, sortOrder] = sortConfig.split("-");
 
     const { data: response, isLoading } = useMyBiddingActivity({
         tab: activeTab,
         page,
-        limit: 20
+        limit: 20,
+        search: debouncedSearch || undefined,
+        sortBy,
+        sortOrder: sortOrder as any
     });
 
     const auctions = response?.data || [];
@@ -39,26 +60,63 @@ export default function MyBiddingActivityPage() {
                 statusValue="My Activity"
             />
 
-            {/* Tabs */}
-            <div className="flex p-1 bg-white/5 border border-white/10 rounded-xl w-fit">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => {
-                            setActiveTab(tab.id);
-                            setPage(1);
-                        }}
-                        className={cn(
-                            "flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300",
-                            activeTab === tab.id
-                                ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                : "text-muted-foreground hover:text-white hover:bg-white/5"
-                        )}
-                    >
-                        {tab.icon}
-                        {tab.label}
-                    </button>
-                ))}
+            {/* Tabs and Filters */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                {/* Tabs */}
+                <div className="flex p-1 bg-white/5 border border-white/10 rounded-xl w-fit">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => {
+                                setActiveTab(tab.id);
+                                setPage(1);
+                            }}
+                            className={cn(
+                                "flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300",
+                                activeTab === tab.id
+                                    ? "bg-primary text-white shadow-lg shadow-primary/20"
+                                    : "text-muted-foreground hover:text-white hover:bg-white/5"
+                            )}
+                        >
+                            {tab.icon}
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <div className="relative w-full sm:w-64">
+                        <Input
+                            placeholder="Search bids..."
+                            value={search}
+                            onChange={(e) => {
+                                setSearch(e.target.value);
+                                setPage(1);
+                            }}
+                            className="h-10 bg-white/5 border-white/10 pl-10"
+                            icon={<Search className="w-4 h-4 text-gray-500" />}
+                        />
+                    </div>
+
+                    <Select value={sortConfig} onValueChange={(val) => {
+                        if (val) setSortConfig(val);
+                        setPage(1);
+                    }}>
+                        <SelectTrigger className="h-10 w-full sm:w-44 bg-white/5 border-white/10 text-gray-300">
+                            <div className="flex items-center gap-2">
+                                <ListFilter className="w-4 h-4 text-gray-500" />
+                                <SelectValue placeholder="Sort by" />
+                            </div>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="endTime-desc">Ending Soonest</SelectItem>
+                            <SelectItem value="endTime-asc">Ending Latest</SelectItem>
+                            <SelectItem value="highestBid-desc">Price: High to Low</SelectItem>
+                            <SelectItem value="highestBid-asc">Price: Low to High</SelectItem>
+                            <SelectItem value="createdAt-desc">Newest First</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
 
             {/* Content */}

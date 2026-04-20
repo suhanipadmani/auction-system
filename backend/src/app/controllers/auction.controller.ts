@@ -60,13 +60,16 @@ export const finalizeAuction = async (req: Request, res: Response) => {
 };
 
 export const getMyActivity = async (req: Request, res: Response) => {
-  const { page, limit, tab } = req.query;
+  const { page, limit, tab, search, sortBy, sortOrder } = req.query;
   const result = await AuctionService.getMyBiddingActivity(req.user!.id, {
     page: Number(page) || 1,
     limit: Number(limit) || 20,
-    tab: tab as string
+    tab: tab as string,
+    search: search as string,
+    sortBy: sortBy as string,
+    sortOrder: sortOrder as any
   });
-  sendSuccess(res, "Bidding activity retrieved", result, 200, getPagingMeta(result.total, result.page, 20)); // limit fixed to 20 or as per result
+  sendSuccess(res, "Bidding activity retrieved", result, 200, getPagingMeta(result.total, result.page, Number(limit) || 20));
 };
 
 export const getSellerStats = async (req: Request, res: Response) => {

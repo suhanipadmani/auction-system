@@ -238,6 +238,9 @@ export class BidService {
       bid.status = BID_STATUSES.CANCELLED as any;
       await bid.save({ session });
 
+      // Always decrement bid count when a bid is removed
+      auction.bidCount = Math.max(0, (auction.bidCount || 0) - 1);
+
       if (wasHighest) {
         await walletService.unlockFunds(bid.bidderId.toString(), bid.amount, session);
         
@@ -255,8 +258,9 @@ export class BidService {
           auction.highestBid = 0;
           auction.highestBidderId = null;
         }
-        await auction.save({ session });
       }
+      
+      await auction.save({ session });
 
       if (session) await session.commitTransaction();
 

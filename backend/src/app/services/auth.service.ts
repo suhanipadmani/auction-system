@@ -64,11 +64,7 @@ export const forgotPassword = async (email: string) => {
   await user.save();
 
   // MOCK: Log to console instead of sending real email
-  console.log("-----------------------------------------");
-  console.log(`[AUTH-SERVICE] Password Reset Token for ${email}:`);
-  console.log(`Token: ${resetToken}`);
-  console.log(`Reset URL: http://localhost:3000/reset-password?token=${resetToken}`);
-  console.log("-----------------------------------------");
+  console.log(`[AUTH-SERVICE] Password Reset: http://localhost:3000/reset-password?token=${resetToken}`);
 
   return { message: "Reset token generated and logged to console" };
 };

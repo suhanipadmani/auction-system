@@ -92,7 +92,14 @@ export const useFinalizeAuction = () => {
   });
 };
 
-export const useMyBiddingActivity = (params: { page?: number; limit?: number; tab?: string } = {}) => {
+export const useMyBiddingActivity = (params: { 
+  page?: number; 
+  limit?: number; 
+  tab?: string;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: string;
+} = {}) => {
   return useQuery({
     queryKey: [...AUCTION_KEYS.all, 'my-activity', params],
     queryFn: () => auctionApi.getMyBiddingActivity(params),

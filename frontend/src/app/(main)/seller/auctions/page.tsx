@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // External
-import { Loader2, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, Plus, ChevronLeft, ChevronRight, Search, ListFilter } from "lucide-react";
 
 // State (Auth Store)
 import { useAuthStore } from "@/store/auth.store";
@@ -22,17 +22,38 @@ import { cn } from "@/lib/utils";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { AuctionCard } from "@/components/auctions/AuctionCard";
 import { Button, buttonVariants } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/Select";
 
 export default function SellerAuctionsPage() {
   const user = useAuthStore((state) => state.user);
   const [status, setStatus] = useState<AuctionStatus | "all">("all");
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [sortConfig, setSortConfig] = useState("createdAt-desc");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 500);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const [sortBy, sortOrder] = sortConfig.split("-");
 
   const { data: response, isLoading } = useAuctions({ 
     sellerId: user?._id,
     status: status === "all" ? undefined : status,
     page,
-    limit: 12
+    limit: 12,
+    search: debouncedSearch || undefined,
+    sortBy,
+    sortOrder: sortOrder as "asc" | "desc"
   });
 
   const auctions = response?.data || [];
@@ -67,22 +88,59 @@ export default function SellerAuctionsPage() {
         </Link>
       </div>
 
-      {/* Tabs Filter */}
-      <div className="flex items-center gap-2 p-1 bg-white/5 border border-white/10 rounded-xl w-fit">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => handleStatusChange(tab.id as any)}
-            className={cn(
-              "px-4 py-2 text-xs font-medium rounded-lg transition-all",
-              status === tab.id
-                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                : "text-gray-400 hover:text-white hover:bg-white/5"
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* Filters Bar */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        {/* Tabs Filter */}
+        <div className="flex items-center gap-2 p-1 bg-white/5 border border-white/10 rounded-xl w-fit">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => handleStatusChange(tab.id as any)}
+              className={cn(
+                "px-4 py-2 text-xs font-medium rounded-lg transition-all",
+                status === tab.id
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+                  : "text-gray-400 hover:text-white hover:bg-white/5"
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <div className="relative w-full sm:w-64">
+             <Input
+               placeholder="Search by title..."
+               value={search}
+               onChange={(e) => {
+                 setSearch(e.target.value);
+                 setPage(1);
+               } }
+               className="h-10 bg-white/5 border-white/10 pl-10"
+               icon={<Search className="w-4 h-4 text-gray-500" />}
+             />
+          </div>
+
+          <Select value={sortConfig} onValueChange={(val) => {
+            if (val) setSortConfig(val);
+            setPage(1);
+          }}>
+            <SelectTrigger className="h-10 w-full sm:w-44 bg-white/5 border-white/10 text-gray-300">
+              <div className="flex items-center gap-2">
+                <ListFilter className="w-4 h-4 text-gray-500" />
+                <SelectValue placeholder="Sort by" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="createdAt-desc">Newest First</SelectItem>
+              <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+              <SelectItem value="basePrice-desc">Price: High to Low</SelectItem>
+              <SelectItem value="basePrice-asc">Price: Low to High</SelectItem>
+              <SelectItem value="highestBid-desc">Highest Bid: High to Low</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {isLoading ? (

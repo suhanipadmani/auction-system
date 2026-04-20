@@ -8,7 +8,6 @@ import { SocketService } from "./socket.service";
 import { NotificationService } from "./notification.service";
 import { NOTIFICATION_TYPES } from "../enums";
 import { ICreateAuctionData, IUpdateAuctionData, IAuctionFilters, IPaginationOptions } from "../types/auction";
-import { UserModel } from "../models/user";
 import { AuditLogService } from "./auditLog.service";
 import { AUDIT_ACTIONS } from "../enums";
 import { maskName } from "../utils/masking";
@@ -482,14 +481,32 @@ export class AuctionService {
     return auction;
   }
 
-  static async getMyBiddingActivity(userId: string, options: { page?: number; limit?: number; tab?: string } = {}) {
-    const { page = 1, limit = 20, tab = "all" } = options;
+  static async getMyBiddingActivity(userId: string, options: { 
+    page?: number; 
+    limit?: number; 
+    tab?: string;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+  } = {}) {
+    const { page = 1, limit = 20, tab = "all", search, sortBy = "endTime", sortOrder = "desc" } = options;
     const skip = (page - 1) * limit;
 
-    // Aggregation to get stats and categorized auctions in one go (or more efficiently)
-    // For now, keeping the logic but cleaning it up
     const userAuctionIds = await BidModel.distinct("auctionId", { bidderId: userId });
-    const allAuctions = await AuctionModel.find({ _id: { $in: userAuctionIds } }).sort({ endTime: -1 });
+    
+    // Initial query to get auctions user has bid on
+    const query: any = { _id: { $in: userAuctionIds } };
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const sort: any = {};
+    sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    const allAuctions = await AuctionModel.find(query).sort(sort);
 
     const stats = {
       activeWinningCount: 0,
@@ -565,5 +582,26 @@ export class AuctionService {
     });
 
     return { data: formattedBids, total };
+  }
+
+  static async syncAllBidCounts() {
+    const auctions = await AuctionModel.find({});
+    
+    let updatedCount = 0;
+    for (const auction of auctions) {
+      const count = await BidModel.countDocuments({ auctionId: auction._id });
+      if (auction.bidCount !== count) {
+        auction.bidCount = count;
+        await auction.save();
+        updatedCount++;
+      }
+    }
+    
+    return { total: auctions.length, updated: updatedCount };
+  }
+
+  static async syncAuctionBidCount(auctionId: string) {
+    const count = await BidModel.countDocuments({ auctionId });
+    await AuctionModel.findByIdAndUpdate(auctionId, { $set: { bidCount: count } });
   }
 }

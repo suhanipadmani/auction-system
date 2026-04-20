@@ -8,6 +8,9 @@ export const auctionApi = {
     if (filters.sellerId) params.append("sellerId", filters.sellerId);
     if (filters.page) params.append("page", filters.page.toString());
     if (filters.limit) params.append("limit", filters.limit.toString());
+    if (filters.search) params.append("search", filters.search);
+    if (filters.sortBy) params.append("sortBy", filters.sortBy);
+    if (filters.sortOrder) params.append("sortOrder", filters.sortOrder);
     
     const response = await axiosClient.get(`/auctions?${params.toString()}`);
     return { data: response.data.data, ...response.data.meta };
@@ -48,7 +51,14 @@ export const auctionApi = {
     return response.data;
   },
 
-  getMyBiddingActivity: async (params?: { page?: number; limit?: number; tab?: string }): Promise<{ 
+  getMyBiddingActivity: async (params?: { 
+    page?: number; 
+    limit?: number; 
+    tab?: string;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  }): Promise<{ 
     success: boolean; 
     data: IAuction[]; 
     total?: number;
