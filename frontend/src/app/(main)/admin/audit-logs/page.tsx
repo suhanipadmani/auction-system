@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { 
-  History, Search, Filter, Calendar, 
+  History, Filter, Calendar, 
   Download, ChevronLeft, ChevronRight,
   User, Activity, Wallet, Gavel, X, Check
 } from "lucide-react";
@@ -33,7 +33,6 @@ export default function AuditLogsPage() {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({
     action: "all",
-    search: "",
     startDate: "",
     endDate: "",
   });
@@ -221,23 +220,8 @@ export default function AuditLogsPage() {
       </DashboardHeader>
 
       {/* Filters Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
         
-        {/* Search */}
-        <div className="space-y-1.5">
-          <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-1">Search</label>
-          <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
-            <input 
-              type="text"
-              placeholder="User, auction, note..."
-              value={filters.search}
-              onChange={(e) => handleFilterChange("search", e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-black/20 border border-white/10 rounded-xl text-sm text-gray-300 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all"
-            />
-          </div>
-        </div>
-
         {/* Action Type */}
         <div className="space-y-1.5">
           <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-1">Event Type</label>
