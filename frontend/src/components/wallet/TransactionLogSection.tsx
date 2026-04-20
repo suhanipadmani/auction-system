@@ -39,7 +39,7 @@ export function TransactionLogSection() {
     startDate: txStartDate,
     endDate: txEndDate,
     page,
-    limit: 20
+    limit: 10
   });
 
   const totalPages = (allTransactionsData as any)?.totalPages || 1;
