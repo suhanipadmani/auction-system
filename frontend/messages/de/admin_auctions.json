@@ -1,0 +1,50 @@
+{
+  "title": "Auktionsverwaltung",
+  "subtitle": "Genehmigungen prüfen und den globalen Auktionsbestand überwachen.",
+  "tabs": {
+    "pending": "Ausstehende Prüfung",
+    "inventory": "Globaler Bestand"
+  },
+  "searchPlaceholder": "Bestand suchen...",
+  "statusFilter": {
+    "placeholder": "Alle Status",
+    "all": "Alle Status"
+  },
+  "empty": {
+    "pending": "Keine Auktionen zur Prüfung ausstehend",
+    "inventory": "Keine Auktionen im Bestand gefunden"
+  },
+  "pagination": {
+    "showing": "{count} von {total} {type} werden angezeigt",
+    "page": "Seite {current} von {total}",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "pending": "ausstehend",
+    "auctions": "Auktionen"
+  },
+  "modals": {
+    "approveTitle": "Auktion genehmigen",
+    "rejectTitle": "Auktion ablehnen",
+    "confirmAction": "Sind Sie sicher, dass Sie diese Auktion {action} möchten?",
+    "approveEffect": " Dies macht die Auktion sichtbar und ermöglicht Gebote zum geplanten Startzeitpunkt.",
+    "rejectEffect": " Dies wird die Anfrage dauerhaft ablehnen.",
+    "processing": "Wird bearbeitet...",
+    "confirmApproval": "Genehmigung bestätigen",
+    "confirmRejection": "Ablehnung bestätigen",
+    "cancel": "Abbrechen",
+    "success": "Auktion erfolgreich {action}"
+  },
+  "table": {
+    "item": "Auktionsartikel",
+    "seller": "Verkäufer",
+    "startingPrice": "Grundpreis",
+    "status": "Status",
+    "actions": "Aktionen",
+    "startTime": "Geplanter Start",
+    "endTime": "Endzeit",
+    "currentBid": "Aktuelles Gebot",
+    "dateCreated": "Erstellungsdatum",
+    "details": "Details",
+    "action": "Aktion"
+  }
+}

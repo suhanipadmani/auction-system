@@ -1,0 +1,216 @@
+{
+  "activeListings": "Active Listings",
+  "placeBid": "Place Bid",
+  "currentBid": "Current Bid",
+  "highestBid": "Highest Bid",
+  "startingBid": "Starting Bid",
+  "endsIn": "Ends in",
+  "bidHistory": "Bid History",
+  "noBids": "No bids yet",
+  "auctionDetails": "Auction Details",
+  "bidSuccess": "Bid placed successfully!",
+  "outbid": "You have been outbid! New highest bid: {amount}",
+  "categories": {
+    "electronics": "Electronics",
+    "art": "Art",
+    "vehicles": "Vehicles",
+    "realestate": "Real Estate"
+  },
+  "card": {
+    "viewDetails": "View Details",
+    "bids": "Bids",
+    "currentBid": "Current Bid",
+    "basePrice": "Base Price",
+    "endingIn": "Ending In",
+    "starts": "Starts",
+    "cancelTitle": "Cancel Auction",
+    "back": "Back",
+    "confirmCancel": "Confirm Cancel",
+    "areYouSure": "Are you sure?",
+    "cancelWarning": "This action will permanently cancel the auction for",
+    "ended": "Ended",
+    "live": "LIVE",
+    "userStatus": {
+      "winning": "Winning",
+      "outbid": "Outbid"
+    }
+  },
+  "create": {
+    "title": "Create New Auction",
+    "subtitle": "Fill in the details to launch your auction.",
+    "backToDashboard": "Back to Dashboard",
+    "formTitle": "Auction Details",
+    "itemTitle": "Title",
+    "itemTitlePlaceholder": "e.g. Vintage 1960s Camera",
+    "description": "Description",
+    "descriptionPlaceholder": "Tell bidders about your item...",
+    "basePrice": "Base Price ({symbol})",
+    "minIncrement": "Min Increment ({symbol})",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "submit": "Launch Auction Listing",
+    "submitting": "Creating...",
+    "success": "Auction created successfully and is pending approval!"
+  },
+  "bidding": {
+    "budgetActive": "Budget Active: {name}",
+    "left": "Left",
+    "used": "Used",
+    "exposureImpact": "Exposure Impact",
+    "highestBidder": "You are the highest bidder",
+    "participatePrompt": "Want to participate in this auction?",
+    "registrationRequired": "Registration is required to place bids",
+    "signInToBid": "Sign in to Bid",
+    "assignToGoal": "Assign to Goal",
+    "noGoalSelected": "No Goal Selected",
+    "goalTrackingDesc": "Assigning to a goal helps you stay within your budget across multiple auctions.",
+    "enableAutoBid": "Enable Auto-Bid",
+    "activeAutoBid": "Active Auto-Bid",
+    "maxLimit": "Max Limit",
+    "setupAutoBid": "Setup Auto-Bid",
+    "settingUp": "Setting up...",
+    "placeBid": "Place Bid",
+    "processing": "Processing...",
+    "limitExceeded": "Limit Exceeded",
+    "bidExceedsBudget": "Bid exceeds goal budget: {amount} left",
+    "currentHighestBid": "Current Highest Bid",
+    "timer": {
+      "ended": "Auction Ended",
+      "cancelled": "Auction Cancelled",
+      "startingSoon": "Starting Soon",
+      "inactive": "Auction Inactive",
+      "days": "{count}d",
+      "endsIn": "Ends in {time}"
+    },
+    "errors": {
+      "minBid": "Minimum bid required is {amount}",
+      "autoBidFailed": "Failed to setup auto-bid"
+    }
+  },
+  "management": {
+    "title": "Auction Management",
+    "subtitle": "Manage your listed items and track their status.",
+    "createListing": "Create New Listing",
+    "tabs": {
+      "all": "All Listings",
+      "active": "Live",
+      "pending": "Pending",
+      "past": "History"
+    },
+    "searchPlaceholder": "Search by title...",
+    "sortBy": "Sort by",
+    "sort": {
+      "newest": "Newest First",
+      "oldest": "Oldest First",
+      "priceHigh": "Price: High to Low",
+      "priceLow": "Price: Low to High",
+      "bidHigh": "Highest Bid: High to Low"
+    },
+    "empty": "You haven't created any auctions yet.",
+    "emptyStatus": "No {status} auctions found.",
+    "startFirstListing": "Start your first listing",
+    "pagination": {
+      "info": "Showing {count} of {total} auctions",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "page": "Page {current} of {total}"
+  },
+  "discovery": {
+    "title": "Explore Marketplace",
+    "subtitle": "Discover live bidding wars and bookmark upcoming gems",
+    "marketplace": "Marketplace",
+    "tabs": {
+      "live": "Live Now",
+      "upcoming": "Upcoming"
+    },
+    "searchPlaceholder": "Search auctions...",
+    "scanning": "Scanning the marketplace...",
+    "emptyTitle": "No auctions found",
+    "emptySearch": "We couldn't find any {status} auctions matching \"{query}\".",
+    "emptyLive": "There are currently no live auctions. Check back soon for new opportunities!",
+    "emptyUpcoming": "No upcoming auctions scheduled at the moment. Sellers are preparing new listings."
+  },
+  "goals": {
+    "title": "Manage Your Bidding Goals",
+    "subtitle": "Set maximum spending limits for different categories to ensure you stay within your strategy and never overspend on impulse.",
+    "strategyLabel": "Smart Bidding Strategy",
+    "activeGoals": "Active Goals",
+    "exposure": "Exposure",
+    "available": "Available",
+    "createGoal": "Create your goal",
+    "modal": {
+      "title": "Create New Bidding Goal",
+      "nameLabel": "Goal Name",
+      "namePlaceholder": "e.g., Luxury Watches, Electronics...",
+      "budgetLabel": "Maximum Budget",
+      "budgetPlaceholder": "Total spending limit",
+      "submit": "Create Goal"
+    }
+  },
+  "details": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "cancelling": "Cancelling...",
+    "finalizeSale": "Finalize Sale",
+    "finalizing": "Finalizing...",
+    "listedBy": "Listed by",
+    "description": "Description",
+    "timeline": "Timeline",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "rules": "Rules",
+    "basePrice": "Base Price",
+    "minIncrement": "Min. Increment",
+    "topBidder": "Top Bidder",
+    "noBidsPlaced": "No bids placed yet",
+    "cancelConfirm": "Are you sure you want to cancel this auction? This action cannot be undone.",
+    "cancelSuccess": "Auction cancelled successfully",
+    "finalizeConfirm": "Are you sure you want to finalize this sale? This will transfer funds from the winner to your wallet.",
+    "finalizeSuccess": "Sale finalized successfully!",
+    "bidHistory": "Bid History",
+    "viewAll": "View All",
+    "completeBidHistory": "Complete Bid History",
+    "you": "YOU",
+    "currentHigh": "CURRENT HIGH",
+    "noBidsYet": "No bids yet",
+    "beTheFirst": "Be the first to place a bid on this item!",
+    "admin": {
+      "approveTitle": "Approve Auction",
+      "rejectTitle": "Reject Auction",
+      "confirmApproval": "Confirm Approval",
+      "confirmRejection": "Confirm Rejection",
+      "processing": "Processing...",
+      "notice": "Are you sure you want to {action} this auction?",
+      "approveEffect": " This will make the auction visible and allow bidding at the scheduled start time.",
+      "rejectEffect": " This will permanently reject the request.",
+      "success": "Auction {action}ed successfully"
+    },
+    "errors": {
+      "notFound": "Auction not found",
+      "goBack": "Go Back",
+      "cancelFailed": "Failed to cancel auction",
+      "finalizeFailed": "Failed to finalize sale",
+      "actionFailed": "Action failed"
+    },
+    "live": "LIVE NOW"
+  },
+  "activity": {
+    "title": "Bidding Activity",
+    "subtitle": "Track your participation and auction results",
+    "status": "My Activity",
+    "tabs": {
+      "active": "Live Bids",
+      "won": "Won",
+      "past": "History"
+    },
+    "searchPlaceholder": "Search bids...",
+    "loading": "Loading your activity...",
+    "empty": {
+      "title": "No auctions found",
+      "active": "You haven't placed any bids on live auctions yet.",
+      "won": "You haven't won any auctions yet. Keep bidding!",
+      "past": "No past auction activity found."
+    }
+  }
+}

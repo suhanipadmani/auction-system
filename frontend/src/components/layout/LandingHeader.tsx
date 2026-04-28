@@ -1,12 +1,15 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Hammer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import { useTranslations } from "next-intl";
 
 export function LandingHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const t = useTranslations("dashboard.header");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,23 +37,24 @@ export function LandingHeader() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-          <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
-          <Link href="#how-it-works" className="hover:text-primary transition-colors">How it Works</Link>
-          <Link href="#auctions" className="hover:text-primary transition-colors">Live Auctions</Link>
+          <Link href="#features" className="hover:text-primary transition-colors">{t('features')}</Link>
+          <Link href="#how-it-works" className="hover:text-primary transition-colors">{t('howItWorks')}</Link>
+          <Link href="/auctions" className="hover:text-primary transition-colors">{t('liveAuctions')}</Link>
         </nav>
 
         <div className="flex items-center gap-4">
+          <LanguageSwitcher />
           <Link 
             href="/login" 
-            className="text-sm font-medium hover:text-primary transition-colors px-4 py-2"
+            className="text-sm font-medium hover:text-primary transition-colors px-4 py-2 whitespace-nowrap"
           >
-            Log in
+            {t('login')}
           </Link>
           <Link 
             href="/register" 
-            className="bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-medium hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
+            className="bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-medium hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 whitespace-nowrap"
           >
-            Get Started
+            {t('getStarted')}
           </Link>
         </div>
       </div>

@@ -1,0 +1,136 @@
+{
+  "title": "Auction System",
+  "loading": "Loading...",
+  "save": "Save",
+  "cancel": "Cancel",
+  "actions": "Actions",
+  "language": "Language",
+  "logout": "Logout",
+  "notifications": "Notifications",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  "search": "Search...",
+  "home": "Home",
+  "accountSettings": "Account Settings",
+  "profile": "Profile",
+  "sidebar": {
+    "auctionsystem": "Auction System",
+    "dashboard": "Dashboard",
+    "marketplace": "Marketplace",
+    "mywallet": "My Wallet",
+    "walletcontrol": "Wallet Control",
+    "payoutrequests": "Payout Requests",
+    "auctionmanagement": "Auction Management",
+    "usermanagement": "User Management",
+    "biddinghistory": "Bidding History",
+    "myauctions": "My Auctions",
+    "payoutaccount": "Payout Account",
+    "auditlogs": "Audit Logs",
+    "portal": "{role} Portal",
+    "signOut": "Sign Out"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome,",
+    "subtitle": "Your Dashboard & Portfolio",
+    "status": "Status",
+    "active": "Active",
+    "quickActions": "Quick Actions",
+    "toolsAndOperations": "Tools & Operations",
+    "user": {
+      "subtitle": "Your Bidding Dashboard & Portfolio",
+      "statusValue": "Active Bidder",
+      "insights": {
+        "title": "Bidding Insights",
+        "description": "Detailed performance metrics for your bidding activity.",
+        "availableBalance": "Available Balance",
+        "availableBalanceSubtitle": "ready for new bids",
+        "activeBids": "Active Bids",
+        "activeBidsSubtitle": "current ongoing bids",
+        "auctionsWon": "Auctions Won",
+        "auctionsWonSubtitle": "successfully acquired items",
+        "totalSpent": "Total Spent",
+        "totalSpentSubtitle": "across all won auctions",
+        "winRate": "Win Rate",
+        "winRateSubtitle": "{won} won vs {lost} lost",
+        "lossCount": "Loss Count",
+        "lossCountSubtitle": "auctions ended without winning"
+      },
+      "tools": {
+        "description": "Manage your bidding goals, fund your wallet, and explore auctions.",
+        "goalsTitle": "Bidding Goals",
+        "goalsDesc": "Set budgets and track exposure",
+        "marketplaceTitle": "Marketplace",
+        "marketplaceDesc": "View live and upcoming items",
+        "historyTitle": "My History",
+        "historyDesc": "View won and past auctions",
+        "fundWalletTitle": "Fund Wallet",
+        "fundWalletDesc": "Add balance to place bids"
+      }
+    },
+    "admin": {
+      "subtitle": "Platform Management & System Overview",
+      "role": "Role",
+      "statusValue": "System Administrator",
+      "analytics": {
+        "title": "Platform Analytics",
+        "description": "System-wide performance and financial overview.",
+        "totalUsers": "Total Users",
+        "totalUsersSubtitle": "registered on platform",
+        "activeUsers": "Active Users",
+        "activeUsersSubtitle": "users with active status",
+        "totalAuctions": "Total Auctions",
+        "totalAuctionsSubtitle": "all time listings",
+        "totalRevenue": "Total Revenue",
+        "totalRevenueSubtitle": "gross transaction volume"
+      },
+      "tools": {
+        "description": "Manage platform resources and user accounts.",
+        "walletControlTitle": "Wallet Control",
+        "walletControlDesc": "Process deposits and manual balance adjustments",
+        "auctionManagementTitle": "Auction Management",
+        "auctionManagementDesc": "Review and approve pending auction listings"
+      }
+    },
+    "seller": {
+      "studio": "Seller Studio",
+      "subtitle": "Manage your listings and track your sales performance.",
+      "statusValue": "Verified Seller",
+      "performance": {
+        "title": "Seller Performance",
+        "description": "Insights into your auction success and market value.",
+        "activeListings": "Active Listings",
+        "activeListingsSubtitle": "currently live for bidding",
+        "completedSales": "Completed Sales",
+        "completedSalesSubtitle": "successfully ended auctions",
+        "successRate": "Success Rate",
+        "successRateSubtitle": "Auctions sold vs listed",
+        "avgHighBid": "Average High Bid",
+        "avgHighBidSubtitle": "per auction with bids",
+        "highestBidEver": "Highest Bid Ever",
+        "highestBidEverSubtitle": "your personal record",
+        "totalProceeds": "Total Proceeds",
+        "totalProceedsSubtitle": "lifetime earnings"
+      },
+      "tools": {
+        "description": "Create auctions, manage listings, and view your records.",
+        "listNewItemTitle": "List New Item",
+        "listNewItemDesc": "Create a new auction listing for bidders",
+        "myAuctionsTitle": "My Auctions",
+        "myAuctionsDesc": "Manage your active and pending listings"
+      }
+    }
+  },
+  "pagination": {
+    "showing": "Showing {count} of {total} {type}",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {current} of {total}",
+    "items": "items"
+  },
+  "errors": {
+
+    "unknown": "An unknown error occurred",
+    "required": "This field is required"
+  }
+}

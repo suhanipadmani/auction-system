@@ -1,0 +1,55 @@
+{
+  "title": "Audit Logs",
+  "subtitle": "System-wide activity and transaction history",
+  "statusLabel": "Real-time",
+  "statusValue": "Enabled",
+  "exportCsv": "Export CSV",
+  "filters": {
+    "eventType": "Event Type",
+    "fromDate": "From Date",
+    "toDate": "To Date",
+    "allEvents": "All Events",
+    "bidPlacement": "Bid Placement",
+    "auctionCreation": "Auction Creation",
+    "walletChanges": "Wallet Changes"
+  },
+  "table": {
+    "timestamp": "Timestamp",
+    "action": "Action",
+    "user": "User",
+    "details": "Details / Metadata",
+    "noLogs": "No audit logs found matching your criteria."
+  },
+  "pagination": {
+    "page": "Page {current} of {total}"
+  },
+  "actions": {
+    "BID_PLACED": "Bid Placed",
+    "BID_REMOVED": "Bid Removed",
+    "AUCTION_CREATED": "Auction Created",
+    "AUCTION_UPDATED": "Auction Updated",
+    "AUCTION_CANCELLED": "Auction Cancelled",
+    "WALLET_UPDATED": "Wallet Change",
+    "DEPOSIT_REQUESTED": "Deposit Requested",
+    "DEPOSIT_APPROVED": "Deposit Approved",
+    "DEPOSIT_REJECTED": "Deposit Rejected"
+  },
+  "metadata": {
+    "fundsLocked": "Funds Locked: {amount}",
+    "fundsUnlocked": "Funds Unlocked: {amount}",
+    "auctionPayment": "Auction Payment: {amount}",
+    "auctionReceipt": "Auction Sale Receipt: {amount}",
+    "depositApproved": "Deposit Approved: {amount}",
+    "payoutApproved": "Payout Approved: {amount}",
+    "payoutRejected": "Payout Rejected: {amount}",
+    "manualAdjustment": "Manual {type}: {amount}",
+    "walletFrozen": "WALLET FROZEN",
+    "walletUnfrozen": "WALLET UNFROZEN",
+    "auction": "Auction: {title}",
+    "bidAmount": "Bid Amount: {amount}",
+    "reason": "Reason: {reason}",
+    "note": "Note: {note}",
+    "newBalance": "New Balance: {amount}",
+    "remainingLocked": "Remaining Locked: {amount}"
+  }
+}

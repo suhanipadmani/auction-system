@@ -1,0 +1,29 @@
+{
+  "title": "Payout Management",
+  "subtitle": "Review and process withdrawal requests from bidders and sellers.",
+  "all": "All",
+  "pending": "Pending",
+  "approved": "Approved",
+  "rejected": "Rejected",
+  "table": {
+    "user": "User",
+    "amount": "Amount",
+    "requestedDate": "Requested Date",
+    "status": "Status",
+    "actions": "Actions",
+    "processed": "Processed: {date}",
+    "noRequests": "No payout requests found."
+  },
+  "modals": {
+    "addNote": "Adding a note (optional):",
+    "rejectReason": "Reason for rejection (mandatory):",
+    "rejectionRequired": "Rejection note is required."
+  },
+  "notice": {
+    "title": "Administrative Notice",
+    "content": "Approving a payout will permanently deduct the funds from the user's locked balance. Ensure the physical or external money transfer is complete before marking as Approved. Rejections will automatically release the locked funds back to the user's available balance."
+  },
+  "pagination": {
+    "pageInfo": "Showing page {current} of {total}"
+  }
+}

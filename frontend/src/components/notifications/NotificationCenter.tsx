@@ -27,9 +27,9 @@ export const NotificationCenter = () => {
   // Listen for real-time notification events to invalidate query
   useEffect(() => {
     const handleNotification = (data: any) => {
-        // Invalidate the notifications query to fetch the latest
-        queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.all });
-        // Optional: Play a sound or show a toast
+      // Invalidate the notifications query to fetch the latest
+      queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.all });
+      // Optional: Play a sound or show a toast
     };
 
     socket.on("notification", handleNotification);
@@ -88,7 +88,7 @@ export const NotificationCenter = () => {
               ) : notifications.length === 0 ? (
                 <div className="p-10 text-center space-y-2">
                   <div className="mx-auto w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                     <Bell className="w-6 h-6 text-zinc-300 dark:text-zinc-600" />
+                    <Bell className="w-6 h-6 text-zinc-300 dark:text-zinc-600" />
                   </div>
                   <p className="text-zinc-500 text-sm font-medium">No notifications yet</p>
                 </div>
@@ -121,9 +121,9 @@ export const NotificationCenter = () => {
 
             {notifications.length > 0 && (
               <div className="p-3 border-t border-zinc-100 dark:border-zinc-800 text-center bg-zinc-50/50 dark:bg-zinc-800/50">
-                 <button className="text-xs font-bold text-zinc-500 hover:text-indigo-600 transition-colors">
-                    View all activity
-                 </button>
+                <button className="text-xs font-bold text-zinc-500 hover:text-indigo-600 transition-colors">
+                  View all activity
+                </button>
               </div>
             )}
           </div>

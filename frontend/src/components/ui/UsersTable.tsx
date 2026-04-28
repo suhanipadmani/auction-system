@@ -22,19 +22,24 @@ import { Badge } from "./Badge";
 import { Modal } from "./Modal";
 import { IUsersTableProps, IConfirmModalProps } from "@/types/components";
 import { IUser } from "@/types/auth";
+import { USER_ACTIONS } from "@/enums/user.enum";
+import { useTranslations } from "next-intl";
+import { formatDate } from "@/lib/utils";
+
 
 
 function ConfirmModal({ user, action, onConfirm, onCancel, isLoading }: IConfirmModalProps) {
+  const t = useTranslations("admin_users.modals");
   const isDelete = action === "delete";
   const isDeactivate = action === "deactivate";
   const isRestore = action === "restore";
   const isActivate = action === "activate";
 
   let title = "Action";
-  if (isDelete) title = "Delete User";
-  if (isRestore) title = "Restore User";
-  if (isDeactivate) title = "Deactivate User";
-  if (isActivate) title = "Activate User";
+  if (isDelete) title = t('deleteTitle');
+  if (isRestore) title = t('restoreTitle');
+  if (isDeactivate) title = t('deactivateTitle');
+  if (isActivate) title = t('activateTitle');
 
   return (
     <Modal
@@ -44,7 +49,7 @@ function ConfirmModal({ user, action, onConfirm, onCancel, isLoading }: IConfirm
       footer={
         <>
           <Button variant="ghost" size="sm" onClick={onCancel} disabled={isLoading}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             variant={isDelete || isDeactivate ? "destructive" : "default"}
@@ -52,10 +57,10 @@ function ConfirmModal({ user, action, onConfirm, onCancel, isLoading }: IConfirm
             onClick={onConfirm}
             isLoading={isLoading}
           >
-            {isDelete && <><UserX className="w-3.5 h-3.5 mr-2" /> Yes, Delete</>}
-            {isRestore && <><RotateCcw className="w-3.5 h-3.5 mr-2" /> Yes, Restore</>}
-            {isDeactivate && <><UserMinus className="w-3.5 h-3.5 mr-2" /> Yes, Deactivate</>}
-            {isActivate && <><UserCheck className="w-3.5 h-3.5 mr-2" /> Yes, Activate</>}
+            {isDelete && <><UserX className="w-3.5 h-3.5 mr-2" /> {t('yesDelete')}</>}
+            {isRestore && <><RotateCcw className="w-3.5 h-3.5 mr-2" /> {t('yesRestore')}</>}
+            {isDeactivate && <><UserMinus className="w-3.5 h-3.5 mr-2" /> {t('yesDeactivate')}</>}
+            {isActivate && <><UserCheck className="w-3.5 h-3.5 mr-2" /> {t('yesActivate')}</>}
           </Button>
         </>
       }
@@ -75,10 +80,10 @@ function ConfirmModal({ user, action, onConfirm, onCancel, isLoading }: IConfirm
           {/* Description */}
           <div className="text-center space-y-1">
             <p className="text-sm text-muted-foreground">
-              {isDelete && "This user will be hidden from the system. Their data is preserved and can be restored later."}
-              {isDeactivate && "This user will be blocked from logging in, but will remain visible in the list."}
-              {isRestore && "This user will be restored and can log in again."}
-              {isActivate && "This user's login access will be restored."}
+              {isDelete && t('deleteDesc')}
+              {isDeactivate && t('deactivateDesc')}
+              {isRestore && t('restoreDesc')}
+              {isActivate && t('activateDesc')}
             </p>
           </div>
 
@@ -117,9 +122,10 @@ export function UsersTable({
   isDeleting,
   isRestoring,
 }: IUsersTableProps) {
+  const t = useTranslations("admin_users.table");
   const [pendingAction, setPendingAction] = useState<{
     user: IUser;
-    action: "delete" | "restore" | "deactivate" | "activate";
+    action: USER_ACTIONS;
   } | null>(null);
 
   const handleConfirm = () => {
@@ -127,14 +133,23 @@ export function UsersTable({
     const { id } = { id: pendingAction.user._id };
     
     switch (pendingAction.action) {
-      case "delete": deleteUser(id); break;
-      case "restore": restoreUser(id); break;
-      case "deactivate": deactivateUser(id); break;
-      case "activate": activateUser(id); break;
+      case USER_ACTIONS.DELETE: deleteUser(id); break;
+      case USER_ACTIONS.RESTORE: restoreUser(id); break;
+      case USER_ACTIONS.DEACTIVATE: deactivateUser(id); break;
+      case USER_ACTIONS.ACTIVATE: activateUser(id); break;
     }
     
     setPendingAction(null);
   };
+
+  const columns = [
+    { key: "userInfo", label: t('userInfo'), className: "px-4 sm:px-6 py-5" },
+    { key: "role", label: t('role'), className: "px-4 sm:px-6 py-5" },
+    { key: "status", label: t('status'), className: "px-4 sm:px-6 py-5 hidden min-[450px]:table-cell" },
+    { key: "joined", label: t('joined'), className: "px-6 py-5 hidden md:table-cell" },
+    { key: "actions", label: t('actions'), className: "px-4 sm:px-6 py-5 text-right" },
+  ];
+
 
   return (
     <>
@@ -152,13 +167,14 @@ export function UsersTable({
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent border-none">
-                <TableHead className="px-4 sm:px-6 py-5">User Info</TableHead>
-                <TableHead className="px-4 sm:px-6 py-5">Role</TableHead>
-                <TableHead className="px-4 sm:px-6 py-5 hidden min-[450px]:table-cell">Status</TableHead>
-                <TableHead className="px-6 py-5 hidden md:table-cell">Joined</TableHead>
-                <TableHead className="px-4 sm:px-6 py-5 text-right">Actions</TableHead>
+                {columns.map((col) => (
+                  <TableHead key={col.key} className={col.className}>
+                    {col.label}
+                  </TableHead>
+                ))}
               </TableRow>
             </TableHeader>
+
             <TableBody>
               {users.map((user) => {
                 const isAdmin   = user.role === "admin";
@@ -196,7 +212,7 @@ export function UsersTable({
                       {isAdmin ? (
                         <Badge variant="outline" className="gap-1.5 px-3 py-1.5 bg-primary/10 text-primary border-primary/20 whitespace-nowrap">
                           <ShieldCheck className="w-3.5 h-3.5" />
-                          Admin
+                          {t('roles.admin')}
                         </Badge>
                       ) : (
                         <div className="w-28 sm:w-40">
@@ -206,12 +222,12 @@ export function UsersTable({
                             disabled={isUpdatingRole || isSelf || isDeleted}
                           >
                             <SelectTrigger className="w-full text-xs sm:text-sm h-9 sm:h-10">
-                              <SelectValue placeholder="Select role" />
+                              <SelectValue placeholder={t('selectRole')} />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="bidder">Bidder</SelectItem>
-                              <SelectItem value="seller">Seller</SelectItem>
-                              <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="bidder">{t('roles.bidder')}</SelectItem>
+                              <SelectItem value="seller">{t('roles.seller')}</SelectItem>
+                              <SelectItem value="admin">{t('roles.admin')}</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -223,17 +239,17 @@ export function UsersTable({
                       {isDeleted ? (
                         <Badge variant="outline" className="gap-1.5 bg-red-500/10 text-red-400 border-red-500/20 whitespace-nowrap">
                           <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                          Deleted
+                          {t('statuses.deleted')}
                         </Badge>
                       ) : user.status === "inactive" ? (
                         <Badge variant="outline" className="gap-1.5 bg-amber-500/10 text-amber-400 border-amber-500/20 whitespace-nowrap">
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                          Inactive
+                          {t('statuses.inactive')}
                         </Badge>
                       ) : (
                         <Badge variant="outline" className="gap-1.5 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 whitespace-nowrap">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          Active
+                          {t('statuses.active')}
                         </Badge>
                       )}
                     </TableCell>
@@ -242,24 +258,24 @@ export function UsersTable({
                     <TableCell className="px-6 py-4 hidden md:table-cell">
                       <div className="flex items-center gap-2 text-muted-foreground whitespace-nowrap">
                         <Calendar className="w-4 h-4" />
-                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
+                        {user.createdAt ? formatDate(user.createdAt, "date") : "N/A"}
                       </div>
                     </TableCell>
 
                     {/* Actions */}
                     <TableCell className="px-6 py-4 text-right">
                       {isSelf || isAdmin ? (
-                        <span className="text-xs text-muted-foreground italic">No actions available</span>
+                        <span className="text-xs text-muted-foreground italic">{t('noActions')}</span>
                       ) : isDeleted ? (
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setPendingAction({ user, action: "restore" })}
+                          onClick={() => setPendingAction({ user, action: USER_ACTIONS.RESTORE })}
                           isLoading={isRestoring}
                           className="py-1.5 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/50"
                         >
                           <RotateCcw className="w-3.5 h-3.5 mr-2" />
-                          Restore
+                          {t('restore')}
                         </Button>
                       ) : (
                         <div className="flex items-center justify-end gap-2">
@@ -267,34 +283,34 @@ export function UsersTable({
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => setPendingAction({ user, action: "activate" })}
+                              onClick={() => setPendingAction({ user, action: USER_ACTIONS.ACTIVATE })}
                               isLoading={isActivating}
                               className="py-1.5 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
                             >
                               <UserCheck className="w-3.5 h-3.5 mr-2" />
-                              Activate
+                              {t('activate')}
                             </Button>
                           ) : (
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => setPendingAction({ user, action: "deactivate" })}
+                              onClick={() => setPendingAction({ user, action: USER_ACTIONS.DEACTIVATE })}
                               isLoading={isDeactivating}
                               className="py-1.5 border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
                             >
                               <UserMinus className="w-3.5 h-3.5 mr-2" />
-                              Deactivate
+                              {t('deactivate')}
                             </Button>
                           )}
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => setPendingAction({ user, action: "delete" })}
+                            onClick={() => setPendingAction({ user, action: USER_ACTIONS.DELETE })}
                             isLoading={isDeleting}
                             className="py-1.5"
                           >
                             <UserX className="w-3.5 h-3.5 mr-2" />
-                            Delete
+                            {t('delete')}
                           </Button>
                         </div>
                       )}
@@ -306,7 +322,7 @@ export function UsersTable({
               {users.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                    No users found.
+                    {t('noUsers')}
                   </TableCell>
                 </TableRow>
               )}

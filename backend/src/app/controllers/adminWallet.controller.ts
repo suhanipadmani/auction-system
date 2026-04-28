@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { DEPOSIT_STATUSES, TRANSACTION_TYPES, PAYOUT_STATUSES } from "../enums";
 import * as AdminWalletService from "../services/adminWallet.service";
 import { sendSuccess } from "../utils/apiResponse";
-import { AppError } from "../utils/AppError";
+import { AppError, ErrorMessages } from "../errors";
 import { getPagingMeta } from "../utils/pagination";
 
 const VALID_DEPOSIT_ACTIONS = [DEPOSIT_STATUSES.APPROVED, DEPOSIT_STATUSES.REJECTED] as const;
@@ -21,10 +21,9 @@ export const approveRejectDeposit = async (req: Request, res: Response) => {
   const adminId = req.user!.id;
 
   if (!requestId || !VALID_DEPOSIT_ACTIONS.includes(status)) {
-    throw new AppError(
-      `Invalid request data. Status must be one of: ${VALID_DEPOSIT_ACTIONS.join(", ")}`,
-      400
-    );
+    throw AppError.from(ErrorMessages.CUSTOM_VALIDATION(
+      `Invalid request data. Status must be one of: ${VALID_DEPOSIT_ACTIONS.join(", ")}`
+    ));
   }
 
   const result = await AdminWalletService.processDepositRequest(
@@ -41,10 +40,9 @@ export const adjustBalance = async (req: Request, res: Response) => {
   const adminId = req.user!.id;
 
   if (!userId || !amount || !VALID_ADJUSTMENT_TYPES.includes(type)) {
-    throw new AppError(
-      `Invalid adjustment data. Type must be one of: ${VALID_ADJUSTMENT_TYPES.join(", ")}`,
-      400
-    );
+    throw AppError.from(ErrorMessages.CUSTOM_VALIDATION(
+      `Invalid adjustment data. Type must be one of: ${VALID_ADJUSTMENT_TYPES.join(", ")}`
+    ));
   }
 
   const result = await AdminWalletService.adjustUserBalance(
@@ -62,7 +60,7 @@ export const freezeUnfreezeWallet = async (req: Request, res: Response) => {
   const adminId = req.user!.id;
 
   if (!userId || typeof isFrozen !== "boolean") {
-    throw new AppError("Invalid status data", 400);
+    throw AppError.from(ErrorMessages.CUSTOM_VALIDATION("Invalid status data"));
   }
 
   const result = await AdminWalletService.toggleWalletStatus(userId, isFrozen, adminId);
@@ -102,10 +100,9 @@ export const approveRejectPayout = async (req: Request, res: Response) => {
   const adminId = req.user!.id;
 
   if (!requestId || !VALID_PAYOUT_ACTIONS.includes(status)) {
-    throw new AppError(
-      `Invalid request data. Status must be one of: ${VALID_PAYOUT_ACTIONS.join(", ")}`,
-      400
-    );
+    throw AppError.from(ErrorMessages.CUSTOM_VALIDATION(
+      `Invalid request data. Status must be one of: ${VALID_PAYOUT_ACTIONS.join(", ")}`
+    ));
   }
 
   const result = await AdminWalletService.processPayoutRequest(

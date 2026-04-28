@@ -7,15 +7,16 @@ import {
   CheckCircle2,
   Lock,
   ShieldAlert,
-  IndianRupee
+  Wallet
 } from "lucide-react";
 
 // Hooks
 import { useUsers } from "@/hooks/useUsers";
 import { useUserWallet, useToggleFreeze } from "@/hooks/useWallet";
+import { useCurrency } from "@/hooks/useCurrency";
 
 // Utils
-import { formatCurrency } from "@/lib/utils";
+
 
 // Components
 import { Button } from "@/components/ui/Button";
@@ -29,17 +30,20 @@ import {
   SelectContent,
   SelectItem
 } from "@/components/ui/Select";
+import { TRANSACTION_TYPES } from "@/enums";
 
 // Types
 import { IBalanceAdjustmentSectionProps } from "@/types/components";
+import { useTranslations } from "next-intl";
 
 
 export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanceAdjustmentSectionProps) {
-
+  const t = useTranslations("wallet");
+  const { formatCurrency, convertBack } = useCurrency();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserId, setSelectedUserId] = useState("");
   const [adjustmentAmount, setAdjustmentAmount] = useState("");
-  const [adjustmentType, setAdjustmentType] = useState<"credit" | "debit">("credit");
+  const [adjustmentType, setAdjustmentType] = useState<TRANSACTION_TYPES.CREDIT | TRANSACTION_TYPES.DEBIT>(TRANSACTION_TYPES.CREDIT);
   const [adjustmentNote, setAdjustmentNote] = useState("");
 
   const { data: usersData } = useUsers();
@@ -49,15 +53,17 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
   const selectedUser = usersData?.data?.find((u: any) => u._id === selectedUserId);
   const filteredUsers = usersData?.data?.filter((u: any) =>
     (u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      u.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
     u.role !== "admin"
   ) || [];
 
   const handleReview = () => {
-    if (!selectedUserId || !adjustmentAmount || Number(adjustmentAmount) <= 0) return;
+    const amount = Number(adjustmentAmount);
+    const amountInBase = convertBack(amount);
+
     onReviewClick({
       userId: selectedUserId,
-      amount: Number(adjustmentAmount),
+      amount: amountInBase,
       type: adjustmentType,
       note: adjustmentNote,
       userName: selectedUser?.name || "User"
@@ -70,15 +76,15 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
         <CardHeader className="border-b border-border/40 pb-4 mb-6">
           <CardTitle className="text-xl font-heading flex items-center gap-2">
             <RefreshCcw className="h-5 w-5 text-indigo-400" />
-            Balance Adjustment
+            {t('balanceAdjustment')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Search User</label>
+              <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('searchUser')}</label>
               <Input
-                placeholder="name or email..."
+                placeholder={t('searchPlaceholder')}
                 icon={<Search className="h-4 w-4" />}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -109,18 +115,18 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
             {selectedUserId && (
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between animate-in zoom-in-95 duration-300">
                 <div className="space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Active User</p>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{t('activeUser')}</p>
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-semibold text-white">{selectedUser?.name}</p>
                     {userWalletData?.data?.isFrozen && (
                       <Badge variant="outline" className="bg-rose-500/10 text-rose-400 border-rose-500/20 text-[10px] h-5 px-1.5 animate-pulse">
-                        <Lock className="h-3 w-3 mr-1" /> FROZEN
+                        <Lock className="h-3 w-3 mr-1" /> {t('frozen')}
                       </Badge>
                     )}
                   </div>
                 </div>
                 <div className="text-right space-y-1">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Current Balance</p>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{t('currentBalance')}</p>
                   <p className={`text-sm font-bold ${userWalletData?.data?.isFrozen ? 'text-rose-400' : 'text-emerald-400'}`}>
                     {isUserWalletLoading ? "..." : formatCurrency(userWalletData?.data?.balance || 0)}
                   </p>
@@ -130,7 +136,7 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Type</label>
+                <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('type')}</label>
                 <Select
                   value={adjustmentType}
                   onValueChange={(val: any) => setAdjustmentType(val)}
@@ -139,13 +145,13 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="credit">Credit (Add)</SelectItem>
-                    <SelectItem value="debit">Debit (Remove)</SelectItem>
+                    <SelectItem value="credit">{t('creditAdd')}</SelectItem>
+                    <SelectItem value="debit">{t('debitRemove')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Amount (₹)</label>
+                <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('amount')}</label>
                 <Input
                   type="number"
                   placeholder="0.00"
@@ -157,9 +163,9 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Admin Note</label>
+              <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('adminNote')}</label>
               <Input
-                placeholder="Reason for adjustment..."
+                placeholder={t('notePlaceholder')}
                 className="h-11 bg-background/50"
                 value={adjustmentNote}
                 onChange={(e) => setAdjustmentNote(e.target.value)}
@@ -172,18 +178,18 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
               onClick={handleReview}
               isLoading={isAdjusting}
             >
-              <IndianRupee className="h-4 w-4 mr-2" />
-              {userWalletData?.data?.isFrozen ? "Wallet Locked" : "Review Adjustment"}
+              <Wallet className="h-4 w-4 mr-2" />
+              {userWalletData?.data?.isFrozen ? t('walletLocked') : t('reviewAdjustment')}
             </Button>
           </div>
 
           <div className="pt-8 border-t border-border/40">
             <h3 className="text-sm font-bold uppercase tracking-widest text-rose-400 mb-4 flex items-center gap-2">
-              <ShieldAlert className="h-4 w-4" /> Wallet Security
+              <ShieldAlert className="h-4 w-4" /> {t('walletSecurity')}
             </h3>
             <div className="p-4 rounded-xl bg-rose-400/5 border border-rose-400/20 mb-4">
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Freezing a wallet blocks all deposits and auction participation. Use this only for suspicious activity.
+                {t('securityNotice')}
               </p>
             </div>
             <div className="flex gap-4">
@@ -196,7 +202,7 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
                   isLoading={toggleFreeze.isPending}
                 >
                   <RefreshCcw className="h-4 w-4 mr-2" />
-                  Unfreeze Wallet
+                  {t('unfreezeWallet')}
                 </Button>
               ) : (
                 <Button
@@ -207,7 +213,7 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
                   isLoading={toggleFreeze.isPending}
                 >
                   <Lock className="h-4 w-4 mr-2" />
-                  Freeze Wallet
+                  {t('freezeWallet')}
                 </Button>
               )}
             </div>

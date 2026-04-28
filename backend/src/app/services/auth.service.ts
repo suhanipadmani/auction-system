@@ -4,11 +4,12 @@ import { UserModel } from "../models/user";
 import { IRegisterData, ILoginData, IAuthResponse } from "../types/auth";
 
 import crypto from "crypto";
+import { AppError, ErrorMessages } from "../errors";
 
 export const registerUser = async (data: IRegisterData) => {
   const existingUser = await UserModel.findOne({ email: data.email });
   if (existingUser) {
-    throw new Error("User already exists with this email");
+    throw AppError.from(ErrorMessages.USER_ALREADY_EXISTS);
   }
 
   const newUser = await UserModel.create({
@@ -23,20 +24,20 @@ export const registerUser = async (data: IRegisterData) => {
 export const loginUser = async (data: ILoginData): Promise<IAuthResponse> => {
   const user = await UserModel.findOne({ email: data.email });
   if (!user) {
-    throw new Error("Invalid credentials");
+    throw AppError.from(ErrorMessages.INVALID_CREDENTIALS);
   }
 
   if (user.status === USER_STATUSES.INACTIVE) {
-    throw new Error("Your account has been deactivated. Please contact support.");
+    throw AppError.from(ErrorMessages.ACCOUNT_DEACTIVATED);
   }
 
   if (user.status === USER_STATUSES.DELETED) {
-    throw new Error("This account no longer exists.");
+    throw AppError.from(ErrorMessages.ACCOUNT_DELETED);
   }
 
   const isPasswordValid = await (user as any).comparePassword(data.password);
   if (!isPasswordValid) {
-    throw new Error("Invalid credentials");
+    throw AppError.from(ErrorMessages.INVALID_CREDENTIALS);
   }
 
   const token = generateToken({
@@ -51,7 +52,7 @@ export const loginUser = async (data: ILoginData): Promise<IAuthResponse> => {
 export const forgotPassword = async (email: string) => {
   const user = await UserModel.findOne({ email });
   if (!user) {
-    throw new Error("User with this email does not exist");
+    throw AppError.from(ErrorMessages.USER_NOT_FOUND);
   }
 
   // Generate Reset Token
@@ -78,7 +79,7 @@ export const resetPassword = async (token: string, password: string) => {
   });
 
   if (!user) {
-    throw new Error("Token is invalid or has expired");
+    throw AppError.from(ErrorMessages.INVALID_RESET_TOKEN);
   }
 
   // Set new password

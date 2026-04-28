@@ -12,8 +12,9 @@ import { IAuctionFormData } from "@/types/auction";
 import { auctionSchema } from "@/validations/auction.validation";
 
 
-// Hooks
 import { useCreateAuction } from "@/hooks/useAuction";
+import { useCurrency } from "@/hooks/useCurrency";
+import { useTranslations } from "next-intl";
 
 // Components
 import { Button } from "@/components/ui/Button";
@@ -24,6 +25,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 export function CreateAuctionForm() {
   const router = useRouter();
   const { mutate: createAuction, isPending } = useCreateAuction();
+  const { convertBack, symbol } = useCurrency();
+  const t = useTranslations("auction.create");
+  const te = useTranslations("common.errors");
 
   const {
     register,
@@ -40,14 +44,19 @@ export function CreateAuctionForm() {
   });
 
   const onSubmit = (data: IAuctionFormData) => {
+    const transformedData = {
+      ...data,
+      basePrice: convertBack(Number(data.basePrice)),
+      minIncrement: convertBack(Number(data.minIncrement))
+    };
 
-    createAuction(data, {
+    createAuction(transformedData as any, {
       onSuccess: () => {
-        toast.success("Auction created successfully and is pending approval!");
+        toast.success(t("success"));
         router.push("/seller/auctions");
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.message || "Failed to create auction");
+        toast.error(error.response?.data?.message || te("unknown"));
       },
     });
   };
@@ -56,26 +65,26 @@ export function CreateAuctionForm() {
     <Card className="w-full max-w-2xl mx-auto border-white/5 bg-black/40 backdrop-blur-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-          Create New Auction
+          {t("formTitle")}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Title</label>
+            <label className="text-sm font-medium text-gray-300">{t("itemTitle")}</label>
             <Input
               {...register("title")}
-              placeholder="e.g. Vintage 1960s Camera"
+              placeholder={t("itemTitlePlaceholder")}
               className="bg-white/5 border-white/10"
             />
             {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Description</label>
+            <label className="text-sm font-medium text-gray-300">{t("description")}</label>
             <Textarea
               {...register("description")}
-              placeholder="Tell bidders about your item..."
+              placeholder={t("descriptionPlaceholder")}
               className="bg-white/5 border-white/10 min-h-[120px]"
             />
             {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
@@ -83,7 +92,7 @@ export function CreateAuctionForm() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Base Price (₹)</label>
+              <label className="text-sm font-medium text-gray-300">{t("basePrice", { symbol })}</label>
               <Input
                 type="number"
                 {...register("basePrice")}
@@ -93,7 +102,7 @@ export function CreateAuctionForm() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Min Increment (₹)</label>
+              <label className="text-sm font-medium text-gray-300">{t("minIncrement", { symbol })}</label>
               <Input
                 type="number"
                 {...register("minIncrement")}
@@ -105,7 +114,7 @@ export function CreateAuctionForm() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Start Time</label>
+              <label className="text-sm font-medium text-gray-300">{t("startTime")}</label>
               <Input
                 type="datetime-local"
                 {...register("startTime")}
@@ -115,7 +124,7 @@ export function CreateAuctionForm() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">End Time</label>
+              <label className="text-sm font-medium text-gray-300">{t("endTime")}</label>
               <Input
                 type="datetime-local"
                 {...register("endTime")}
@@ -130,7 +139,7 @@ export function CreateAuctionForm() {
             disabled={isPending}
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-6"
           >
-            {isPending ? "Creating..." : "Launch Auction Listing"}
+            {isPending ? t("submitting") : t("submit")}
           </Button>
         </form>
       </CardContent>

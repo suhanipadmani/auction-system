@@ -1,19 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { 
-    useBudgets, 
-    useCreateBudget 
+import {
+    useBudgets,
+    useCreateBudget
 } from "@/hooks/useBudget";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
-import { PlusCircle, Target, TrendingUp, Info, ArrowRight } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { Target, TrendingUp, Info, ArrowRight } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Label } from "@/components/ui/Label";
 import Link from "next/link";
+import { useCurrency } from "@/hooks/useCurrency";
+import { useTranslations } from "next-intl";
 
 export function BiddingGoalsOverview() {
+    const { formatCurrency } = useCurrency();
+    const t = useTranslations("auction.goals");
+    const tc = useTranslations("common");
     const { data: budgetsResponse, isLoading } = useBudgets();
     const { mutate: createGoal, isPending: isCreating } = useCreateBudget();
 
@@ -46,39 +50,38 @@ export function BiddingGoalsOverview() {
                     <div className="flex-1 space-y-4 text-center md:text-left">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest">
                             <Target className="w-3 h-3" />
-                            Smart Bidding Strategy
+                            {t("strategyLabel")}
                         </div>
                         <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white">
-                            Manage Your Bidding Goals
+                            {t("title")}
                         </h2>
                         <p className="text-muted-foreground text-sm max-w-lg mx-auto md:mx-0">
-                            Set maximum spending limits for different categories to ensure you stay 
-                            within your strategy and never overspend on impulse.
+                            {t("subtitle")}
                         </p>
                     </div>
 
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 w-full md:w-auto">
                         <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Active Goals</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t("activeGoals")}</p>
                             <p className="text-xl font-bold text-white">{goals.length}</p>
                         </div>
                         <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Exposure</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t("exposure")}</p>
                             <p className="text-xl font-bold text-indigo-400">{formatCurrency(totalExposure)}</p>
                         </div>
                         <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1 hidden lg:block">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Available</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t("available")}</p>
                             <p className="text-xl font-bold text-emerald-400">{formatCurrency(remaining > 0 ? remaining : 0)}</p>
                         </div>
                     </div>
 
                     <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto">
                         <Link href="/user/goals">
-                            <Button 
-                                variant="ghost" 
+                            <Button
+                                variant="ghost"
                                 className="w-full text-white/70 hover:text-white hover:bg-white/5 font-bold h-12"
                             >
-                                Create your goal
+                                {t("createGoal")}
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </Link>
@@ -90,27 +93,27 @@ export function BiddingGoalsOverview() {
             <Modal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
-                title="Create New Bidding Goal"
+                title={t("modal.title")}
             >
                 <form onSubmit={handleCreate} className="space-y-6 pt-4">
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label>Goal Name</Label>
-                            <input 
+                            <Label>{t("modal.nameLabel")}</Label>
+                            <input
                                 type="text"
                                 className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary transition-colors"
-                                placeholder="e.g., Luxury Watches, Electronics..."
+                                placeholder={t("modal.namePlaceholder")}
                                 value={newName}
                                 onChange={(e) => setNewName(e.target.value)}
                                 required
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>Maximum Budget</Label>
-                            <input 
+                            <Label>{t("modal.budgetLabel")}</Label>
+                            <input
                                 type="number"
                                 className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary transition-colors"
-                                placeholder="Total spending limit"
+                                placeholder={t("modal.budgetPlaceholder")}
                                 value={newBudget}
                                 onChange={(e) => setNewBudget(e.target.value)}
                                 required
@@ -118,20 +121,20 @@ export function BiddingGoalsOverview() {
                         </div>
                     </div>
                     <div className="flex gap-4 pt-4">
-                        <Button 
-                            type="button" 
-                            variant="ghost" 
-                            className="flex-1" 
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            className="flex-1"
                             onClick={() => setIsCreateModalOpen(false)}
                         >
-                            Cancel
+                            {tc("cancel")}
                         </Button>
-                        <Button 
-                            type="submit" 
+                        <Button
+                            type="submit"
                             className="flex-1 bg-primary text-white"
                             isLoading={isCreating}
                         >
-                            Create Goal
+                            {t("modal.submit")}
                         </Button>
                     </div>
                 </form>

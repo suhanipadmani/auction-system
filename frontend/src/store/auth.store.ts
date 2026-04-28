@@ -10,6 +10,7 @@ export const useAuthStore = create<IAuthState>()(
       isAuthenticated: false,
       _hasHydrated: false,
       login: (user, token) => set({ user, token, isAuthenticated: true }),
+      setUser: (user) => set({ user }),
       logout: () => set({ user: null, token: null, isAuthenticated: false }),
       setHasHydrated: (state: boolean) => set({ _hasHydrated: state }),
     }),

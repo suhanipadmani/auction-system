@@ -26,8 +26,10 @@ import {
   SelectContent,
   SelectItem
 } from "@/components/ui/Select";
+import { useTranslations } from "next-intl";
 
 export function TransactionLogSection() {
+  const t = useTranslations("wallet");
   const [txType, setTxType] = useState<string>("all");
   const [txSearch, setTxSearch] = useState("");
   const [txStartDate, setTxStartDate] = useState("");
@@ -54,7 +56,7 @@ export function TransactionLogSection() {
     const transactions = allTransactionsData?.data as ITransaction[];
 
     if (!transactions || transactions.length === 0) {
-      return <EmptyState message="No system transactions recorded." colSpan={7} />;
+      return <EmptyState message={t('noTransactions')} colSpan={7} />;
     }
 
     return transactions.map((tx) => (
@@ -68,16 +70,16 @@ export function TransactionLogSection() {
         <CardHeader className="flex flex-row items-center justify-between border-b border-border/40 pb-4 mb-4">
           <CardTitle className="text-xl font-heading flex items-center gap-2">
             <History className="h-5 w-5 text-indigo-400" />
-            Global Transaction Log
+            {t('globalLog')}
           </CardTitle>
           <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">
-            Live Audit
+            {t('liveAudit')}
           </Badge>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
             <div className="space-y-1.5">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">Search User</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">{t('searchUser')}</label>
               <Input
                 placeholder="Name or email..."
                 value={txSearch}
@@ -87,25 +89,25 @@ export function TransactionLogSection() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">Transaction Type</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">{t('transactionType')}</label>
               <Select value={txType} onValueChange={(val: string | null) => {
                 setTxType(val || "all");
                 setPage(1);
               }}>
                 <SelectTrigger className="h-9 text-xs bg-background/50">
-                  <SelectValue placeholder="All Types" />
+                  <SelectValue placeholder={t('allTypes')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value={TRANSACTION_TYPES.CREDIT}>Credit</SelectItem>
-                  <SelectItem value={TRANSACTION_TYPES.DEBIT}>Debit</SelectItem>
-                  <SelectItem value={TRANSACTION_TYPES.LOCK}>Lock</SelectItem>
-                  <SelectItem value={TRANSACTION_TYPES.UNLOCK}>Unlock</SelectItem>
+                  <SelectItem value="all">{t('allTypes')}</SelectItem>
+                  <SelectItem value={TRANSACTION_TYPES.CREDIT}>{t('txTypes.credit')}</SelectItem>
+                  <SelectItem value={TRANSACTION_TYPES.DEBIT}>{t('txTypes.debit')}</SelectItem>
+                  <SelectItem value={TRANSACTION_TYPES.LOCK}>{t('txTypes.lock')}</SelectItem>
+                  <SelectItem value={TRANSACTION_TYPES.UNLOCK}>{t('txTypes.unlock')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">From Date</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">{t('fromDate')}</label>
               <Input
                 type="date"
                 value={txStartDate}
@@ -114,7 +116,7 @@ export function TransactionLogSection() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">To Date</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">{t('toDate')}</label>
               <Input
                 type="date"
                 value={txEndDate}
@@ -128,13 +130,13 @@ export function TransactionLogSection() {
             <Table>
               <TableHeader className="bg-white/5">
                 <TableRow className="hover:bg-transparent border-border/40">
-                  <TableHead className="py-4">User</TableHead>
-                  <TableHead className="py-4">Type</TableHead>
-                  <TableHead className="py-4">Amount</TableHead>
-                  <TableHead className="py-4">Source</TableHead>
-                  <TableHead className="py-4">Action By</TableHead>
-                  <TableHead className="py-4">Date</TableHead>
-                  <TableHead className="text-right py-4">Status</TableHead>
+                  <TableHead className="py-4">{t('table.user')}</TableHead>
+                  <TableHead className="py-4">{t('table.type')}</TableHead>
+                  <TableHead className="py-4">{t('table.amount')}</TableHead>
+                  <TableHead className="py-4">{t('table.source')}</TableHead>
+                  <TableHead className="py-4">{t('table.actionBy')}</TableHead>
+                  <TableHead className="py-4">{t('table.date')}</TableHead>
+                  <TableHead className="text-right py-4">{t('table.status')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

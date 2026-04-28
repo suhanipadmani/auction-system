@@ -6,16 +6,21 @@ import { XCircle, CheckCircle2 } from "lucide-react";
 import { IDepositRowProps } from "@/types/components";
 
 // Utils
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 
 // Components
 import { TableRow, TableCell } from "@/components/ui/Table";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { useTranslations } from "next-intl";
+import { TRANSACTION_STATUSES } from "@/enums";
+import { useCurrency } from "@/hooks/useCurrency";
 
 
 
 export function DepositRow({ req, onProcessClick, isLoading, processingId }: IDepositRowProps) {
+  const t = useTranslations("wallet");
+  const { formatCurrency } = useCurrency();
 
   const isSelectedForProcessing = processingId === req._id && isLoading;
 
@@ -46,7 +51,7 @@ export function DepositRow({ req, onProcessClick, isLoading, processingId }: IDe
               'bg-rose-500/10 text-rose-400 border-rose-500/20'
             }`}
         >
-          {req.status}
+          {t(`statuses.${req.status}`)}
         </Badge>
       </TableCell>
       <TableCell className="text-right py-4">
@@ -57,8 +62,8 @@ export function DepositRow({ req, onProcessClick, isLoading, processingId }: IDe
                 size="sm"
                 variant="ghost"
                 className="h-8 w-8 p-0 text-rose-400 hover:text-rose-300 hover:bg-rose-400/10 rounded-full"
-                onClick={() => onProcessClick(req, "rejected")}
-                title="Reject Request"
+                onClick={() => onProcessClick(req, TRANSACTION_STATUSES.REJECTED)}
+                title={t('modals.reject')}
                 disabled={isLoading}
               >
                 <XCircle className="h-4 w-4" />
@@ -66,8 +71,8 @@ export function DepositRow({ req, onProcessClick, isLoading, processingId }: IDe
               <Button
                 size="sm"
                 className="h-8 w-8 p-0 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20 rounded-full"
-                onClick={() => onProcessClick(req, "approved")}
-                title="Approve Request"
+                onClick={() => onProcessClick(req, TRANSACTION_STATUSES.APPROVED)}
+                title={t('modals.approve')}
                 disabled={isLoading}
                 isLoading={isSelectedForProcessing}
               >
@@ -81,7 +86,7 @@ export function DepositRow({ req, onProcessClick, isLoading, processingId }: IDe
               className="h-8 text-[10px] text-muted-foreground"
               disabled
             >
-              Processed
+              {t(`statuses.${req.status}`)}
             </Button>
           )}
         </div>

@@ -34,3 +34,10 @@ export interface ITransaction {
   createdAt: string;
 }
 
+export interface IAdjustmentData {
+  userId: string;
+  amount: number;
+  type: TRANSACTION_TYPES.CREDIT | TRANSACTION_TYPES.DEBIT;
+  note: string;
+  userName: string;
+}

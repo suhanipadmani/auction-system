@@ -1,0 +1,58 @@
+{
+  "hero": {
+    "liveStatus": "Live bidding now active",
+    "title": "The Future of",
+    "titlePrecision": "Precision Bidding",
+    "subtitle": "Experience the adrenaline of real-time auctions with BidMaster. Secure, transparent, and designed for high-stakes competition.",
+    "cta": "Start Bidding Now"
+  },
+  "stats": {
+    "liveAuctions": "Live Auctions",
+    "activeBidders": "Active Bidders",
+    "bidsPlaced": "Bids Placed"
+  },
+  "header": {
+    "features": "Features",
+    "howItWorks": "How it Works",
+    "liveAuctions": "Live Auctions",
+    "login": "Log in",
+    "getStarted": "Get Started"
+  },
+  "footer": {
+    "description": "The next generation of real-time auctions. Transparent, fast, and secure for precision bidding.",
+    "marketplace": "Marketplace",
+    "liveAuctions": "Live Auctions",
+    "trending": "Trending",
+    "upcoming": "Upcoming",
+    "account": "Account",
+    "signIn": "Sign In",
+    "register": "Register",
+    "helpCenter": "Help Center",
+    "rights": "© 2026 BidMaster. All rights reserved."
+  },
+  "sections": {
+    "trending": {
+      "title": "Trending Now",
+      "subtitle": "Most Active Auctions",
+      "viewAll": "View All Auctions"
+    },
+    "closingSoon": {
+      "title": "Closing Soon",
+      "subtitle": "Last Chance to Bid"
+    },
+    "newlyListed": {
+      "title": "Newly Listed",
+      "subtitle": "Fresh in the Market"
+    }
+  },
+  "cta": {
+    "ready": "Ready to outbid?",
+    "description": "Join thousands of active bidders and start winning the world's most exclusive auctions today.",
+    "join": "Join BidMaster Now",
+    "signIn": "Member Sign In"
+  },
+  "noAuctions": {
+    "title": "No auctions available",
+    "description": "We're currently preparing new exclusive items. Check back in a few minutes!"
+  }
+}

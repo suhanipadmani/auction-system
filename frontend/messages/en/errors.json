@@ -1,0 +1,17 @@
+{
+  "AUTH_UNAUTHORIZED": "Unauthorized access. Please login.",
+  "AUTH_FORBIDDEN": "You do not have permission to perform this action.",
+  "AUTH_INVALID_TOKEN": "Invalid or expired token.",
+  "RESOURCE_NOT_FOUND": "The requested resource was not found.",
+  "BAD_REQUEST": "Invalid request parameters.",
+  "VALIDATION_ERROR": "Validation failed.",
+  "INTERNAL_SERVER_ERROR": "Something went wrong on our end.",
+  "AUTH_USER_ALREADY_EXISTS": "User already exists with this email.",
+  "AUTH_INVALID_CREDENTIALS": "Invalid email or password.",
+  "AUCTION_NOT_FOUND": "Auction listing not found.",
+  "AUCTION_STATUS_FORBIDDEN": "Action forbidden in current auction status.",
+  "BID_TOO_LOW": "Your bid must be at least {amount}.",
+  "BID_CONFLICT": "Someone else placed a bid just now. Please try again.",
+  "WALLET_INSUFFICIENT_BALANCE": "Insufficient wallet balance to perform this action.",
+  "WALLET_FROZEN": "Your wallet is currently frozen."
+}

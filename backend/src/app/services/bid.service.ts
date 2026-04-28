@@ -5,7 +5,7 @@ import { TransactionModel } from "../models/transaction";
 import { AUCTION_STATUSES, BID_STATUSES, TRANSACTION_SOURCES, TRANSACTION_STATUSES, TRANSACTION_TYPES } from "../enums";
 import * as walletService from "./wallet.service";
 import { BudgetService } from "./budget.service";
-import { AppError } from "../utils/AppError";
+import { AppError, ErrorMessages } from "../errors";
 import { SocketService } from "./socket.service";
 import { NotificationService } from "./notification.service";
 import { UserModel } from "../models/user";
@@ -45,7 +45,7 @@ export class BidService {
         { session, new: true }
       );
 
-      if (!result) throw new AppError("Bid conflict: Someone else may have placed a bid. Please try again.", 409);
+      if (!result) throw AppError.from(ErrorMessages.BID_CONFLICT);
 
       if (session) await session.commitTransaction();
       lastBidMap.set(bidderId, Date.now());
@@ -75,29 +75,32 @@ export class BidService {
 
   private static async getValidatedAuction(auctionId: string, session: ClientSession | null) {
     const auction = session ? await AuctionModel.findById(auctionId).session(session) : await AuctionModel.findById(auctionId);
-    if (!auction) throw new AppError("Auction not found", 404);
-    if (auction.status !== AUCTION_STATUSES.ACTIVE) throw new AppError("Auction is not active", 400);
-    if (new Date(auction.endTime).getTime() <= Date.now()) throw new AppError("Auction has already ended", 400);
+    if (!auction) throw AppError.from(ErrorMessages.AUCTION_NOT_FOUND);
+    if (auction.status !== AUCTION_STATUSES.ACTIVE) throw AppError.from(ErrorMessages.AUCTION_NOT_ACTIVE);
+    if (new Date(auction.endTime).getTime() <= Date.now()) throw AppError.from(ErrorMessages.AUCTION_HAS_ENDED);
     return auction;
   }
 
   private static async validateBidder(bidderId: string) {
     const bidder = await UserModel.findById(bidderId);
-    if (!bidder || bidder.status !== "active") throw new AppError("Your account is not active", 403);
+    if (!bidder || bidder.status !== "active") {
+      throw AppError.from(ErrorMessages.ACCOUNT_DEACTIVATED);
+    }
   }
 
   private static checkCooldown(bidderId: string) {
     const lastBidTime = lastBidMap.get(bidderId) || 0;
     const now = Date.now();
     if (now - lastBidTime < 1000) {
-      throw new AppError(`Slow down! Please wait ${Math.ceil((1000 - (now - lastBidTime)) / 100) / 10}s before bidding again.`, 429);
+      const waitSeconds = Math.ceil((1000 - (now - lastBidTime)) / 100) / 10;
+      throw AppError.from(ErrorMessages.COOLDOWN_ACTIVE(waitSeconds));
     }
   }
 
   private static validateAmount(amount: number, auction: any) {
     const minRequired = auction.highestBid > 0 ? auction.highestBid + auction.minIncrement : auction.basePrice;
-    if (amount < minRequired) throw new AppError(`Bid must be at least ${minRequired}`, 400);
-    if (!Number.isFinite(amount) || amount <= 0) throw new AppError("Invalid bid amount", 400);
+    if (amount < minRequired) throw AppError.from(ErrorMessages.BID_TOO_LOW(minRequired));
+    if (!Number.isFinite(amount) || amount <= 0) throw AppError.from(ErrorMessages.INVALID_AMOUNT);
   }
 
   private static async handleOutbid(auction: any, session: ClientSession | null) {
@@ -166,8 +169,8 @@ export class BidService {
 
   static async setupAutoBid(bidderId: string, auctionId: string, limit: number) {
     const auction = await AuctionModel.findById(auctionId);
-    if (!auction) throw new AppError("Auction not found", 404);
-    if (limit <= (auction.highestBid || auction.basePrice)) throw new AppError("Limit must be higher than current price", 400);
+    if (!auction) throw AppError.from(ErrorMessages.AUCTION_NOT_FOUND);
+    if (limit <= (auction.highestBid || auction.basePrice)) throw AppError.from(ErrorMessages.AUTO_BID_LIMIT_LOW);
 
     let bid = await BidModel.findOne({ auctionId, bidderId, isAutoBid: true });
     if (bid) {
@@ -228,11 +231,11 @@ export class BidService {
 
     try {
       const bid = await BidModel.findById(bidId).session(session);
-      if (!bid) throw new AppError("Bid not found", 404);
-      if (bid.status === BID_STATUSES.CANCELLED as any) throw new AppError("Bid is already cancelled", 400);
+      if (!bid) throw AppError.from(ErrorMessages.NOT_FOUND);
+      if (bid.status === BID_STATUSES.CANCELLED as any) throw AppError.from(ErrorMessages.BID_ALREADY_CANCELLED);
 
       const auction = await AuctionModel.findById(bid.auctionId).session(session);
-      if (!auction) throw new AppError("Auction not found", 404);
+      if (!auction) throw AppError.from(ErrorMessages.AUCTION_NOT_FOUND);
 
       const wasHighest = bid.status === BID_STATUSES.ACTIVE;
       bid.status = BID_STATUSES.CANCELLED as any;

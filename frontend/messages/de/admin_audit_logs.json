@@ -1,0 +1,55 @@
+{
+  "title": "Audit-Protokolle",
+  "subtitle": "Systemweite Aktivitäten und Transaktionsverlauf",
+  "statusLabel": "Echtzeit",
+  "statusValue": "Aktiviert",
+  "exportCsv": "CSV exportieren",
+  "filters": {
+    "eventType": "Ereignistyp",
+    "fromDate": "Von Datum",
+    "toDate": "Bis Datum",
+    "allEvents": "Alle Ereignisse",
+    "bidPlacement": "Gebotsplatzierung",
+    "auctionCreation": "Auktionserstellung",
+    "walletChanges": "Wallet-Änderungen"
+  },
+  "table": {
+    "timestamp": "Zeitstempel",
+    "action": "Aktion",
+    "user": "Benutzer",
+    "details": "Details / Metadaten",
+    "noLogs": "Keine Audit-Protokolle gefunden, die Ihren Kriterien entsprechen."
+  },
+  "pagination": {
+    "page": "Seite {current} von {total}"
+  },
+  "actions": {
+    "BID_PLACED": "Gebot platziert",
+    "BID_REMOVED": "Gebot entfernt",
+    "AUCTION_CREATED": "Auktion erstellt",
+    "AUCTION_UPDATED": "Auktion aktualisiert",
+    "AUCTION_CANCELLED": "Auktion abgebrochen",
+    "WALLET_UPDATED": "Wallet-Änderung",
+    "DEPOSIT_REQUESTED": "Einzahlung angefordert",
+    "DEPOSIT_APPROVED": "Einzahlung genehmigt",
+    "DEPOSIT_REJECTED": "Einzahlung abgelehnt"
+  },
+  "metadata": {
+    "fundsLocked": "Guthaben gesperrt: {amount}",
+    "fundsUnlocked": "Guthaben freigegeben: {amount}",
+    "auctionPayment": "Auktionszahlung: {amount}",
+    "auctionReceipt": "Auktionsverkaufserlös: {amount}",
+    "depositApproved": "Einzahlung genehmigt: {amount}",
+    "payoutApproved": "Auszahlung genehmigt: {amount}",
+    "payoutRejected": "Auszahlung abgelehnt: {amount}",
+    "manualAdjustment": "Manuelle {type}: {amount}",
+    "walletFrozen": "WALLET EINGEFROREN",
+    "walletUnfrozen": "WALLET ENTFROREREN",
+    "auction": "Auktion: {title}",
+    "bidAmount": "Gebotsbetrag: {amount}",
+    "reason": "Grund: {reason}",
+    "note": "Hinweis: {note}",
+    "newBalance": "Neuer Kontostand: {amount}",
+    "remainingLocked": "Verbleibend gesperrt: {amount}"
+  }
+}

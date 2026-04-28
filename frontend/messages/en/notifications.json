@@ -1,0 +1,27 @@
+{
+  "title": "Notifications",
+  "empty": "No new notifications",
+  "markAllRead": "Mark all as read",
+  "types": {
+    "outbid": {
+      "title": "Outbid Alert!",
+      "message": "You have been outbid on \"{title}\". Place a higher bid now!"
+    },
+    "won": {
+      "title": "Auction Won!",
+      "message": "Congratulations! You won the auction for \"{title}\"."
+    },
+    "lost": {
+      "title": "Auction Ended",
+      "message": "The auction for \"{title}\" has ended. Unfortunately, your bid was not the highest."
+    },
+    "deposit": {
+      "title": "Deposit Successful",
+      "message": "Your deposit of {amount} has been processed."
+    },
+    "withdrawal": {
+      "title": "Withdrawal Processed",
+      "message": "Your withdrawal of {amount} has been completed."
+    }
+  }
+}

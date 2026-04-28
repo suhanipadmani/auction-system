@@ -3,7 +3,7 @@ import { AUCTION_STATUSES, BID_STATUSES } from "../enums";
 import { AuctionModel } from "../models/auction";
 import { BidModel } from "../models/bid";
 import * as walletService from "./wallet.service";
-import { AppError } from "../utils/AppError";
+import { AppError, ErrorMessages } from "../errors";
 import { SocketService } from "./socket.service";
 import { NotificationService } from "./notification.service";
 import { NOTIFICATION_TYPES } from "../enums";
@@ -40,20 +40,20 @@ export class AuctionService {
   static async updateAuction(auctionId: string, userId: string, data: IUpdateAuctionData) {
 
     const auction = await AuctionModel.findById(auctionId);
-    if (!auction) throw new Error("Auction not found");
+    if (!auction) throw AppError.from(ErrorMessages.AUCTION_NOT_FOUND);
 
     // Ownership check
     if (auction.sellerId.toString() !== userId) {
-      throw new Error("Unauthorized: You do not own this auction");
+      throw AppError.from(ErrorMessages.AUCTION_NOT_OWNER);
     }
 
     // Status check: only allow editing before start and if not rejected/cancelled
     if (["active", "ended", "cancelled"].includes(auction.status)) {
-      throw new Error(`Cannot edit auction in ${auction.status} status`);
+      throw AppError.from(ErrorMessages.CANNOT_EDIT_STATUS(auction.status));
     }
 
     if (new Date(auction.startTime).getTime() <= Date.now()) {
-      throw new Error("Cannot edit auction after it has started");
+      throw AppError.from(ErrorMessages.AUCTION_ALREADY_STARTED);
     }
 
     Object.assign(auction, data);
@@ -63,26 +63,26 @@ export class AuctionService {
 
   static async cancelAuction(auctionId: string, user: { id: string; role: string }) {
     const auction = await AuctionModel.findById(auctionId);
-    if (!auction) throw new Error("Auction not found");
+    if (!auction) throw AppError.from(ErrorMessages.AUCTION_NOT_FOUND);
 
     const isAdmin = user.role === "admin";
     const isOwner = auction.sellerId.toString() === user.id;
 
     if (!isAdmin && !isOwner) {
-      throw new Error("Unauthorized");
+      throw AppError.from(ErrorMessages.UNAUTHORIZED);
     }
 
     // Role-based status check
     if (!isAdmin) {
       // Sellers can only cancel if not active
       if (auction.status === AUCTION_STATUSES.ACTIVE) {
-        throw new Error("Sellers cannot cancel an active auction. Please contact administration.");
+        throw AppError.from(ErrorMessages.AUCTION_STATUS_FORBIDDEN);
       }
     }
 
     // If cancelled after already ended/sold/etc
     if ([AUCTION_STATUSES.CANCELLED, AUCTION_STATUSES.SOLD, AUCTION_STATUSES.EXPIRED].includes(auction.status as any)) {
-      throw new Error(`Auction is already ${auction.status}`);
+      throw AppError.from(ErrorMessages.AUCTION_ALREADY_STATE(auction.status));
     }
 
     const session = await mongoose.startSession();
@@ -93,8 +93,6 @@ export class AuctionService {
       auction.status = AUCTION_STATUSES.CANCELLED;
       await auction.save({ session });
 
-      // If it was active, we may have a lead bidder to refund
-      // Actually, we should refund ALL active bids on this auction (usually only one is active at a time though, but for safety...)
       const activeBids = await BidModel.find({ auctionId: auction._id, status: BID_STATUSES.ACTIVE }).session(session);
 
       for (const bid of activeBids) {
@@ -182,16 +180,16 @@ export class AuctionService {
 
   static async getAuctionById(id: string) {
     const auction = await AuctionModel.findById(id).populate("sellerId", "name");
-    if (!auction) throw new Error("Auction not found");
+    if (!auction) throw AppError.from(ErrorMessages.AUCTION_NOT_FOUND);
     return auction;
   }
 
   static async adminApproveReject(auctionId: string, action: "approve" | "reject") {
     const auction = await AuctionModel.findById(auctionId);
-    if (!auction) throw new Error("Auction not found");
+    if (!auction) throw AppError.from(ErrorMessages.AUCTION_NOT_FOUND);
 
     if (auction.status !== "pending") {
-      throw new Error(`Auction is already ${auction.status}`);
+      throw AppError.from(ErrorMessages.AUCTION_ALREADY_STATE(auction.status));
     }
 
     auction.status = action === "approve" ? AUCTION_STATUSES.APPROVED : AUCTION_STATUSES.REJECTED;
@@ -386,15 +384,15 @@ export class AuctionService {
 
 
       if (auction.status !== AUCTION_STATUSES.ENDED) {
-        throw new AppError(`Auction is not in ENDED status (Current: ${auction.status})`, 400);
+        throw AppError.from(ErrorMessages.AUCTION_NOT_ENDED(auction.status));
       }
 
       if (!isAuto && auction.sellerId.toString() !== userId) {
-        throw new AppError("Unauthorized: Only the seller can finalize this auction", 403);
+        throw AppError.from(ErrorMessages.ONLY_SELLER_CAN_FINALIZE);
       }
 
       if (!auction.highestBidderId) {
-        throw new AppError("Cannot finalize an auction with no bidder", 400);
+        throw AppError.from(ErrorMessages.NO_BIDDER_CAN_FINALIZE);
       }
 
       // 1. Complete fund transfer
@@ -459,13 +457,17 @@ export class AuctionService {
 
   static async forceAction(auctionId: string, action: "start" | "end") {
     const auction = await AuctionModel.findById(auctionId);
-    if (!auction) throw new Error("Auction not found");
+    if (!auction) throw AppError.from(ErrorMessages.AUCTION_NOT_FOUND);
 
     if (action === "start") {
-      if (auction.status !== "approved") throw new Error("Only approved auctions can be started");
+      if (auction.status !== "approved") {
+        throw AppError.from(ErrorMessages.AUCTION_STATUS_FORBIDDEN);
+      }
       auction.status = AUCTION_STATUSES.ACTIVE;
     } else {
-      if (auction.status !== "active") throw new Error("Only active auctions can be ended");
+      if (auction.status !== "active") {
+        throw AppError.from(ErrorMessages.AUCTION_STATUS_FORBIDDEN);
+      }
       auction.status = AUCTION_STATUSES.ENDED;
     }
 

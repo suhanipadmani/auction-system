@@ -1,0 +1,25 @@
+{
+  "title": "Kontoeinstellungen",
+  "subtitle": "Verwalten Sie Ihre Profilinformationen und Sicherheitseinstellungen",
+  "general": {
+    "title": "Allgemeine Informationen",
+    "description": "Aktualisieren Sie Ihre grundlegenden Kontodaten.",
+    "fullName": "Vollständiger Name",
+    "email": "E-Mail-Adresse (schreibgeschützt)",
+    "emailWarning": "Die E-Mail kann aus Sicherheitsgründen nicht geändert werden.",
+    "save": "Änderungen speichern",
+    "success": "Profil erfolgreich aktualisiert"
+  },
+  "security": {
+    "title": "Sicherheit & Passwort",
+    "description": "Stellen Sie sicher, dass Ihr Konto ein starkes, eindeutiges Passwort verwendet.",
+    "currentPassword": "Aktuelles Passwort",
+    "currentPasswordPlaceholder": "Aktuelles Passwort eingeben",
+    "newPassword": "Neues Passwort",
+    "newPasswordPlaceholder": "Neues Passwort",
+    "confirmPassword": "Neues Passwort bestätigen",
+    "confirmPasswordPlaceholder": "Passwort bestätigen",
+    "update": "Passwort aktualisieren",
+    "success": "Passwort erfolgreich geändert"
+  }
+}

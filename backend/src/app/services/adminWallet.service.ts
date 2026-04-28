@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { AppError, ErrorMessages } from "../errors";
 
 import { DEPOSIT_STATUSES, TRANSACTION_TYPES, TRANSACTION_STATUSES, TRANSACTION_SOURCES, AUDIT_ACTIONS, PAYOUT_STATUSES } from "../enums";
 import { runInTransaction } from "../utils/transaction";
@@ -47,10 +48,10 @@ export const processDepositRequest = async (
 ) => {
   return await runInTransaction(async (session) => {
     const request = await DepositRequestModel.findById(requestId).session(session);
-    if (!request) throw new Error("Deposit request not found");
+    if (!request) throw AppError.from(ErrorMessages.DEPOSIT_NOT_FOUND);
 
     // Prevent Double Approval
-    if (request.status !== "pending") throw new Error("Already processed");
+    if (request.status !== "pending") throw AppError.from(ErrorMessages.ALREADY_PROCESSED);
 
     request.status = status;
     request.adminId = new Types.ObjectId(adminId);
@@ -61,7 +62,7 @@ export const processDepositRequest = async (
       const wallet = await getOrCreateWallet(request.userId.toString());
 
       // Block if Wallet Frozen
-      if (wallet.isFrozen) throw new Error("Wallet is frozen");
+      if (wallet.isFrozen) throw AppError.from(ErrorMessages.WALLET_FROZEN);
 
       wallet.balance += request.amount;
       await wallet.save({ session });
@@ -122,16 +123,16 @@ export const adjustUserBalance = async (
     // Check user role: Admins cannot have balance adjustments
     const user = await UserModel.findById(userId).session(session);
     if (user?.role === "admin") {
-      throw new Error("Financial operations are restricted for administrative accounts");
+      throw AppError.from(ErrorMessages.FINANCIAL_RESTRICTION);
     }
 
     // Safety check: Block adjustments on frozen wallets (Admin can override if policy changes)
     if (wallet.isFrozen) {
-      throw new Error("Cannot adjust balance: Wallet is frozen");
+      throw AppError.from(ErrorMessages.WALLET_FROZEN);
     }
 
     if (type === TRANSACTION_TYPES.DEBIT) {
-      if (wallet.balance < amount) throw new Error("Insufficient balance");
+      if (wallet.balance < amount) throw AppError.from(ErrorMessages.INSUFFICIENT_BALANCE);
       wallet.balance -= amount;
     } else {
       wallet.balance += amount;
@@ -291,8 +292,8 @@ export const processPayoutRequest = async (
 ) => {
   return await runInTransaction(async (session) => {
     const request = await PayoutRequestModel.findById(requestId).session(session);
-    if (!request) throw new Error("Payout request not found");
-    if (request.status !== PAYOUT_STATUSES.PENDING) throw new Error("Already processed");
+    if (!request) throw AppError.from(ErrorMessages.PAYOUT_NOT_FOUND);
+    if (request.status !== PAYOUT_STATUSES.PENDING) throw AppError.from(ErrorMessages.ALREADY_PROCESSED);
 
     request.status = status;
     request.adminId = new Types.ObjectId(adminId);

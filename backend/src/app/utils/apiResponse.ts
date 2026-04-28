@@ -1,17 +1,7 @@
 import { Response } from "express";
 
-interface ApiResponse {
-  success: boolean;
-  message: string;
-  data?: any;
-  meta?: {
-    total?: number;
-    page?: number;
-    limit?: number;
-    totalPages?: number;
-    [key: string]: any;
-  };
-}
+import { ApiResponse } from "../types/api";
+
 
 export const sendSuccess = (
   res: Response, 

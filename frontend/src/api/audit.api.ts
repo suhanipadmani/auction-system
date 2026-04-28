@@ -1,35 +1,7 @@
 import { axiosClient } from "@/lib/axios";
 
-export interface IAuditLog {
-  _id: string;
-  userId: {
-    _id: string;
-    name: string;
-    email: string;
-  };
-  action: string;
-  metadata: any;
-  createdAt: string;
-  updatedAt: string;
-}
+import { IAuditLogFilters, IAuditLogResponse } from "@/types/audit";
 
-export interface IAuditLogResponse {
-  success: boolean;
-  data: IAuditLog[];
-  total: number;
-  page: number;
-  totalPages: number;
-}
-
-export interface IAuditLogFilters {
-  action?: string;
-  userId?: string;
-  startDate?: string;
-  endDate?: string;
-  search?: string;
-  page?: number;
-  limit?: number;
-}
 
 export const auditApi = {
   getLogs: async (filters: IAuditLogFilters = {}): Promise<IAuditLogResponse> => {

@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { BudgetModel } from "../models/budget";
 import { AuctionModel } from "../models/auction";
-import { AppError } from "../utils/AppError";
+import { AppError, ErrorMessages } from "../errors";
 
 export class BudgetService {
   /**
@@ -10,7 +10,7 @@ export class BudgetService {
   static async createGoal(userId: string, name: string, maxBudget: number) {
     // Check if goal with same name exists
     const existing = await BudgetModel.findOne({ userId, name });
-    if (existing) throw new AppError("A goal with this name already exists", 400);
+    if (existing) throw AppError.from(ErrorMessages.GOAL_ALREADY_EXISTS);
 
     return await BudgetModel.create({
       userId: new Types.ObjectId(userId),
@@ -54,7 +54,7 @@ export class BudgetService {
       { new: true }
     );
 
-    if (!goal) throw new AppError("Goal not found", 404);
+    if (!goal) throw AppError.from(ErrorMessages.GOAL_NOT_FOUND);
     return goal;
   }
 
@@ -96,10 +96,8 @@ export class BudgetService {
     const currentOtherExposure = otherWinningAuctions.reduce((sum, auction) => sum + auction.highestBid, 0);
 
     if (currentOtherExposure + amount > goal.maxBudget) {
-      throw new AppError(
-        `Bid exceeds your goal budget "${goal.name}". Remaining: ${goal.maxBudget - currentOtherExposure}`, 
-        400
-      );
+      const remaining = goal.maxBudget - currentOtherExposure;
+      throw AppError.from(ErrorMessages.BID_EXCEEDS_BUDGET(goal.name, remaining));
     }
 
     return true;
@@ -107,7 +105,7 @@ export class BudgetService {
 
   static async deleteGoal(goalId: string, userId: string) {
     const result = await BudgetModel.deleteOne({ _id: goalId, userId });
-    if (result.deletedCount === 0) throw new AppError("Goal not found", 404);
+    if (result.deletedCount === 0) throw AppError.from(ErrorMessages.GOAL_NOT_FOUND);
     return true;
   }
 
@@ -117,7 +115,7 @@ export class BudgetService {
         { $set: data },
         { new: true }
     );
-    if (!goal) throw new AppError("Goal not found", 404);
+    if (!goal) throw AppError.from(ErrorMessages.GOAL_NOT_FOUND);
     return goal;
   }
 }

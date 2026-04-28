@@ -1,0 +1,60 @@
+{
+  "title": "Benutzerverwaltung",
+  "subtitle": "Rollen, Berechtigungen und Benutzersichtbarkeit auf der Plattform verwalten.",
+  "searchPlaceholder": "Benutzer suchen...",
+  "showDeleted": "Gelöschte anzeigen",
+  "hideDeleted": "Gelöschte ausblenden",
+  "stats": {
+    "active": "{count} aktiv",
+    "deleted": "{count} gelöscht"
+  },
+  "error": {
+    "accessDenied": "Zugriff verweigert",
+    "failedToLoad": "Benutzer konnten nicht geladen werden. Bitte stellen Sie sicher, dass Sie Administratorrechte haben."
+  },
+  "pagination": {
+    "showing": "{count} von {total} Benutzern werden angezeigt",
+    "page": "Seite {current} von {total}",
+    "previous": "Zurück",
+    "next": "Weiter"
+  },
+  "table": {
+    "userInfo": "Benutzerinfo",
+    "role": "Rolle",
+    "status": "Status",
+    "actions": "Aktionen",
+    "joined": "Beigetreten",
+    "noActions": "Keine Aktionen verfügbar",
+    "noUsers": "Keine Benutzer gefunden.",
+    "selectRole": "Rolle wählen",
+    "roles": {
+      "bidder": "Bieter",
+      "seller": "Verkäufer",
+      "admin": "Administrator"
+    },
+    "statuses": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "deleted": "Gelöscht"
+    },
+    "activate": "Aktivieren",
+    "deactivate": "Deaktivieren",
+    "delete": "Löschen",
+    "restore": "Wiederherstellen"
+  },
+  "modals": {
+    "deleteTitle": "Benutzer löschen",
+    "restoreTitle": "Benutzer wiederherstellen",
+    "deactivateTitle": "Benutzer deaktivieren",
+    "activateTitle": "Benutzer aktivieren",
+    "cancel": "Abbrechen",
+    "yesDelete": "Ja, löschen",
+    "yesRestore": "Ja, wiederherstellen",
+    "yesDeactivate": "Ja, deaktivieren",
+    "yesActivate": "Ja, aktivieren",
+    "deleteDesc": "Dieser Benutzer wird im System ausgeblendet. Seine Daten bleiben erhalten und können später wiederhergestellt werden.",
+    "deactivateDesc": "Dieser Benutzer wird am Einloggen gehindert, bleibt aber in der Liste sichtbar.",
+    "restoreDesc": "Dieser Benutzer wird wiederhergestellt und kann sich wieder einloggen.",
+    "activateDesc": "Der Login-Zugriff dieses Benutzers wird wiederhergestellt."
+  }
+}

@@ -5,7 +5,7 @@ import { TransactionModel } from "../models/transaction";
 import { DepositRequestModel } from "../models/depositRequest";
 import { PayoutRequestModel } from "../models/payoutRequest";
 import { TRANSACTION_SOURCES, TRANSACTION_STATUSES, TRANSACTION_TYPES, AUDIT_ACTIONS, NOTIFICATION_TYPES, PAYOUT_STATUSES } from "../enums";
-import { AppError } from "../utils/AppError";
+import { AppError, ErrorMessages } from "../errors";
 import { AuditLogService } from "./auditLog.service";
 import { NotificationService } from "./notification.service";
 import { runInTransaction } from "../utils/transaction";
@@ -36,14 +36,14 @@ export const getOrCreateWallet = async (userId: string, session?: ClientSession 
  */
 export const createDepositRequest = async (userId: string, amount: number) => {
   if (amount <= 0) {
-    throw new AppError("Invalid deposit amount", 400);
+    throw AppError.from(ErrorMessages.INVALID_AMOUNT);
   }
 
   const wallet = await getOrCreateWallet(userId);
   const user = await UserModel.findById(userId).select("name");
   
   if (wallet.isFrozen) {
-    throw new AppError("Wallet is frozen", 403);
+    throw AppError.from(ErrorMessages.WALLET_FROZEN);
   }
 
   const request = await DepositRequestModel.create({
@@ -116,7 +116,7 @@ export const lockFunds = async (userId: string, amount: number, session?: Client
   const wallet = await getOrCreateWallet(userId, session);
   
   if (wallet.balance < amount) {
-    throw new AppError("Insufficient balance", 400);
+    throw AppError.from(ErrorMessages.INSUFFICIENT_BALANCE);
   }
 
   wallet.balance -= amount;
@@ -205,7 +205,7 @@ export const completeTransfer = async (
       console.warn(`[WALLET] Winner ${winnerId} has insufficient locked balance (${winnerWallet.lockedBalance}) for amount ${amount}`);
       // We still proceed if it's very close (rounding) or throw if it's a major gap
       if (winnerWallet.lockedBalance + 1 < amount) {
-         throw new AppError("Insufficient locked funds for settlement", 400);
+         throw AppError.from(ErrorMessages.INSUFFICIENT_LOCKED_FUNDS);
       }
     }
     winnerWallet.lockedBalance = Math.max(0, winnerWallet.lockedBalance - amount);
@@ -253,7 +253,7 @@ export const completeTransfer = async (
     return { winnerWallet, sellerWallet };
   } catch (error: any) {
     if (error instanceof AppError) throw error;
-    throw new AppError(error.message || "Wallet transfer failed", error.statusCode || 500);
+    throw AppError.from(ErrorMessages.TRANSFER_FAILED, error.message);
   }
 };
 
@@ -263,7 +263,7 @@ export const completeTransfer = async (
  */
 export const createPayoutRequest = async (userId: string, amount: number) => {
   if (amount <= 0) {
-    throw new AppError("Invalid payout amount", 400);
+    throw AppError.from(ErrorMessages.INVALID_AMOUNT);
   }
 
   return await runInTransaction(async (session) => {

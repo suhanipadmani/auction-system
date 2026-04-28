@@ -1,12 +1,13 @@
 import bcrypt from "bcrypt";
 import { USER_STATUSES } from "../enums";
+import { AppError, ErrorMessages } from "../errors";
 import { UserModel } from "../models/user";
 import { ICreateUserData } from "../types/user";
 
 export const createUser = async (data: ICreateUserData) => {
   const existingUser = await UserModel.findOne({ email: data.email });
   if (existingUser) {
-    throw new Error("User already exists with this email");
+    throw AppError.from(ErrorMessages.USER_ALREADY_EXISTS);
   }
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -65,7 +66,7 @@ export const updateUserRole = async (id: string, role: string) => {
     { returnDocument: "after" }
   ).select("-password");
 
-  if (!user) throw new Error("User not found");
+  if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
   return user;
 };
 
@@ -77,7 +78,7 @@ export const deactivateUser = async (id: string) => {
     { returnDocument: "after" }
   ).select("-password");
 
-  if (!user) throw new Error("User not found");
+  if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
   return user;
 };
 
@@ -89,7 +90,7 @@ export const activateUser = async (id: string) => {
     { returnDocument: "after" }
   ).select("-password");
 
-  if (!user) throw new Error("User not found");
+  if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
   return user;
 };
 
@@ -101,7 +102,7 @@ export const softDeleteUser = async (id: string) => {
     { returnDocument: "after" }
   ).select("-password");
 
-  if (!user) throw new Error("User not found");
+  if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
   return user;
 };
 
@@ -113,28 +114,28 @@ export const restoreUser = async (id: string) => {
     { returnDocument: "after" }
   ).select("-password");
 
-  if (!user) throw new Error("User not found");
+  if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
   return user;
 };
 
-export const updateProfile = async (id: string, name: string) => {
+export const updateProfile = async (id: string, updates: { name?: string; preferredLanguage?: string }) => {
   const user = await UserModel.findByIdAndUpdate(
     id,
-    { name },
+    updates,
     { returnDocument: "after" }
   ).select("-password");
 
-  if (!user) throw new Error("User not found");
+  if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
   return user;
 };
 
 export const updatePassword = async (id: string, currentPassword: string, newPassword: string) => {
   const user = await UserModel.findById(id);
-  if (!user) throw new Error("User not found");
+  if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
 
   const isPasswordValid = await (user as any).comparePassword(currentPassword);
   if (!isPasswordValid) {
-    throw new Error("Invalid current password");
+    throw AppError.from(ErrorMessages.INVALID_PASSWORD);
   }
 
   user.password = newPassword;

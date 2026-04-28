@@ -45,6 +45,11 @@ export const userSchema = new Schema(
       type: Date,
       default: null,
     },
+    preferredLanguage: {
+      type: String,
+      enum: ["en", "de"],
+      default: "en",
+    },
     
   },
   { timestamps: true },

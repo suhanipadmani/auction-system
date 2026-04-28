@@ -1,0 +1,60 @@
+{
+  "title": "User Management",
+  "subtitle": "Manage roles, permissions, and user visibility across the platform.",
+  "searchPlaceholder": "Search users...",
+  "showDeleted": "Show Deleted",
+  "hideDeleted": "Hide Deleted",
+  "stats": {
+    "active": "{count} active",
+    "deleted": "{count} deleted"
+  },
+  "error": {
+    "accessDenied": "Access Denied",
+    "failedToLoad": "Failed to load users. Please ensure you have Admin privileges."
+  },
+  "pagination": {
+    "showing": "Showing {count} of {total} users",
+    "page": "Page {current} of {total}",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "table": {
+    "userInfo": "User Info",
+    "role": "Role",
+    "status": "Status",
+    "actions": "Actions",
+    "joined": "Joined",
+    "noActions": "No actions available",
+    "noUsers": "No users found.",
+    "selectRole": "Select role",
+    "roles": {
+      "bidder": "Bidder",
+      "seller": "Seller",
+      "admin": "Admin"
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "deleted": "Deleted"
+    },
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "delete": "Delete",
+    "restore": "Restore"
+  },
+  "modals": {
+    "deleteTitle": "Delete User",
+    "restoreTitle": "Restore User",
+    "deactivateTitle": "Deactivate User",
+    "activateTitle": "Activate User",
+    "cancel": "Cancel",
+    "yesDelete": "Yes, Delete",
+    "yesRestore": "Yes, Restore",
+    "yesDeactivate": "Yes, Deactivate",
+    "yesActivate": "Yes, Activate",
+    "deleteDesc": "This user will be hidden from the system. Their data is preserved and can be restored later.",
+    "deactivateDesc": "This user will be blocked from logging in, but will remain visible in the list.",
+    "restoreDesc": "This user will be restored and can log in again.",
+    "activateDesc": "This user's login access will be restored."
+  }
+}

@@ -10,12 +10,12 @@ import { USER_ROLES } from "@/enums/user.enum";
 export interface ILoginForm {
   email: string;
   password: string;
-  role: USER_ROLES.BIDDER | USER_ROLES.SELLER;
+  role: USER_ROLES;
 }
 
 export interface IRegisterForm {
   name: string;
   email: string;
   password: string;
-  role: USER_ROLES.BIDDER | USER_ROLES.SELLER;
+  role: USER_ROLES;
 }

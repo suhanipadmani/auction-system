@@ -19,6 +19,7 @@ export enum TRANSACTION_SOURCES {
   AUCTION = "auction",
   WITHDRAWAL = "withdrawal",
   MANUAL = "manual",
+  BID = "bid",
 }
 
 export enum WALLET_VIEW_TYPES {

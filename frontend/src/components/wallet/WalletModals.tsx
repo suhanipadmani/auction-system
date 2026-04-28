@@ -6,18 +6,23 @@ import { ShieldAlert, CheckCircle2, XCircle } from "lucide-react";
 import { useUserWallet } from "@/hooks/useWallet";
 
 // Utils
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 
 // Components
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useTranslations } from "next-intl";
+import { useCurrency } from "@/hooks/useCurrency";
 
 // Types
-import { IAdjustmentData, IWalletModalsProps } from "@/types/components";
+import { IWalletModalsProps } from "@/types/components";
+import { IAdjustmentData } from "@/types/wallet";
+
 
 
 export function WalletStatusCheck({ userId }: { userId: string }) {
+  const t = useTranslations("wallet.modals");
   const { data: walletData, isLoading } = useUserWallet(userId);
   
   if (isLoading) return <Skeleton className="h-10 w-full animate-pulse" />;
@@ -27,10 +32,10 @@ export function WalletStatusCheck({ userId }: { userId: string }) {
     <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 mb-4 animate-in zoom-in-95 duration-300">
       <div className="flex items-center gap-2 text-rose-400 mb-1">
         <ShieldAlert className="h-4 w-4" />
-        <span className="text-xs font-bold uppercase tracking-wider">Wallet Frozen</span>
+        <span className="text-xs font-bold uppercase tracking-wider">{t('walletFrozenTitle')}</span>
       </div>
       <p className="text-[10px] text-muted-foreground leading-relaxed">
-        This user's wallet is currently locked. Approving this deposit will fail unless you unfreeze the wallet first.
+        {t('walletFrozenNotice')}
       </p>
     </div>
   );
@@ -49,51 +54,59 @@ export function WalletModals({
   onDepositConfirm,
   isProcessing
 }: IWalletModalsProps) {
+  const t = useTranslations("wallet");
+  const modalT = useTranslations("wallet.modals");
+  const { formatCurrency } = useCurrency();
   return (
     <>
       {/* Confirmation Modal */}
       <Modal
         isOpen={isAdjustmentOpen}
         onClose={onAdjustmentClose}
-        title="Confirm Adjustment"
+        title={modalT('confirmAdjustment')}
         footer={
           <>
             <Button variant="ghost" onClick={onAdjustmentClose}>
-              Cancel
+              {modalT('cancel')}
             </Button>
             <Button 
               className="bg-indigo-500 hover:bg-indigo-600"
               onClick={onAdjustmentConfirm}
               isLoading={isAdjusting}
             >
-              Confirm & Apply
+              {modalT('confirmApply')}
             </Button>
           </>
         }
       >
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Are you sure you want to {adjustmentData?.type} <span className="text-white font-bold">{formatCurrency(Number(adjustmentData?.amount))}</span> {adjustmentData?.type === 'credit' ? 'to' : 'from'} <span className="text-white font-bold">{adjustmentData?.userName}</span>?
+            {modalT('adjustNotice', {
+              type: t(adjustmentData?.type === 'credit' ? 'creditAdd' : 'debitRemove'),
+              amount: formatCurrency(Number(adjustmentData?.amount || 0)),
+              direction: modalT(adjustmentData?.type === 'credit' ? 'to' : 'from'),
+              user: adjustmentData?.userName || ""
+            })}
           </p>
           <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
             <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">Type:</span>
-              <span className={`font-bold capitalize ${adjustmentData?.type === 'credit' ? 'text-emerald-400' : 'text-rose-400'}`}>{adjustmentData?.type}</span>
+              <span className="text-muted-foreground">{t('table.type')}:</span>
+              <span className={`font-bold capitalize ${adjustmentData?.type === 'credit' ? 'text-emerald-400' : 'text-rose-400'}`}>{t(adjustmentData?.type === 'credit' ? 'creditAdd' : 'debitRemove')}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">Amount:</span>
+              <span className="text-muted-foreground">{t('table.amount')}:</span>
               <span className="font-bold text-white">{formatCurrency(Number(adjustmentData?.amount))}</span>
             </div>
             {adjustmentData?.note && (
               <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Note:</span>
+                <span className="text-muted-foreground">{t('adminNote')}:</span>
                 <span className="font-medium text-white italic truncate max-w-[200px]">{adjustmentData?.note}</span>
               </div>
             )}
           </div>
           <p className="text-[10px] text-rose-400 flex items-center gap-1 font-medium">
             <ShieldAlert className="h-3 w-3" />
-            This action will be permanently logged in the system audit trail.
+            {modalT('auditTrail')}
           </p>
         </div>
       </Modal>
@@ -102,18 +115,19 @@ export function WalletModals({
       <Modal
         isOpen={isDepositOpen}
         onClose={onDepositClose}
-        title={`${actionType === 'approved' ? 'Approve' : 'Reject'} Deposit Request`}
+        title={modalT(actionType === 'approved' ? 'approveDeposit' : 'rejectDeposit')}
         footer={
           <>
             <Button variant="ghost" onClick={onDepositClose}>
-              Cancel
+              {modalT('cancel')}
             </Button>
             <Button 
               className={actionType === 'approved' ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-rose-500 hover:bg-rose-600'}
-              onClick={() => onDepositConfirm(selectedRequest?._id, actionType)}
+              onClick={() => selectedRequest?._id && onDepositConfirm(selectedRequest._id, actionType)}
+
               isLoading={isProcessing}
             >
-              Confirm {actionType === 'approved' ? 'Approval' : 'Rejection'}
+              {modalT('confirmAction', { action: t(`statuses.${actionType}`) })}
             </Button>
           </>
         }
@@ -125,7 +139,9 @@ export function WalletModals({
             </div>
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground font-medium">
-                Are you sure you want to {actionType} this request of
+                {modalT('confirmDeposit', {
+                  action: t(`statuses.${actionType}`).toLowerCase()
+                })}
               </p>
               <p className="text-2xl font-bold text-white">
                 {selectedRequest && formatCurrency(selectedRequest.amount)}
@@ -139,17 +155,19 @@ export function WalletModals({
 
           <div className="p-4 rounded-xl bg-background/50 border border-border/50 space-y-2">
             <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">User:</span>
+              <span className="text-muted-foreground">{t('table.user')}:</span>
               <span className="font-bold text-white">{selectedRequest?.userId?.name}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">Requested At:</span>
+              <span className="text-muted-foreground">{t('requestedAt')}:</span>
               <span className="font-medium text-white">{selectedRequest && formatDate(selectedRequest.createdAt)}</span>
             </div>
           </div>
 
           <p className="text-[10px] text-muted-foreground text-center italic">
-            This action will {actionType === 'approved' ? 'add balance to' : 'notify'} the user and cannot be undone.
+            {modalT('depositActionNotice', {
+              actionEffect: modalT(`actionEffect.${actionType}`)
+            })}
           </p>
         </div>
       </Modal>

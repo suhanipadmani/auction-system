@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { env } from "../../config";
 
 // Utils
-import { AppError } from "../utils/AppError";
+import { AppError } from "../errors";
 import { sendError } from "../utils/apiResponse";
 
 export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {

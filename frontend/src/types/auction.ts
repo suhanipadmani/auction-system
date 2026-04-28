@@ -3,8 +3,7 @@ import { AuctionStatus } from "@/constants/auction.constants";
 export type { AuctionStatus };
 export type IAuctionTabType = "active" | "won" | "past";
 export type IDiscoveryTabType = "live" | "upcoming";
-
-
+export type AdminTab = "pending" | "history";
 
 export interface IAuction {
   _id: string;

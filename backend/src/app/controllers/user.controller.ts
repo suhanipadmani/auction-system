@@ -46,8 +46,8 @@ export const restore = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const updateMe = asyncHandler(async (req: Request, res: Response) => {
-  const { name } = req.body;
-  const user = await UserService.updateProfile(req.user!.id, name);
+  const { name, preferredLanguage } = req.body;
+  const user = await UserService.updateProfile(req.user!.id, { name, preferredLanguage });
   sendSuccess(res, "Profile updated successfully", user);
 });
 

@@ -1,15 +1,8 @@
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
-interface IAnalyticsCardProps {
-  title: string;
-  value: string | number;
-  subtitle?: string;
-  icon: ReactNode;
-  percentage?: number;
-  color?: "indigo" | "emerald" | "purple" | "amber" | "rose" | "blue" | "teal";
-  className?: string;
-}
+import { IAnalyticsCardProps, IAnalyticsSectionProps } from "@/types/components";
+
 
 export function AnalyticsCard({
   title,
@@ -95,12 +88,8 @@ export function AnalyticsCard({
   );
 }
 
-interface IAnalyticsSectionProps {
-  title: string;
-  description?: string;
-  children: ReactNode;
-  className?: string;
-}
+
+
 
 export function AnalyticsSection({ title, description, children, className }: IAnalyticsSectionProps) {
   return (

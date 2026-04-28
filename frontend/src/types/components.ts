@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Switch as SwitchPrimitives } from "@base-ui/react/switch";
 import { IUser } from "./auth";
 import { IAuction } from "./auction";
-import { IViewType, ITransaction, IDepositRequest } from "./wallet";
+import { IViewType, ITransaction, IDepositRequest, IAdjustmentData } from "./wallet";
 import { USER_ACTIONS } from "@/enums/user.enum";
 import { TRANSACTION_STATUSES, TRANSACTION_TYPES } from "@/enums/wallet.enum";
 
@@ -71,6 +71,8 @@ export interface IDashboardHeaderProps {
 export interface ISidebarProps {
   isMobile?: boolean;
   onClose?: () => void;
+  isCollapsed?: boolean;
+  onToggle?: () => void;
 }
 
 export interface IHeaderProps {
@@ -97,13 +99,7 @@ export interface IDashboardStatCardProps {
   trend?: string;
 }
 
-export interface IAdjustmentData {
-  userId: string;
-  amount: number;
-  type: TRANSACTION_TYPES.CREDIT | TRANSACTION_TYPES.DEBIT;
-  note: string;
-  userName: string;
-}
+
 
 export interface IWalletModalsProps {
   // Adjustment Modal
@@ -116,7 +112,7 @@ export interface IWalletModalsProps {
   // Deposit Modal
   isDepositOpen: boolean;
   onDepositClose: () => void;
-  selectedRequest: any;
+  selectedRequest: IDepositRequest | null;
   actionType: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED;
   onDepositConfirm: (id: string, status: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED) => void;
   isProcessing: boolean;
@@ -177,6 +173,82 @@ export interface IAuctionCardProps {
   auction: IAuction;
   href?: string;
   showActions?: boolean;
+}
+
+export interface IProgressProps {
+  value: number;
+  className?: string;
+  indicatorClassName?: string;
+  showBlur?: boolean;
+}
+
+export interface IAnalyticsCardProps {
+  title: string;
+  value: string | number;
+  subtitle?: string;
+  icon: ReactNode;
+  percentage?: number;
+  color?: "indigo" | "emerald" | "purple" | "amber" | "rose" | "blue" | "teal";
+  className?: string;
+}
+
+export interface IAnalyticsSectionProps {
+  title: string;
+  description?: string;
+  children: ReactNode;
+  className?: string;
+}
+
+export interface IBidHistoryProps {
+  auctionId: string;
+}
+
+export interface IBidItemProps {
+  bid: any;
+  index: number;
+  page: number;
+}
+
+export interface IFullHistoryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  auctionId: string;
+}
+
+export interface IAuctionTimelineProps {
+  startTime: string;
+  endTime: string;
+}
+
+export interface IAuctionRulesProps {
+  basePrice: number;
+  minIncrement: number;
+}
+
+export interface IAdminControlsProps {
+  onAction: (action: "approve" | "reject") => void;
+  isProcessing: boolean;
+}
+
+export interface ITableColumn<T> {
+  header: string;
+  render: (item: T) => React.ReactNode;
+  className?: string;
+  headerClassName?: string;
+}
+
+export interface IApprovalTableProps {
+  data: IAuction[];
+  onAction: any;
+  isProcessing: boolean;
+  t: any;
+  formatCurrency: any;
+}
+
+export interface IInventoryTableProps {
+  data: IAuction[];
+  t: any;
+  formatCurrency: any;
 }
 
 

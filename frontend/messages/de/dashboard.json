@@ -1,0 +1,58 @@
+{
+  "hero": {
+    "liveStatus": "Live-Bieten jetzt aktiv",
+    "title": "Die Zukunft des",
+    "titlePrecision": "Präzisions-Bietens",
+    "subtitle": "Erleben Sie das Adrenalin von Echtzeit-Auktionen mit BidMaster. Sicher, transparent und für Wettbewerbe mit hohem Einsatz konzipiert.",
+    "cta": "Jetzt mit dem Bieten beginnen"
+  },
+  "stats": {
+    "liveAuctions": "Live-Auktionen",
+    "activeBidders": "Aktive Bieter",
+    "bidsPlaced": "Abgegebene Gebote"
+  },
+  "header": {
+    "features": "Funktionen",
+    "howItWorks": "Wie es funktioniert",
+    "liveAuctions": "Live-Auktionen",
+    "login": "Anmelden",
+    "getStarted": "Loslegen"
+  },
+  "footer": {
+    "description": "Die nächste Generation von Echtzeit-Auktionen. Transparent, schnell und sicher für Präzisionsgebote.",
+    "marketplace": "Marktplatz",
+    "liveAuctions": "Live-Auktionen",
+    "trending": "Im Trend",
+    "upcoming": "Demnächst",
+    "account": "Konto",
+    "signIn": "Anmelden",
+    "register": "Registrieren",
+    "helpCenter": "Hilfecenter",
+    "rights": "© 2026 BidMaster. Alle Rechte vorbehalten."
+  },
+  "sections": {
+    "trending": {
+      "title": "Jetzt im Trend",
+      "subtitle": "Aktivste Auktionen",
+      "viewAll": "Alle Auktionen anzeigen"
+    },
+    "closingSoon": {
+      "title": "Endet bald",
+      "subtitle": "Letzte Chance zu bieten"
+    },
+    "newlyListed": {
+      "title": "Neu eingestellt",
+      "subtitle": "Frisch auf dem Markt"
+    }
+  },
+  "cta": {
+    "ready": "Bereit zum Überbieten?",
+    "description": "Schließen Sie sich Tausenden von aktiven Bietern an und gewinnen Sie noch heute die exklusivsten Auktionen der Welt.",
+    "join": "Jetzt bei BidMaster mitmachen",
+    "signIn": "Mitglieder-Anmeldung"
+  },
+  "noAuctions": {
+    "title": "Keine Auktionen verfügbar",
+    "description": "Wir bereiten gerade neue exklusive Artikel vor. Schauen Sie in ein paar Minuten wieder vorbei!"
+  }
+}

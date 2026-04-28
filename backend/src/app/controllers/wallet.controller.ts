@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as WalletService from "../services/wallet.service";
 import { sendSuccess } from "../utils/apiResponse";
-import { AppError } from "../utils/AppError";
+import { AppError, ErrorMessages } from "../errors";
 import { getPagingMeta } from "../utils/pagination";
 
 export const getWallet = async (req: Request, res: Response) => {
@@ -15,7 +15,7 @@ export const requestDeposit = async (req: Request, res: Response) => {
   const { amount } = req.body;
   
   if (!amount || amount <= 0) {
-    throw new AppError("Invalid deposit amount", 400);
+    throw AppError.from(ErrorMessages.INVALID_AMOUNT);
   }
 
   const request = await WalletService.createDepositRequest(userId, amount);
@@ -43,7 +43,7 @@ export const requestPayout = async (req: Request, res: Response) => {
   const { amount } = req.body;
   
   if (!amount || amount <= 0) {
-    throw new AppError("Invalid payout amount", 400);
+    throw AppError.from(ErrorMessages.INVALID_AMOUNT);
   }
 
   const request = await WalletService.createPayoutRequest(userId, amount);

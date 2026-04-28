@@ -1,0 +1,29 @@
+{
+  "title": "Auszahlungsverwaltung",
+  "subtitle": "Auszahlungsanfragen von Mietern und Verkäufern prüfen und bearbeiten.",
+  "all": "Alle",
+  "pending": "Ausstehend",
+  "approved": "Genehmigt",
+  "rejected": "Abgelehnt",
+  "table": {
+    "user": "Benutzer",
+    "amount": "Betrag",
+    "requestedDate": "Anforderungsdatum",
+    "status": "Status",
+    "actions": "Aktionen",
+    "processed": "Bearbeitet: {date}",
+    "noRequests": "Keine Auszahlungsanfragen gefunden."
+  },
+  "modals": {
+    "addNote": "Notiz hinzufügen (optional):",
+    "rejectReason": "Grund für die Ablehnung (obligatorisch):",
+    "rejectionRequired": "Ablehnungsnotiz ist erforderlich."
+  },
+  "notice": {
+    "title": "Administrativer Hinweis",
+    "content": "Die Genehmigung einer Auszahlung zieht die Beträge dauerhaft vom gesperrten Guthaben des Benutzers ab. Stellen Sie sicher, dass die physische oder externe Überweisung abgeschlossen ist, bevor Sie sie als Genehmigt markieren. Ablehnungen geben die gesperrten Beträge automatisch wieder an das verfügbare Guthaben des Benutzers frei."
+  },
+  "pagination": {
+    "pageInfo": "Seite {current} von {total} wird angezeigt"
+  }
+}

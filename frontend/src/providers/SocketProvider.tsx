@@ -5,11 +5,8 @@ import { socket } from "@/lib/socket";
 import { useAuthStore } from "@/store/auth.store";
 import toast from "react-hot-toast";
 
-interface SocketContextType {
-  isConnected: boolean;
-  emit: (event: string, ...args: any[]) => void;
-  socket: typeof socket;
-}
+import { SocketContextType } from "@/types/socket";
+
 
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 

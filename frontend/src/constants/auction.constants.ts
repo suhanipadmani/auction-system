@@ -36,6 +36,10 @@ export const AUCTION_STATUS_CONFIG = {
     label: "Expired",
     colorClass: "bg-zinc-500/10 text-zinc-400 border-zinc-500/20",
   },
+  [AUCTION_STATUSES.PAST]: {
+    label: "Past",
+    colorClass: "bg-zinc-500/10 text-zinc-400 border-zinc-500/20",
+  },
 } as const;
 
 export const AUCTION_STATUS_OPTIONS = [

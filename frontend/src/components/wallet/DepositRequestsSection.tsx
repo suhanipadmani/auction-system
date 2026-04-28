@@ -17,11 +17,12 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { DepositRow } from "./DepositRow";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Table, TableHeader, TableBody, TableHead, TableRow } from "@/components/ui/Table";
+import { useTranslations } from "next-intl";
 
 
 
 export function DepositRequestsSection({ onProcessClick, processingId }: IDepositRequestsSectionProps) {
-
+  const t = useTranslations("wallet");
   const [depositFilter, setDepositFilter] = useState<"pending" | "approved" | "rejected">("pending");
   const [page, setPage] = useState(1);
   const { data: pendingData, isLoading: isPendingLoading } = usePendingDeposits(depositFilter, page, 20);
@@ -38,7 +39,7 @@ export function DepositRequestsSection({ onProcessClick, processingId }: IDeposi
     const requests = pendingData?.data as IDepositRequest[];
 
     if (!requests || requests.length === 0) {
-      return <EmptyState message={`No ${depositFilter} requests found`} colSpan={5} />;
+      return <EmptyState message={`${t('depositRequests')} - ${t(`statuses.${depositFilter}`)}`} colSpan={5} />;
     }
 
     return requests.map((req) => (
@@ -59,9 +60,9 @@ export function DepositRequestsSection({ onProcessClick, processingId }: IDeposi
           <div className="space-y-1">
             <CardTitle className="text-xl font-heading flex items-center gap-2">
               <ArrowUpCircle className="h-5 w-5 text-emerald-400" />
-              Deposit Requests
+              {t('depositRequests')}
             </CardTitle>
-            <p className="text-xs text-muted-foreground">Manage and audit user deposit requests.</p>
+            <p className="text-xs text-muted-foreground">{t('depositRequestsDesc')}</p>
           </div>
 
           <div className="flex p-1 bg-background/50 rounded-xl border border-border/50 w-fit">
@@ -77,7 +78,7 @@ export function DepositRequestsSection({ onProcessClick, processingId }: IDeposi
                   : 'text-muted-foreground hover:text-white'
                   }`}
               >
-                {status}
+                {t(`statuses.${status}`)}
               </button>
             ))}
           </div>
@@ -87,11 +88,11 @@ export function DepositRequestsSection({ onProcessClick, processingId }: IDeposi
             <Table>
               <TableHeader className="bg-white/5">
                 <TableRow className="hover:bg-transparent border-border/40">
-                  <TableHead className="w-[250px] py-4">User</TableHead>
-                  <TableHead className="py-4">Amount</TableHead>
-                  <TableHead className="py-4">Requested At</TableHead>
-                  <TableHead className="py-4">Status</TableHead>
-                  <TableHead className="text-right py-4">Actions</TableHead>
+                  <TableHead className="w-[250px] py-4">{t('table.user')}</TableHead>
+                  <TableHead className="py-4">{t('table.amount')}</TableHead>
+                  <TableHead className="py-4">{t('requestedAt')}</TableHead>
+                  <TableHead className="py-4">{t('status')}</TableHead>
+                  <TableHead className="text-right py-4">{t('actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

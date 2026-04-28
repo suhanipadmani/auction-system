@@ -1,0 +1,27 @@
+{
+  "title": "Benachrichtigungen",
+  "empty": "Keine neuen Benachrichtigungen",
+  "markAllRead": "Alle als gelesen markieren",
+  "types": {
+    "outbid": {
+      "title": "Überboten!",
+      "message": "Sie wurden bei \"{title}\" überboten. Geben Sie jetzt ein höheres Gebot ab!"
+    },
+    "won": {
+      "title": "Auktion gewonnen!",
+      "message": "Herzlichen Glückwunsch! Sie haben die Auktion für \"{title}\" gewonnen."
+    },
+    "lost": {
+      "title": "Auktion beendet",
+      "message": "Die Auktion für \"{title}\" ist beendet. Leider war Ihr Gebot nicht das höchste."
+    },
+    "deposit": {
+      "title": "Einzahlung erfolgreich",
+      "message": "Ihre Einzahlung von {amount} wurde bearbeitet."
+    },
+    "withdrawal": {
+      "title": "Auszahlung bearbeitet",
+      "message": "Ihre Auszahlung von {amount} wurde abgeschlossen."
+    }
+  }
+}

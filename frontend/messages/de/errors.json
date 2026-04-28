@@ -1,0 +1,17 @@
+{
+  "AUTH_UNAUTHORIZED": "Nicht autorisierter Zugriff. Bitte melden Sie sich an.",
+  "AUTH_FORBIDDEN": "Sie haben keine Berechtigung, diese Aktion auszuführen.",
+  "AUTH_INVALID_TOKEN": "Ungültiges oder abgelaufenes Token.",
+  "RESOURCE_NOT_FOUND": "Die angeforderte Ressource wurde nicht gefunden.",
+  "BAD_REQUEST": "Ungültige Anfrageparameter.",
+  "VALIDATION_ERROR": "Validierung fehlgeschlagen.",
+  "INTERNAL_SERVER_ERROR": "Etwas ist schief gelaufen.",
+  "AUTH_USER_ALREADY_EXISTS": "Benutzer mit dieser E-Mail existiert bereits.",
+  "AUTH_INVALID_CREDENTIALS": "Ungültige E-Mail-Adresse oder Passwort.",
+  "AUCTION_NOT_FOUND": "Auktionsangebot nicht gefunden.",
+  "AUCTION_STATUS_FORBIDDEN": "Aktion im aktuellen Auktionsstatus verboten.",
+  "BID_TOO_LOW": "Ihr Gebot muss mindestens {amount} betragen.",
+  "BID_CONFLICT": "Jemand anderes hat gerade ein Gebot abgegeben. Bitte versuchen Sie es erneut.",
+  "WALLET_INSUFFICIENT_BALANCE": "Unzureichendes Guthaben für diese Aktion.",
+  "WALLET_FROZEN": "Ihre Brieftasche ist derzeit eingefroren."
+}

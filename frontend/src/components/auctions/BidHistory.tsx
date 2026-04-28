@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { useAuctionBids } from "@/hooks/useAuction";
-import { formatCurrency, cn } from "@/lib/utils";
+import { useCurrency } from "@/hooks/useCurrency";
+import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { Loader2, User, Zap, History, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
+import { useTranslations } from "next-intl";
 
-interface BidHistoryProps {
-  auctionId: string;
-}
+import { IBidHistoryProps, IBidItemProps, IFullHistoryModalProps } from "@/types/components";
 
-export const BidHistory = ({ auctionId }: BidHistoryProps) => {
+
+export const BidHistory = ({ auctionId }: IBidHistoryProps) => {
+  const { formatCurrency } = useCurrency();
+  const t = useTranslations("auction.details");
   const [isFullHistoryOpen, setIsFullHistoryOpen] = useState(false);
   const { data: response, isLoading } = useAuctionBids(auctionId, { page: 1, limit: 3 });
   const bids = response?.data || [];
@@ -33,14 +36,14 @@ export const BidHistory = ({ auctionId }: BidHistoryProps) => {
         <CardHeader className="p-6 pb-2 border-b border-white/5 flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-white/70">
             <History className="h-4 w-4 text-primary" />
-            Bid History
+            {t('bidHistory')}
           </CardTitle>
           {bids.length > 0 && (
-            <button 
+            <button
               onClick={() => setIsFullHistoryOpen(true)}
               className="group flex items-center gap-1.5 text-[10px] font-bold text-primary hover:text-white transition-colors uppercase tracking-widest"
             >
-              View All
+              {t('viewAll')}
               <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
             </button>
           )}
@@ -51,8 +54,8 @@ export const BidHistory = ({ auctionId }: BidHistoryProps) => {
               <div className="mx-auto w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4">
                 <History className="h-6 w-6 text-white/20" />
               </div>
-              <p className="text-sm font-bold text-white/50">No bids yet</p>
-              <p className="text-xs text-white/30">Be the first to place a bid on this item!</p>
+              <p className="text-sm font-bold text-white/50">{t('noBidsYet')}</p>
+              <p className="text-xs text-white/30">{t('beTheFirst')}</p>
             </div>
           ) : (
             <div className="divide-y divide-white/5">
@@ -64,18 +67,21 @@ export const BidHistory = ({ auctionId }: BidHistoryProps) => {
         </CardContent>
       </Card>
 
-      <FullHistoryModal 
-        isOpen={isFullHistoryOpen} 
-        onClose={() => setIsFullHistoryOpen(false)} 
-        auctionId={auctionId} 
+      <FullHistoryModal
+        isOpen={isFullHistoryOpen}
+        onClose={() => setIsFullHistoryOpen(false)}
+        auctionId={auctionId}
       />
     </>
   );
 };
 
 // Sub-component for individual bid rows
-const BidItem = ({ bid, index, page }: { bid: any; index: number; page: number }) => (
-  <div 
+const BidItem = ({ bid, index, page }: IBidItemProps) => {
+  const { formatCurrency } = useCurrency();
+  const t = useTranslations("auction.details");
+  return (
+  <div
     className={cn(
       "p-4 flex items-center justify-between transition-colors hover:bg-white/5",
       index === 0 && page === 1 && "bg-primary/5"
@@ -100,7 +106,7 @@ const BidItem = ({ bid, index, page }: { bid: any; index: number; page: number }
             {bid.bidderName}
           </span>
           {bid.isMine && (
-             <Badge className="bg-primary/20 text-primary border-primary/30 text-[9px] font-black h-4 px-1.5">YOU</Badge>
+            <Badge className="bg-primary/20 text-primary border-primary/30 text-[9px] font-black h-4 px-1.5">{t('you')}</Badge>
           )}
           {bid.isAutoBid && (
             <Zap className="h-3 w-3 text-amber-500 fill-amber-500" />
@@ -111,7 +117,7 @@ const BidItem = ({ bid, index, page }: { bid: any; index: number; page: number }
         </p>
       </div>
     </div>
-    
+
     <div className="text-right space-y-1">
       <p className={cn(
         "font-black tracking-tight",
@@ -120,14 +126,18 @@ const BidItem = ({ bid, index, page }: { bid: any; index: number; page: number }
         {formatCurrency(bid.amount)}
       </p>
       {index === 0 && page === 1 && (
-        <Badge variant="outline" className="text-[9px] border-primary/20 text-primary font-bold">CURRENT HIGH</Badge>
+        <Badge variant="outline" className="text-[9px] border-primary/20 text-primary font-bold">{t('currentHigh')}</Badge>
       )}
     </div>
   </div>
-);
+  );
+};
 
 // Full history modal component
-const FullHistoryModal = ({ isOpen, onClose, auctionId }: { isOpen: boolean; onClose: () => void; auctionId: string }) => {
+const FullHistoryModal = ({ isOpen, onClose, auctionId }: IFullHistoryModalProps) => {
+  const { formatCurrency } = useCurrency();
+  const t = useTranslations("auction.details");
+  const tm = useTranslations("auction.management");
   const [page, setPage] = useState(1);
   const { data: response, isLoading } = useAuctionBids(auctionId, { page, limit: 10 });
   const bids = response?.data || [];
@@ -137,7 +147,7 @@ const FullHistoryModal = ({ isOpen, onClose, auctionId }: { isOpen: boolean; onC
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Complete Bid History"
+      title={t('completeBidHistory')}
     >
       <div className="min-h-[400px] flex flex-col">
         {isLoading ? (
@@ -151,7 +161,7 @@ const FullHistoryModal = ({ isOpen, onClose, auctionId }: { isOpen: boolean; onC
                 <BidItem key={bid._id} bid={bid} index={index} page={page} />
               ))}
             </div>
-            
+
             {totalPages > 1 && (
               <div className="mt-6 p-4 rounded-xl bg-white/5 flex items-center justify-between">
                 <Button
@@ -161,10 +171,10 @@ const FullHistoryModal = ({ isOpen, onClose, auctionId }: { isOpen: boolean; onC
                   disabled={page === 1}
                   className="h-9 text-xs"
                 >
-                  <ChevronLeft className="w-4 h-4 mr-2" /> Previous
+                  <ChevronLeft className="w-4 h-4 mr-2" /> {tm('pagination.previous')}
                 </Button>
                 <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  Page <span className="text-white">{page}</span> of {totalPages}
+                  {tm('page', { current: page, total: totalPages })}
                 </div>
                 <Button
                   variant="ghost"
@@ -173,7 +183,7 @@ const FullHistoryModal = ({ isOpen, onClose, auctionId }: { isOpen: boolean; onC
                   disabled={page === totalPages}
                   className="h-9 text-xs"
                 >
-                  Next <ChevronRight className="w-4 h-4 ml-2" />
+                  {tm('pagination.next')} <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             )}

@@ -1,0 +1,128 @@
+{
+  "title": "Auktionssystem",
+  "loading": "Wird geladen...",
+  "save": "Speichern",
+  "cancel": "Abbrechen",
+  "actions": "Aktionen",
+  "language": "Sprache",
+  "logout": "Abmelden",
+  "notifications": "Benachrichtigungen",
+  "darkMode": "Dunkelmodus",
+  "lightMode": "Lichtmodus",
+  "search": "Suchen...",
+  "home": "Startseite",
+  "accountSettings": "Kontoeinstellungen",
+  "profile": "Profil",
+  "sidebar": {
+    "auctionsystem": "Auktionssystem",
+    "dashboard": "Dashboard",
+    "marketplace": "Marktplatz",
+    "mywallet": "Mein Wallet",
+    "walletcontrol": "Wallet-Steuerung",
+    "payoutrequests": "Auszahlungsanfragen",
+    "auctionmanagement": "Auktionsverwaltung",
+    "usermanagement": "Benutzerverwaltung",
+    "biddinghistory": "Gebotsverlauf",
+    "myauctions": "Meine Auktionen",
+    "payoutaccount": "Auszahlungskonto",
+    "auditlogs": "Audit-Logs",
+    "portal": "{role} Portal",
+    "signOut": "Abmelden"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Willkommen,",
+    "subtitle": "Ihr Dashboard & Portfolio",
+    "status": "Status",
+    "active": "Aktiv",
+    "quickActions": "Schnellzugriffe",
+    "toolsAndOperations": "Werkzeuge & Operationen",
+    "user": {
+      "subtitle": "Ihr Biet-Dashboard & Portfolio",
+      "statusValue": "Aktiver Bieter",
+      "insights": {
+        "title": "Biet-Einblicke",
+        "description": "Detaillierte Leistungskennzahlen für Ihre Bietaktivitäten.",
+        "availableBalance": "Verfügbares Guthaben",
+        "availableBalanceSubtitle": "bereit für neue Gebote",
+        "activeBids": "Aktive Gebote",
+        "activeBidsSubtitle": "aktuelle laufende Gebote",
+        "auctionsWon": "Gewonnene Auktionen",
+        "auctionsWonSubtitle": "erfolgreich erworbene Artikel",
+        "totalSpent": "Gesamtausgaben",
+        "totalSpentSubtitle": "über alle gewonnenen Auktionen",
+        "winRate": "Erfolgsquote",
+        "winRateSubtitle": "{won} gewonnen vs {lost} verloren",
+        "lossCount": "Verlustanzahl",
+        "lossCountSubtitle": "Auktionen ohne Gewinn beendet"
+      },
+      "tools": {
+        "description": "Verwalten Sie Ihre Bietziele, laden Sie Ihr Wallet auf und erkunden Sie Auktionen.",
+        "goalsTitle": "Bietziele",
+        "goalsDesc": "Budgets festlegen und Risiko verfolgen",
+        "marketplaceTitle": "Marktplatz",
+        "marketplaceDesc": "Live- und kommende Artikel ansehen",
+        "historyTitle": "Mein Verlauf",
+        "historyDesc": "Gewonnene und vergangene Auktionen ansehen",
+        "fundWalletTitle": "Wallet aufladen",
+        "fundWalletDesc": "Guthaben für Gebote hinzufügen"
+      }
+    },
+    "admin": {
+      "subtitle": "Plattformverwaltung & Systemübersicht",
+      "role": "Rolle",
+      "statusValue": "Systemadministrator",
+      "analytics": {
+        "title": "Plattform-Analysen",
+        "description": "Systemweite Leistung und Finanzübersicht.",
+        "totalUsers": "Gesamtbenutzer",
+        "totalUsersSubtitle": "auf der Plattform registriert",
+        "activeUsers": "Aktive Benutzer",
+        "activeUsersSubtitle": "Benutzer mit aktivem Status",
+        "totalAuctions": "Gesamt-Auktionen",
+        "totalAuctionsSubtitle": "alle bisherigen Inserate",
+        "totalRevenue": "Gesamtumsatz",
+        "totalRevenueSubtitle": "Bruttotransaktionsvolumen"
+      },
+      "tools": {
+        "description": "Plattformressourcen und Benutzerkonten verwalten.",
+        "walletControlTitle": "Wallet-Steuerung",
+        "walletControlDesc": "Einzahlungen und manuelle Guthabenanpassungen verarbeiten",
+        "auctionManagementTitle": "Auktionsverwaltung",
+        "auctionManagementDesc": "Ausstehende Auktionsinserate prüfen und genehmigen"
+      }
+    },
+    "seller": {
+      "studio": "Verkäufer-Studio",
+      "subtitle": "Verwalten Sie Ihre Inserate und verfolgen Sie Ihre Verkaufsleistung.",
+      "statusValue": "Verifizierter Verkäufer",
+      "performance": {
+        "title": "Verkäuferleistung",
+        "description": "Einblicke in Ihren Auktionserfolg und Marktwert.",
+        "activeListings": "Aktive Inserate",
+        "activeListingsSubtitle": "aktuell live zum Bieten",
+        "completedSales": "Abgeschlossene Verkäufe",
+        "completedSalesSubtitle": "erfolgreich beendete Auktionen",
+        "successRate": "Erfolgsquote",
+        "successRateSubtitle": "Auktionen verkauft vs inseriert",
+        "avgHighBid": "Durchschnittliches Höchstgebot",
+        "avgHighBidSubtitle": "pro Auktion mit Geboten",
+        "highestBidEver": "Höchstes Gebot aller Zeiten",
+        "highestBidEverSubtitle": "Ihr persönlicher Rekord",
+        "totalProceeds": "Gesamterlös",
+        "totalProceedsSubtitle": "Lebenslange Einnahmen"
+      },
+      "tools": {
+        "description": "Erstellen Sie Auktionen, verwalten Sie Inserate und sehen Sie Ihre Aufzeichnungen an.",
+        "listNewItemTitle": "Neuen Artikel inserieren",
+        "listNewItemDesc": "Erstellen Sie ein neues Auktionsinserat für Bieter",
+        "myAuctionsTitle": "Meine Auktionen",
+        "myAuctionsDesc": "Verwalten Sie Ihre aktiven und ausstehenden Inserate"
+      }
+    }
+  },
+  "errors": {
+    "unknown": "Ein unbekannter Fehler ist aufgetreten",
+    "required": "Dieses Feld ist erforderlich"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "title": "Auction Management",
+  "subtitle": "Review approvals and monitor global auction inventory.",
+  "tabs": {
+    "pending": "Pending Review",
+    "inventory": "Global Inventory"
+  },
+  "searchPlaceholder": "Search inventory...",
+  "statusFilter": {
+    "placeholder": "All Status",
+    "all": "All Status"
+  },
+  "empty": {
+    "pending": "No auctions pending review",
+    "inventory": "No auctions found in inventory"
+  },
+  "pagination": {
+    "showing": "Showing {count} of {total} {type}",
+    "page": "Page {current} of {total}",
+    "previous": "Previous",
+    "next": "Next",
+    "pending": "pending",
+    "auctions": "auctions"
+  },
+  "modals": {
+    "approveTitle": "Approve Auction",
+    "rejectTitle": "Reject Auction",
+    "confirmAction": "Are you sure you want to {action} this auction?",
+    "approveEffect": " This will make the auction visible and allow bidding at the scheduled start time.",
+    "rejectEffect": " This will permanently reject the request.",
+    "processing": "Processing...",
+    "confirmApproval": "Confirm Approval",
+    "confirmRejection": "Confirm Rejection",
+    "cancel": "Cancel",
+    "success": "Auction {action} successfully"
+  },
+  "table": {
+    "item": "Auction Item",
+    "seller": "Seller",
+    "startingPrice": "Base Price",
+    "status": "Status",
+    "actions": "Actions",
+    "startTime": "Scheduled Start",
+    "endTime": "End Time",
+    "currentBid": "Current Bid",
+    "dateCreated": "Date Created",
+    "details": "Details",
+    "action": "Action"
+  }
+}

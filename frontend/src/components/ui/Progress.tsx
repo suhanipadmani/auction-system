@@ -3,14 +3,10 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-interface ProgressProps {
-  value: number;
-  className?: string;
-  indicatorClassName?: string;
-  showBlur?: boolean;
-}
+import { IProgressProps } from "@/types/components";
 
-const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
+
+const Progress = React.forwardRef<HTMLDivElement, IProgressProps>(
   ({ value, className, indicatorClassName, showBlur = true }, ref) => {
     // Ensure value is between 0 and 100
     const clampedValue = Math.min(100, Math.max(0, value));

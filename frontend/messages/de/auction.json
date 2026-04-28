@@ -1,0 +1,216 @@
+{
+  "activeListings": "Aktive Angebote",
+  "placeBid": "Gebot abgeben",
+  "currentBid": "Aktuelles Gebot",
+  "highestBid": "Höchstgebot",
+  "startingBid": "Startgebot",
+  "endsIn": "Endet in",
+  "bidHistory": "Gebotsverlauf",
+  "noBids": "Noch keine Gebote",
+  "auctionDetails": "Auktionsdetails",
+  "bidSuccess": "Gebot erfolgreich abgegeben!",
+  "outbid": "Sie wurden überboten! Neues Höchstgebot: {amount}",
+  "categories": {
+    "electronics": "Elektronik",
+    "art": "Kunst",
+    "vehicles": "Fahrzeuge",
+    "realestate": "Immobilien"
+  },
+  "card": {
+    "viewDetails": "Details anzeigen",
+    "bids": "Gebote",
+    "currentBid": "Aktuelles Gebot",
+    "basePrice": "Startpreis",
+    "endingIn": "Endet in",
+    "starts": "Beginnt in",
+    "cancelTitle": "Auktion abbrechen",
+    "back": "Zurück",
+    "confirmCancel": "Abbrechen bestätigen",
+    "areYouSure": "Sind Sie sicher?",
+    "cancelWarning": "Diese Aktion storniert die Auktion endgültig für",
+    "ended": "Beendet",
+    "live": "LIVE",
+    "userStatus": {
+      "winning": "Führend",
+      "outbid": "Überboten"
+    }
+  },
+  "create": {
+    "title": "Neue Auktion erstellen",
+    "subtitle": "Geben Sie die Details ein, um Ihre Auktion zu starten.",
+    "backToDashboard": "Zurück zum Dashboard",
+    "formTitle": "Auktionsdetails",
+    "itemTitle": "Titel",
+    "itemTitlePlaceholder": "z.B. Vintage 1960er Kamera",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Erzählen Sie den Bietern mehr über Ihren Artikel...",
+    "basePrice": "Startpreis ({symbol})",
+    "minIncrement": "Mindestgebotsschritt ({symbol})",
+    "startTime": "Startzeit",
+    "endTime": "Endzeit",
+    "submit": "Auktion veröffentlichen",
+    "submitting": "Wird erstellt...",
+    "success": "Auktion erfolgreich erstellt und wartet auf Genehmigung!"
+  },
+  "bidding": {
+    "budgetActive": "Budget aktiv: {name}",
+    "left": "Übrig",
+    "used": "Verbraucht",
+    "exposureImpact": "Auswirkung auf das Risiko",
+    "highestBidder": "Sie sind der Höchstbietende",
+    "participatePrompt": "Möchten Sie an dieser Auktion teilnehmen?",
+    "registrationRequired": "Eine Registrierung ist erforderlich, um Gebote abzugeben",
+    "signInToBid": "Anmelden zum Bieten",
+    "assignToGoal": "Einem Ziel zuweisen",
+    "noGoalSelected": "Kein Ziel ausgewählt",
+    "goalTrackingDesc": "Die Zuweisung zu einem Ziel hilft Ihnen, Ihr Budget über mehrere Auktionen hinweg einzuhalten.",
+    "enableAutoBid": "Auto-Gebot aktivieren",
+    "activeAutoBid": "Aktives Auto-Gebot",
+    "maxLimit": "Höchstlimit",
+    "setupAutoBid": "Auto-Gebot einrichten",
+    "settingUp": "Einrichtung läuft...",
+    "placeBid": "Gebot abgeben",
+    "processing": "Verarbeitung...",
+    "limitExceeded": "Limit überschritten",
+    "bidExceedsBudget": "Gebot überschreitet das Zielbudget: {amount} übrig",
+    "currentHighestBid": "Aktuelles Höchstgebot",
+    "timer": {
+      "ended": "Auktion beendet",
+      "cancelled": "Auktion abgebrochen",
+      "startingSoon": "Beginnt bald",
+      "inactive": "Auktion inaktiv",
+      "days": "{count}T",
+      "endsIn": "Endet in {time}"
+    },
+    "errors": {
+      "minBid": "Mindestgebot erforderlich: {amount}",
+      "autoBidFailed": "Automatisches Gebot konnte nicht eingerichtet werden"
+    }
+  },
+  "management": {
+    "title": "Auktionsverwaltung",
+    "subtitle": "Verwalten Sie Ihre gelisteten Artikel und verfolgen Sie deren Status.",
+    "createListing": "Neues Angebot erstellen",
+    "tabs": {
+      "all": "Alle Angebote",
+      "active": "Live",
+      "pending": "Ausstehend",
+      "past": "Verlauf"
+    },
+    "searchPlaceholder": "Nach Titel suchen...",
+    "sortBy": "Sortieren nach",
+    "sort": {
+      "newest": "Neueste zuerst",
+      "oldest": "Älteste zuerst",
+      "priceHigh": "Preis: Hoch zu Niedrig",
+      "priceLow": "Preis: Niedrig zu Hoch",
+      "bidHigh": "Höchstgebot: Hoch zu Niedrig"
+    },
+    "empty": "Sie haben noch keine Auktionen erstellt.",
+    "emptyStatus": "Keine {status} Auktionen gefunden.",
+    "startFirstListing": "Erstes Angebot erstellen",
+    "pagination": {
+      "info": "Zeige {count} von {total} Auktionen",
+      "previous": "Zurück",
+      "next": "Weiter"
+    },
+    "page": "Seite {current} von {total}"
+  },
+  "discovery": {
+    "title": "Marktplatz erkunden",
+    "subtitle": "Entdecken Sie Live-Bietergefechte und merken Sie sich kommende Highlights",
+    "marketplace": "Marktplatz",
+    "tabs": {
+      "live": "Jetzt Live",
+      "upcoming": "Demnächst"
+    },
+    "searchPlaceholder": "Auktionen suchen...",
+    "scanning": "Marktplatz wird durchsucht...",
+    "emptyTitle": "Keine Auktionen gefunden",
+    "emptySearch": "Wir konnten keine {status} Auktionen finden, die auf \"{query}\" passen.",
+    "emptyLive": "Aktuell gibt es keine Live-Auktionen. Schauen Sie bald wieder vorbei!",
+    "emptyUpcoming": "Momentan sind keine kommenden Auktionen geplant. Verkäufer bereiten neue Angebote vor."
+  },
+  "goals": {
+    "title": "Verwalten Sie Ihre Bieterziele",
+    "subtitle": "Legen Sie Höchstbeträge für verschiedene Kategorien fest, um Ihre Strategie einzuhalten und Impulskäufe zu vermeiden.",
+    "strategyLabel": "Intelligente Bieterstrategie",
+    "activeGoals": "Aktive Ziele",
+    "exposure": "Risiko",
+    "available": "Verfügbar",
+    "createGoal": "Ziel erstellen",
+    "modal": {
+      "title": "Neues Gebotsziel erstellen",
+      "nameLabel": "Name des Ziels",
+      "namePlaceholder": "z.B. Luxusuhren, Elektronik...",
+      "budgetLabel": "Maximales Budget",
+      "budgetPlaceholder": "Gesamtlimit für Ausgaben",
+      "submit": "Ziel erstellen"
+    }
+  },
+  "details": {
+    "back": "Zurück",
+    "cancel": "Abbrechen",
+    "cancelling": "Wird abgebrochen...",
+    "finalizeSale": "Verkauf abschließen",
+    "finalizing": "Wird abgeschlossen...",
+    "listedBy": "Inseriert von",
+    "description": "Beschreibung",
+    "timeline": "Zeitplan",
+    "startTime": "Startzeit",
+    "endTime": "Endzeit",
+    "rules": "Regeln",
+    "basePrice": "Basispreis",
+    "minIncrement": "Mindestgebotsschritt",
+    "topBidder": "Höchstbietender",
+    "noBidsPlaced": "Noch keine Gebote abgegeben",
+    "cancelConfirm": "Sind Sie sicher, dass Sie diese Auktion abbrechen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "cancelSuccess": "Auktion erfolgreich abgebrochen",
+    "finalizeConfirm": "Sind Sie sicher, dass Sie diesen Verkauf abschließen möchten? Dadurch werden Gelder vom Gewinner in Ihr Wallet transferiert.",
+    "finalizeSuccess": "Verkauf erfolgreich abgeschlossen!",
+    "bidHistory": "Gebotsverlauf",
+    "viewAll": "Alle ansehen",
+    "completeBidHistory": "Vollständiger Gebotsverlauf",
+    "you": "SIE",
+    "currentHigh": "AKTUELL HÖCHSTES",
+    "noBidsYet": "Noch keine Gebote",
+    "beTheFirst": "Seien Sie der Erste, der ein Gebot für diesen Artikel abgibt!",
+    "admin": {
+      "approveTitle": "Auktion genehmigen",
+      "rejectTitle": "Auktion ablehnen",
+      "confirmApproval": "Genehmigung bestätigen",
+      "confirmRejection": "Ablehnung bestätigen",
+      "processing": "Wird verarbeitet...",
+      "notice": "Sind Sie sicher, dass Sie diese Auktion {action} möchten?",
+      "approveEffect": " Dadurch wird die Auktion sichtbar und das Bieten zum geplanten Startzeitpunkt ermöglicht.",
+      "rejectEffect": " Dies wird die Anfrage dauerhaft ablehnen.",
+      "success": "Auktion erfolgreich {action}"
+    },
+    "errors": {
+      "notFound": "Auktion nicht gefunden",
+      "goBack": "Zurückgehen",
+      "cancelFailed": "Auktion konnte nicht abgebrochen werden",
+      "finalizeFailed": "Verkauf konnte nicht abgeschlossen werden",
+      "actionFailed": "Aktion fehlgeschlagen"
+    },
+    "live": "JETZT LIVE"
+  },
+  "activity": {
+    "title": "Gebotsaktivität",
+    "subtitle": "Verfolgen Sie Ihre Teilnahme und Auktionsergebnisse",
+    "status": "Meine Aktivität",
+    "tabs": {
+      "active": "Live-Gebote",
+      "won": "Gewonnen",
+      "past": "Verlauf"
+    },
+    "searchPlaceholder": "Gebote suchen...",
+    "loading": "Lade Ihre Aktivität...",
+    "empty": {
+      "title": "Keine Auktionen gefunden",
+      "active": "Sie haben noch keine Gebote für Live-Auktionen abgegeben.",
+      "won": "Sie haben noch keine Auktionen gewonnen. Bieten Sie weiter!",
+      "past": "Keine vergangenen Auktionsaktivitäten gefunden."
+    }
+  }
+}

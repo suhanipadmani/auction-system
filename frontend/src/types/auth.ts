@@ -15,6 +15,7 @@ export interface IAuthState {
   isAuthenticated: boolean;
   _hasHydrated: boolean;
   login: (user: IUser, token: string) => void;
+  setUser: (user: IUser) => void;
   logout: () => void;
   setHasHydrated: (state: boolean) => void;
 }
