@@ -3,14 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "@/i18n/routing";
 import { LogOut, ChevronLeft, ChevronRight } from "lucide-react";
-
+import { useState } from "react";
 import { ISidebarProps } from "@/types/components";
-
 import { useAuthStore } from "@/store/auth.store";
-
 import { useLogout } from "@/hooks/useAuth";
 import { getVisibleLinks } from "@/config/navigation";
 import { useTranslations } from "next-intl";
+import { Modal } from "@/components/ui/Modal";
 
 
 export function Sidebar({ isMobile, onClose, isCollapsed, onToggle }: ISidebarProps) {
@@ -18,7 +17,8 @@ export function Sidebar({ isMobile, onClose, isCollapsed, onToggle }: ISidebarPr
   const authT = useTranslations("auth");
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
-  const { mutate: logout } = useLogout();
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
 
   const visibleLinks = getVisibleLinks(user?.role);
 
@@ -94,7 +94,7 @@ export function Sidebar({ isMobile, onClose, isCollapsed, onToggle }: ISidebarPr
         <button
           onClick={() => {
             handleLinkClick();
-            logout();
+            setIsSignOutModalOpen(true);
           }}
           className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3 w-full px-4"} py-3 text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 rounded-xl transition-all duration-300 font-bold border border-transparent hover:border-rose-500/20 group`}
           title={isCollapsed ? t('signOut') : ""}
@@ -103,6 +103,20 @@ export function Sidebar({ isMobile, onClose, isCollapsed, onToggle }: ISidebarPr
           {!isCollapsed && <span>{t('signOut')}</span>}
         </button>
       </div>
+
+      <Modal
+        isOpen={isSignOutModalOpen}
+        onClose={() => setIsSignOutModalOpen(false)}
+        title={t('signOutTitle')}
+        cancelText={t('signOutCancel')}
+        confirmText={isLoggingOut ? t('signOutLoading') : t('signOutConfirm')}
+        onCancel={() => setIsSignOutModalOpen(false)}
+        onConfirm={() => logout()}
+        isConfirmLoading={isLoggingOut}
+        isDanger
+      >
+        <p className="text-gray-300">{t('signOutMessage')}</p>
+      </Modal>
     </div>
   );
 }

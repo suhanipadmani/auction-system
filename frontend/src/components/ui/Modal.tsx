@@ -2,10 +2,23 @@
 
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
-
 import { IModalProps } from "@/types/components";
+import { Button } from "./Button";
 
-export function Modal({ isOpen, onClose, title, children, footer }: IModalProps) {
+export function Modal({ 
+  isOpen, 
+  onClose, 
+  title, 
+  children, 
+  footer,
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  onConfirm,
+  onCancel,
+  isConfirmDisabled,
+  isConfirmLoading,
+  isDanger
+}: IModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,8 +37,41 @@ export function Modal({ isOpen, onClose, title, children, footer }: IModalProps)
 
   if (!isOpen) return null;
 
+  const handleCancel = () => {
+    if (onCancel) onCancel();
+    else onClose();
+  };
+
+  const renderFooter = () => {
+    if (footer) return footer;
+    
+    if (onConfirm || onCancel) {
+      return (
+        <>
+          <Button variant="ghost" onClick={handleCancel}>
+            {cancelText}
+          </Button>
+          {onConfirm && (
+            <Button 
+              variant={isDanger ? "destructive" : "default"}
+              onClick={onConfirm}
+              disabled={isConfirmDisabled || isConfirmLoading}
+              isLoading={isConfirmLoading}
+            >
+              {confirmText}
+            </Button>
+          )}
+        </>
+      );
+    }
+    
+    return null;
+  };
+
+  const footerContent = renderFooter();
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
         ref={modalRef}
         className="bg-card/90 border border-border/50 backdrop-blur-xl rounded-3xl w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden"
@@ -47,9 +93,9 @@ export function Modal({ isOpen, onClose, title, children, footer }: IModalProps)
         </div>
 
         {/* Footer */}
-        {footer && (
+        {footerContent && (
           <div className="flex items-center justify-end gap-3 p-6 bg-white/5 border-t border-border/40">
-            {footer}
+            {footerContent}
           </div>
         )}
       </div>

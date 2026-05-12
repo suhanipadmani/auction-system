@@ -4,13 +4,13 @@ import { useState } from "react";
 
 import { IProvidersProps } from "@/types/forms";
 
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { createQueryClient } from "@/lib/queryClient";
 import { SocketProvider } from "@/providers/SocketProvider";
 import { Toaster } from "react-hot-toast";
 
 export const Providers = ({ children }: IProvidersProps) => {
-  const [queryClient] = useState(createQueryClient);
+  const [queryClient] = useState<QueryClient>(createQueryClient);
 
   return (
     <QueryClientProvider client={queryClient}>

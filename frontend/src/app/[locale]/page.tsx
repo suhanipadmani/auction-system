@@ -3,15 +3,10 @@
 import {
   ArrowRight,
   Zap,
-  ShieldCheck,
-  Trophy,
   TrendingUp,
   Clock,
-  Users,
-  Wallet,
   Hammer,
-  Loader2,
-  TrophyIcon
+  Loader2
 } from "lucide-react";
 import { LandingHeader } from "@/components/layout/LandingHeader";
 import { LandingFooter } from "@/components/layout/LandingFooter";
@@ -21,6 +16,7 @@ import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
+import { FAQSection } from "@/components/home/FAQSection";
 
 
 function PublicStats() {
@@ -208,6 +204,9 @@ export default function Home() {
           icon={Zap}
           filters={{ sortBy: "createdAt", sortOrder: "desc" }}
         />
+
+        {/* FAQ SECTION */}
+        <FAQSection />
 
         {/* CTA SECTION */}
         <section className="py-24 md:py-32">

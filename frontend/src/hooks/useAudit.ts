@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { auditApi, IAuditLogFilters } from "@/api/audit.api";
+import { auditApi, type IAuditLogFilters } from "@/api/audit.api";
 
 export const useAuditLogs = (filters: IAuditLogFilters = {}) => {
   return useQuery({

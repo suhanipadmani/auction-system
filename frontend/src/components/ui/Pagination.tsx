@@ -1,16 +1,7 @@
 import { Button } from "./Button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-
-interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-  showingCount: number;
-  onPageChange: (page: number) => void;
-  typeLabel?: string;
-  className?: string;
-}
+import { IPaginationProps } from "@/types/components";
 
 export function Pagination({
   currentPage,
@@ -20,7 +11,7 @@ export function Pagination({
   onPageChange,
   typeLabel,
   className
-}: PaginationProps) {
+}: IPaginationProps) {
   const t = useTranslations("common.pagination");
 
   if (totalPages <= 1) return null;

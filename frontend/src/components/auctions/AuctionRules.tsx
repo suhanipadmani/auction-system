@@ -1,7 +1,10 @@
-import { useCurrency } from "@/hooks/useCurrency";
 import { useTranslations } from "next-intl";
 
+// Types
 import { IAuctionRulesProps } from "@/types/components";
+
+// Hooks
+import { useCurrency } from "@/hooks/useCurrency";
 
 
 export const AuctionRules = ({ basePrice, minIncrement }: IAuctionRulesProps) => {

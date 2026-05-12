@@ -3,8 +3,6 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Loader2, Trophy, AlertCircle, ChevronLeft } from "lucide-react";
-
-
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
@@ -272,18 +270,12 @@ function AdminActionModal({ confirmModal, isProcessing, onClose, onConfirm }: {
       isOpen={confirmModal.isOpen}
       onClose={onClose}
       title={confirmModal.action === "approve" ? t('approveTitle') : t('rejectTitle')}
-      footer={
-        <div className="flex gap-3">
-          <Button variant="ghost" onClick={onClose} disabled={isProcessing}>{tc('cancel')}</Button>
-          <Button
-            variant={confirmModal.action === "approve" ? "default" : "destructive"}
-            onClick={onConfirm}
-            disabled={isProcessing}
-          >
-            {isProcessing ? t('processing') : confirmModal.action === "approve" ? t('confirmApproval') : t('confirmRejection')}
-          </Button>
-        </div>
-      }
+      cancelText={tc('cancel')}
+      confirmText={isProcessing ? t('processing') : confirmModal.action === "approve" ? t('confirmApproval') : t('confirmRejection')}
+      onCancel={onClose}
+      onConfirm={onConfirm}
+      isConfirmLoading={isProcessing}
+      isDanger={confirmModal.action === "reject"}
     >
       <p className="text-gray-300">
         {t('notice', { 

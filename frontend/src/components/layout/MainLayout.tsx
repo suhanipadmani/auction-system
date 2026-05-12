@@ -8,8 +8,8 @@ import { Drawer } from "../common/Drawer";
 import { ProtectedRoute } from "../common/ProtectedRoute";
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
   return (
     <ProtectedRoute>

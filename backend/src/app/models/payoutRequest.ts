@@ -1,5 +1,6 @@
 import { Schema, Types, model } from "mongoose";
 import { PAYOUT_STATUSES } from "../enums";
+import { IPayoutRequestDocument } from "../types/models";
 
 export const payoutRequestSchema = new Schema(
   {
@@ -38,7 +39,5 @@ export const payoutRequestSchema = new Schema(
   },
   { timestamps: true },
 );
-
-import { IPayoutRequestDocument } from "../types/models";
 
 export const PayoutRequestModel = model<IPayoutRequestDocument>("PayoutRequest", payoutRequestSchema);

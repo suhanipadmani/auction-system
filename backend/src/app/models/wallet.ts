@@ -1,4 +1,5 @@
 import { Schema, Types, model } from "mongoose";
+import { IWalletDocument } from "../types/models";
 
 export const walletSchema = new Schema(
   {
@@ -33,7 +34,5 @@ export const walletSchema = new Schema(
   },
   { timestamps: true },
 );
-
-import { IWalletDocument } from "../types/models";
 
 export const WalletModel = model<IWalletDocument>("Wallet", walletSchema);

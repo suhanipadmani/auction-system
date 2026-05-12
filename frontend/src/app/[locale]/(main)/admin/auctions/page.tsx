@@ -2,15 +2,14 @@
 
 import { useState, useEffect } from "react";
 // External
-import { Loader2, ClipboardList, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { ClipboardList, Search } from "lucide-react";
 import { toast } from "sonner";
 // Hooks
-import { useAuctions, useAdminApprove } from "@/hooks/useAuction";
+import { useAuctions, useAdminApprove, useAdminInventory } from "@/hooks/useAuction";
 import { useCurrency } from "@/hooks/useCurrency";
 // Types
 import { IApprovalTableProps, IInventoryTableProps } from "@/types/components";
 import { AdminTab } from "@/types/auction";
-
 // Constants
 import { AUCTION_STATUS_OPTIONS } from "@/constants/auction.constants";
 
@@ -20,18 +19,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { AUCTION_STATUSES } from "@/enums";
 import { TableSkeleton } from "@/components/ui/TableSkeleton";
 import { Pagination } from "@/components/ui/Pagination";
-
-import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/Select";
+import { Dropdown } from "@/components/ui/Dropdown";
 import { cn } from "@/lib/utils";
 import { getApprovalColumns, getInventoryColumns } from "./columns";
 import { useTranslations } from "next-intl";
@@ -63,7 +54,7 @@ export default function AdminAuctionManagementPage() {
     limit: 10
   });
 
-  const { data: inventoryResponse, isLoading: loadingInventory } = useAuctions({
+  const { data: inventoryResponse, isLoading: loadingInventory } = useAdminInventory({
     status: statusFilter === "all" ? undefined : statusFilter as AUCTION_STATUSES,
     page: inventoryPage,
     limit: 10,
@@ -159,18 +150,13 @@ export default function AdminAuctionManagementPage() {
               icon={<Search className="w-4 h-4" />}
               className="bg-white/5 border-white/10 h-12 rounded-2xl"
             />
-            <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || "all")}>
-              <SelectTrigger className="w-[180px] h-12 rounded-2xl bg-white/5 border-white/10 text-white">
-                <SelectValue placeholder={t('statusFilter.placeholder')} />
-              </SelectTrigger>
-              <SelectContent>
-                {AUCTION_STATUS_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Dropdown
+              value={statusFilter}
+              onChange={(val) => setStatusFilter(val || "all")}
+              options={AUCTION_STATUS_OPTIONS}
+              placeholder={t('statusFilter.placeholder')}
+              triggerClassName="w-[180px] h-12 rounded-2xl bg-white/5 border-white/10 text-white"
+            />
           </div>
         )}
       </div>
@@ -178,7 +164,11 @@ export default function AdminAuctionManagementPage() {
       <div className="bg-white/[0.08] backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden">
         {activeTab === "pending" ? (
           loadingPending ? (
-            <TableSkeleton cols={["w-40", "w-24", "w-32", "w-20", "w-16"]} rows={5} />
+            <Table>
+              <TableBody>
+                <TableSkeleton cols={["w-40", "w-24", "w-32", "w-20", "w-16"]} rows={5} />
+              </TableBody>
+            </Table>
           ) : !pendingResponse?.data?.length ? (
 
             <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-400 space-y-4">
@@ -208,7 +198,11 @@ export default function AdminAuctionManagementPage() {
           )
         ) : (
           loadingInventory ? (
-            <TableSkeleton cols={["w-40", "w-24", "w-32", "w-20", "w-16"]} rows={5} />
+            <Table>
+              <TableBody>
+                <TableSkeleton cols={["w-40", "w-24", "w-32", "w-20", "w-16"]} rows={5} />
+              </TableBody>
+            </Table>
           ) : !inventoryData?.length ? (
 
             <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-400 space-y-4">
@@ -237,25 +231,12 @@ export default function AdminAuctionManagementPage() {
         isOpen={confirmModal.isOpen}
         onClose={() => setConfirmModal({ isOpen: false, auctionId: null, action: null })}
         title={confirmModal.action === "approve" ? t('modals.approveTitle') : t('modals.rejectTitle')}
-        footer={
-          <div className="flex gap-3 justify-end">
-            <Button
-              variant="ghost"
-              onClick={() => setConfirmModal({ isOpen: false, auctionId: null, action: null })}
-              disabled={isProcessing}
-            >
-              {t('modals.cancel')}
-            </Button>
-            <Button
-              variant={confirmModal.action === "approve" ? "default" : "destructive"}
-              onClick={handleConfirmAction}
-              isLoading={isProcessing}
-              disabled={isProcessing}
-            >
-              {isProcessing ? t('modals.processing') : confirmModal.action === "approve" ? t('modals.confirmApproval') : t('modals.confirmRejection')}
-            </Button>
-          </div>
-        }
+        cancelText={t('modals.cancel')}
+        confirmText={isProcessing ? t('modals.processing') : confirmModal.action === "approve" ? t('modals.confirmApproval') : t('modals.confirmRejection')}
+        onCancel={() => setConfirmModal({ isOpen: false, auctionId: null, action: null })}
+        onConfirm={handleConfirmAction}
+        isConfirmLoading={isProcessing}
+        isDanger={confirmModal.action === "reject"}
       >
         <p className="text-gray-300">
           {t('modals.confirmAction', { action: confirmModal.action || "" })}
@@ -265,7 +246,6 @@ export default function AdminAuctionManagementPage() {
     </div>
   );
 }
-
 
 function ApprovalTable({ data, onAction, isProcessing, t, formatCurrency }: IApprovalTableProps) {
   const columns = getApprovalColumns(onAction, isProcessing, t, formatCurrency);

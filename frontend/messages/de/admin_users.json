@@ -16,7 +16,8 @@
     "showing": "{count} von {total} Benutzern werden angezeigt",
     "page": "Seite {current} von {total}",
     "previous": "Zurück",
-    "next": "Weiter"
+    "next": "Weiter",
+    "users": "Benutzer"
   },
   "table": {
     "userInfo": "Benutzerinfo",

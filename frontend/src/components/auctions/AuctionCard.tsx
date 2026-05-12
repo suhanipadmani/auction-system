@@ -5,22 +5,17 @@ import Link from "next/link";
 // External
 import { Clock, Trash2, AlertTriangle } from "lucide-react";
 
-
-
 // Types
 import { IAuctionCardProps } from "@/types/components";
 
 // Hooks
 import { useAuctionStatus } from "@/hooks/useAuctionStatus";
-import { formatTimeLeft } from "@/lib/utils/auctions/timer";
-
-
-
 import { useCurrency } from "@/hooks/useCurrency";
 import { useCancelAuction } from "@/hooks/useAuction";
 
 // Utils
 import { cn } from "@/lib/utils";
+import { formatTimeLeft } from "@/lib/utils/auctions/timer";
 
 // Components
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/Card";
@@ -30,13 +25,11 @@ import { Modal } from "@/components/ui/Modal";
 import { useState, useEffect } from "react";
 import { useTranslations, useFormatter } from "next-intl";
 
-
-
 export function AuctionCard({ auction, href, showActions }: IAuctionCardProps) {
   const t = useTranslations("auction.card");
   const tw = useTranslations("wallet");
   const format = useFormatter();
-  const { colorClass, isLive, label } = useAuctionStatus(auction.status, auction.endTime);
+  const { colorClass, isLive } = useAuctionStatus(auction.status, auction.endTime);
   const { formatRaw, symbol } = useCurrency();
   const { mutate: cancelAuction, isPending: isCancelling } = useCancelAuction();
   const [showCancelModal, setShowCancelModal] = useState<boolean>(false);
@@ -66,24 +59,15 @@ export function AuctionCard({ auction, href, showActions }: IAuctionCardProps) {
         isOpen={showCancelModal}
         onClose={() => setShowCancelModal(false)}
         title={t('cancelTitle')}
-        footer={
-          <div className="flex gap-3 justify-end">
-            <Button variant="ghost" size="sm" onClick={() => setShowCancelModal(false)}>
-              {t('back')}
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              isLoading={isCancelling}
-              onClick={() => {
-                cancelAuction(auction._id);
-                setShowCancelModal(false);
-              }}
-            >
-              {t('confirmCancel')}
-            </Button>
-          </div>
-        }
+        cancelText={t('back')}
+        confirmText={t('confirmCancel')}
+        onCancel={() => setShowCancelModal(false)}
+        onConfirm={() => {
+          cancelAuction(auction._id);
+          setShowCancelModal(false);
+        }}
+        isConfirmLoading={isCancelling}
+        isDanger={true}
       >
         <div className="flex flex-col items-center gap-4 text-center py-4">
           <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">

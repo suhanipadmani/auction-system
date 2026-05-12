@@ -2,12 +2,9 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/auth.store";
 import { Loader2 } from "lucide-react";
-
-// Types
+import { useAuthStore } from "@/store/auth.store";
 import { IRoleGateProps } from "@/types/components";
-
 
 /**
  * RoleGate component ensures that the current authenticated user
@@ -19,9 +16,8 @@ export function RoleGate({ children, allowedRoles }: IRoleGateProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // Only perform check after hydration is complete and we have a user
+
     if (_hasHydrated && user && !allowedRoles.includes(user.role)) {
-      // Protection logic: bounce the user back to their respective landing dashboard
       switch (user.role) {
         case "admin":
           router.replace("/admin");

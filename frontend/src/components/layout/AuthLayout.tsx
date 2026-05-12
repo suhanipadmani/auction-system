@@ -1,7 +1,6 @@
 "use client";
 
 import { Gavel } from "lucide-react";
-
 import { IAuthLayoutProps } from "@/types/components";
 
 export function AuthLayout({ children, title, subtitle }: IAuthLayoutProps) {

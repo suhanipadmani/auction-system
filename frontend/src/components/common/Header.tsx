@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, LogOut, Settings, User as UserIcon, ChevronDown } from "lucide-react";
+import { Menu, LogOut, Settings, ChevronDown } from "lucide-react";
 import { IHeaderProps } from "@/types/components";
 import { useAuthStore } from "@/store/auth.store";
 import { NotificationCenter } from "../notifications/NotificationCenter";
@@ -8,14 +8,18 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useRouter } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { Modal } from "@/components/ui/Modal";
+import { useLogout } from "@/hooks/useAuth";
 
 export function Header({ onMenuClick }: IHeaderProps) {
   const t = useTranslations("common");
   const authT = useTranslations("auth");
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const { mutate: logoutMutate, isPending: isLoggingOut } = useLogout();
   const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isSignOutModalOpen, setIsSignOutModalOpen] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -27,11 +31,6 @@ export function Header({ onMenuClick }: IHeaderProps) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const handleLogout = () => {
-    logout();
-    router.push("/login");
-  };
 
   return (
     <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 sm:px-6 sticky top-0 z-30 text-foreground">
@@ -81,7 +80,7 @@ export function Header({ onMenuClick }: IHeaderProps) {
               <button 
                 onClick={() => {
                   setIsMenuOpen(false);
-                  handleLogout();
+                  setIsSignOutModalOpen(true);
                 }}
                 className="flex items-center gap-3 px-4 py-2 text-sm text-rose-400 hover:bg-rose-500/10 w-full text-left transition-colors"
               >
@@ -92,6 +91,20 @@ export function Header({ onMenuClick }: IHeaderProps) {
           )}
         </div>
       </div>
+
+      <Modal
+        isOpen={isSignOutModalOpen}
+        onClose={() => setIsSignOutModalOpen(false)}
+        title={t('sidebar.signOutTitle')}
+        cancelText={t('sidebar.signOutCancel')}
+        confirmText={isLoggingOut ? t('sidebar.signOutLoading') : t('sidebar.signOutConfirm')}
+        onCancel={() => setIsSignOutModalOpen(false)}
+        onConfirm={() => logoutMutate()}
+        isConfirmLoading={isLoggingOut}
+        isDanger
+      >
+        <p className="text-gray-300">{t('sidebar.signOutMessage')}</p>
+      </Modal>
     </header>
   );
 }

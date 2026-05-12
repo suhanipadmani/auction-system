@@ -9,42 +9,32 @@ import {
   ShieldAlert,
   Wallet
 } from "lucide-react";
+import { useTranslations } from "next-intl";
+
+// Types
+import { IBalanceAdjustmentSectionProps } from "@/types/components";
+import { TRANSACTION_TYPES } from "@/enums";
 
 // Hooks
 import { useUsers } from "@/hooks/useUsers";
 import { useUserWallet, useToggleFreeze } from "@/hooks/useWallet";
 import { useCurrency } from "@/hooks/useCurrency";
 
-// Utils
-
-
 // Components
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem
-} from "@/components/ui/Select";
-import { TRANSACTION_TYPES } from "@/enums";
-
-// Types
-import { IBalanceAdjustmentSectionProps } from "@/types/components";
-import { useTranslations } from "next-intl";
-
+import { Dropdown } from "@/components/ui/Dropdown";
 
 export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanceAdjustmentSectionProps) {
   const t = useTranslations("wallet");
   const { formatCurrency, convertBack } = useCurrency();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedUserId, setSelectedUserId] = useState("");
-  const [adjustmentAmount, setAdjustmentAmount] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [adjustmentAmount, setAdjustmentAmount] = useState<string>("");
   const [adjustmentType, setAdjustmentType] = useState<TRANSACTION_TYPES.CREDIT | TRANSACTION_TYPES.DEBIT>(TRANSACTION_TYPES.CREDIT);
-  const [adjustmentNote, setAdjustmentNote] = useState("");
+  const [adjustmentNote, setAdjustmentNote] = useState<string>("");
 
   const { data: usersData } = useUsers();
   const { data: userWalletData, isLoading: isUserWalletLoading } = useUserWallet(selectedUserId);
@@ -137,18 +127,15 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('type')}</label>
-                <Select
+                <Dropdown
                   value={adjustmentType}
-                  onValueChange={(val: any) => setAdjustmentType(val)}
-                >
-                  <SelectTrigger className="w-full bg-background/50 h-11">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="credit">{t('creditAdd')}</SelectItem>
-                    <SelectItem value="debit">{t('debitRemove')}</SelectItem>
-                  </SelectContent>
-                </Select>
+                  onChange={(val: any) => setAdjustmentType(val)}
+                  options={[
+                    { label: t('creditAdd'), value: "credit" },
+                    { label: t('debitRemove'), value: "debit" }
+                  ]}
+                  triggerClassName="w-full bg-background/50 h-11"
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('amount')}</label>

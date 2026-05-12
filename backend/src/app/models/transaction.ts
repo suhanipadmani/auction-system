@@ -1,5 +1,6 @@
 import { Schema, Types, model } from "mongoose";
 import { TRANSACTION_TYPES, TRANSACTION_SOURCES, TRANSACTION_STATUSES } from "../enums";
+import { ITransactionDocument } from "../types/models";
 
 export const transactionSchema = new Schema(
   {
@@ -57,7 +58,5 @@ export const transactionSchema = new Schema(
   },
   { timestamps: true },
 );
-
-import { ITransactionDocument } from "../types/models";
 
 export const TransactionModel = model<ITransactionDocument>("Transaction", transactionSchema);

@@ -1,7 +1,7 @@
 "use client";
 
 // External
-import { Tags, Gavel, PlusCircle, LayoutDashboard, ArrowUpRight, Target, TrendingUp, Award, Wallet } from "lucide-react";
+import { Tags, Gavel, PlusCircle, Target, TrendingUp, Award, Wallet } from "lucide-react";
 import { AnalyticsSection, AnalyticsCard } from "@/components/dashboard/AnalyticsSection";
 
 // State (Auth Store)

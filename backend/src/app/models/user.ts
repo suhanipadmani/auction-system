@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 import { USER_ROLES, USER_STATUSES } from "../enums";
+import { IUserDocument } from "../types/models";
 
 export const userSchema = new Schema(
   {
@@ -72,8 +73,6 @@ userSchema.pre("save", async function () {
 userSchema.methods.comparePassword = async function (password: string) {
   return bcrypt.compare(password, this.password);
 };
-
-import { IUserDocument } from "../types/models";
 
 export const UserModel = model<IUserDocument>("User", userSchema);
 export { USER_ROLES };

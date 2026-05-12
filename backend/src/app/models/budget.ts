@@ -1,4 +1,5 @@
 import { Schema, Types, model } from "mongoose";
+import { IBudgetDocument } from "../types/models";
 
 export const budgetSchema = new Schema(
   {
@@ -34,7 +35,5 @@ export const budgetSchema = new Schema(
 
 // Compound index to prevent duplicate goal names for the same user
 budgetSchema.index({ userId: 1, name: 1 }, { unique: true });
-
-import { IBudgetDocument } from "../types/models";
 
 export const BudgetModel = model<IBudgetDocument>("Budget", budgetSchema);

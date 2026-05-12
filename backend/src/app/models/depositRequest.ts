@@ -1,5 +1,6 @@
 import { Schema, Types, model } from "mongoose";
 import { DEPOSIT_STATUSES } from "../enums";
+import { IDepositRequestDocument } from "../types/models";
 
 export const depositRequestSchema = new Schema(
   {
@@ -38,7 +39,5 @@ export const depositRequestSchema = new Schema(
   },
   { timestamps: true },
 );
-
-import { IDepositRequestDocument } from "../types/models";
 
 export const DepositRequestModel = model<IDepositRequestDocument>("DepositRequest", depositRequestSchema);

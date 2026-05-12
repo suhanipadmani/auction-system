@@ -8,13 +8,7 @@ import { Gavel, Trophy, History, Loader2, Search, ListFilter } from "lucide-reac
 import { cn } from "@/lib/utils";
 import { IAuctionTabType } from "@/types/auction";
 import { Input } from "@/components/ui/Input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/Select";
+import { Dropdown } from "@/components/ui/Dropdown";
 
 
 import { Pagination } from "@/components/ui/Pagination";
@@ -111,25 +105,17 @@ export default function MyBiddingActivityPage() {
                 />
               </div>
 
-              <Select value={sortConfig} onValueChange={(val) => {
-                if (val) setSortConfig(val);
-                setPage(1);
-              }}>
-                <SelectTrigger className="h-10 w-full sm:w-44 bg-white/5 border-white/10 text-gray-300">
-                  <div className="flex items-center gap-2">
-                    <ListFilter className="w-4 h-4 text-gray-500" />
-                    <SelectValue placeholder={tm("sortBy")} />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {sortOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-
-              </Select>
+              <Dropdown
+                value={sortConfig}
+                onChange={(val) => {
+                  if (val) setSortConfig(val);
+                  setPage(1);
+                }}
+                triggerIcon={<ListFilter className="w-4 h-4 text-gray-500" />}
+                options={sortOptions}
+                placeholder={tm("sortBy")}
+                triggerClassName="h-10 w-full sm:w-44 bg-white/5 border-white/10 text-gray-300"
+              />
             </div>
           </div>
 

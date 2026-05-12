@@ -11,9 +11,9 @@ import { useAuthStore } from "@/store/auth.store";
 
 // Types
 import { AuctionStatus } from "@/types/auction";
+import { useTranslations } from "next-intl";
 
 import { useAuctions } from "@/hooks/useAuction";
-import { useTranslations } from "next-intl";
 
 // Utils
 import { cn } from "@/lib/utils";
@@ -23,13 +23,7 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { AuctionCard } from "@/components/auctions/AuctionCard";
 import { Button, buttonVariants } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/Select";
+import { Dropdown } from "@/components/ui/Dropdown";
 
 export default function SellerAuctionsPage() {
   const t = useTranslations("auction.management");
@@ -124,24 +118,23 @@ export default function SellerAuctionsPage() {
              />
           </div>
 
-          <Select value={sortConfig} onValueChange={(val) => {
-            if (val) setSortConfig(val);
-            setPage(1);
-          }}>
-            <SelectTrigger className="h-10 w-full sm:w-44 bg-white/5 border-white/10 text-gray-300">
-              <div className="flex items-center gap-2">
-                <ListFilter className="w-4 h-4 text-gray-500" />
-                <SelectValue placeholder={t("sortBy")} />
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="createdAt-desc">{t("sort.newest")}</SelectItem>
-              <SelectItem value="createdAt-asc">{t("sort.oldest")}</SelectItem>
-              <SelectItem value="basePrice-desc">{t("sort.priceHigh")}</SelectItem>
-              <SelectItem value="basePrice-asc">{t("sort.priceLow")}</SelectItem>
-              <SelectItem value="highestBid-desc">{t("sort.bidHigh")}</SelectItem>
-            </SelectContent>
-          </Select>
+          <Dropdown
+            value={sortConfig}
+            onChange={(val) => {
+              if (val) setSortConfig(val);
+              setPage(1);
+            }}
+            triggerIcon={<ListFilter className="w-4 h-4 text-gray-500" />}
+            options={[
+              { label: t("sort.newest"), value: "createdAt-desc" },
+              { label: t("sort.oldest"), value: "createdAt-asc" },
+              { label: t("sort.priceHigh"), value: "basePrice-desc" },
+              { label: t("sort.priceLow"), value: "basePrice-asc" },
+              { label: t("sort.bidHigh"), value: "highestBid-desc" }
+            ]}
+            placeholder={t("sortBy")}
+            triggerClassName="h-10 w-full sm:w-44 bg-white/5 border-white/10 text-gray-300"
+          />
         </div>
       </div>
 

@@ -5,7 +5,6 @@ import { useState } from "react";
 import { WALLET_VIEW_TYPES, TRANSACTION_STATUSES } from "@/enums";
 import { IAdjustmentData, IDepositRequest, IViewType } from "@/types/wallet";
 
-
 import { useProcessDeposit, useAdjustBalance } from "@/hooks/useWallet";
 
 // Modular Components

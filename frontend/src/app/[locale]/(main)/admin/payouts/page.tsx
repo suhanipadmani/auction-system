@@ -5,10 +5,7 @@ import {
   ArrowDownCircle,
   CheckCircle,
   XCircle,
-  Loader2,
   Filter,
-  ChevronLeft,
-  ChevronRight,
   Clock,
   User as UserIcon
 } from "lucide-react";
@@ -35,7 +32,6 @@ import { formatDate } from "@/lib/utils";
 
 export default function AdminPayoutsPage() {
   const t = useTranslations("payouts");
-  const commonT = useTranslations("wallet");
   const { locale } = useParams();
   const { formatCurrency } = useCurrency();
 

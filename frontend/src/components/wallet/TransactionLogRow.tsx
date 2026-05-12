@@ -11,13 +11,10 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { formatDate } from "@/lib/utils";
 import { getTranslatedTransactionNote } from "@/lib/utils/wallet/notes";
 
-
 // Components
 import { TableRow, TableCell } from "@/components/ui/Table";
 import { Badge } from "@/components/ui/Badge";
 import { useTranslations } from "next-intl";
-
-
 
 export function TransactionLogRow({ tx }: ITransactionLogRowProps) {
   const t = useTranslations("wallet");
@@ -27,9 +24,6 @@ export function TransactionLogRow({ tx }: ITransactionLogRowProps) {
     tx.source as any
   );
   const { formatCurrency, formatRaw } = useCurrency();
-
-
-
 
   return (
     <TableRow className="border-border/40 hover:bg-white/5 transition-colors">

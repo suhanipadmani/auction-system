@@ -2,7 +2,6 @@
 
 import { LayoutDashboard } from "lucide-react";
 import { useTranslations } from "next-intl";
-
 import { IDashboardHeaderProps } from "@/types/components";
 
 export function DashboardHeader({

@@ -1,6 +1,6 @@
 import { Response } from "express";
 
-import { ApiResponse } from "../types/api";
+import { IApiResponse } from "../types/api";
 
 
 export const sendSuccess = (
@@ -8,9 +8,9 @@ export const sendSuccess = (
   message: string, 
   data: any = null, 
   statusCode: number = 200,
-  meta?: ApiResponse["meta"]
+  meta?: IApiResponse["meta"]
 ) => {
-  const response: ApiResponse = {
+  const response: IApiResponse = {
     success: true,
     message,
     data,

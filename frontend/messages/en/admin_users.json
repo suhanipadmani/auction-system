@@ -16,7 +16,8 @@
     "showing": "Showing {count} of {total} users",
     "page": "Page {current} of {total}",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "users": "users"
   },
   "table": {
     "userInfo": "User Info",

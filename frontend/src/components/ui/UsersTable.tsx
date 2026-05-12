@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import { Mail, Calendar, UserX, UserMinus, UserCheck, ShieldCheck, RotateCcw, AlertTriangle } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "./Select";
+import { Dropdown } from "./Dropdown";
 import { Button } from "./Button";
 import {
   Table,
@@ -46,24 +40,19 @@ function ConfirmModal({ user, action, onConfirm, onCancel, isLoading }: IConfirm
       isOpen={!!user && !!action}
       onClose={onCancel}
       title={title}
-      footer={
+      cancelText={t('cancel')}
+      confirmText={
         <>
-          <Button variant="ghost" size="sm" onClick={onCancel} disabled={isLoading}>
-            {t('cancel')}
-          </Button>
-          <Button
-            variant={isDelete || isDeactivate ? "destructive" : "default"}
-            size="sm"
-            onClick={onConfirm}
-            isLoading={isLoading}
-          >
-            {isDelete && <><UserX className="w-3.5 h-3.5 mr-2" /> {t('yesDelete')}</>}
-            {isRestore && <><RotateCcw className="w-3.5 h-3.5 mr-2" /> {t('yesRestore')}</>}
-            {isDeactivate && <><UserMinus className="w-3.5 h-3.5 mr-2" /> {t('yesDeactivate')}</>}
-            {isActivate && <><UserCheck className="w-3.5 h-3.5 mr-2" /> {t('yesActivate')}</>}
-          </Button>
+          {isDelete && <><UserX className="w-3.5 h-3.5 mr-2" /> {t('yesDelete')}</>}
+          {isRestore && <><RotateCcw className="w-3.5 h-3.5 mr-2" /> {t('yesRestore')}</>}
+          {isDeactivate && <><UserMinus className="w-3.5 h-3.5 mr-2" /> {t('yesDeactivate')}</>}
+          {isActivate && <><UserCheck className="w-3.5 h-3.5 mr-2" /> {t('yesActivate')}</>}
         </>
       }
+      onConfirm={onConfirm}
+      onCancel={onCancel}
+      isConfirmLoading={isLoading}
+      isDanger={isDelete || isDeactivate}
     >
       {user && (
         <div className="space-y-4">
@@ -150,7 +139,6 @@ export function UsersTable({
     { key: "actions", label: t('actions'), className: "px-4 sm:px-6 py-5 text-right" },
   ];
 
-
   return (
     <>
       {/* Confirmation modal */}
@@ -216,20 +204,18 @@ export function UsersTable({
                         </Badge>
                       ) : (
                         <div className="w-28 sm:w-40">
-                          <Select
+                          <Dropdown
                             value={user.role}
-                            onValueChange={(value) => value && updateRole({ id: user._id, role: value })}
+                            onChange={(value) => value && updateRole({ id: user._id, role: value })}
                             disabled={isUpdatingRole || isSelf || isDeleted}
-                          >
-                            <SelectTrigger className="w-full text-xs sm:text-sm h-9 sm:h-10">
-                              <SelectValue placeholder={t('selectRole')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="bidder">{t('roles.bidder')}</SelectItem>
-                              <SelectItem value="seller">{t('roles.seller')}</SelectItem>
-                              <SelectItem value="admin">{t('roles.admin')}</SelectItem>
-                            </SelectContent>
-                          </Select>
+                            placeholder={t('selectRole')}
+                            options={[
+                              { label: t('roles.bidder'), value: "bidder" },
+                              { label: t('roles.seller'), value: "seller" },
+                              { label: t('roles.admin'), value: "admin" }
+                            ]}
+                            triggerClassName="w-full text-xs sm:text-sm h-9 sm:h-10"
+                          />
                         </div>
                       )}
                     </TableCell>

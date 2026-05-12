@@ -1,8 +1,6 @@
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
-
+import { analyticsColors } from "@/constants/analyticsColors";
 import { IAnalyticsCardProps, IAnalyticsSectionProps } from "@/types/components";
-
 
 export function AnalyticsCard({
   title,
@@ -13,30 +11,10 @@ export function AnalyticsCard({
   color = "indigo",
   className,
 }: IAnalyticsCardProps) {
-  const colorMap = {
-    indigo: "from-indigo-500/10 to-indigo-500/5 text-indigo-400 border-indigo-500/20",
-    emerald: "from-emerald-500/10 to-emerald-500/5 text-emerald-400 border-emerald-500/20",
-    purple: "from-purple-500/10 to-purple-500/5 text-purple-400 border-purple-500/20",
-    amber: "from-amber-500/10 to-amber-500/5 text-amber-400 border-amber-500/20",
-    rose: "from-rose-500/10 to-rose-500/5 text-rose-400 border-rose-500/20",
-    blue: "from-blue-500/10 to-blue-500/5 text-blue-400 border-blue-500/20",
-    teal: "from-teal-500/10 to-teal-500/5 text-teal-400 border-teal-500/20",
-  };
-
-  const ringColorMap = {
-    indigo: "stroke-indigo-500",
-    emerald: "stroke-emerald-500",
-    purple: "stroke-purple-500",
-    amber: "stroke-amber-500",
-    rose: "stroke-rose-500",
-    blue: "stroke-blue-500",
-    teal: "stroke-teal-500",
-  };
-
   return (
     <div className={cn(
       "relative overflow-hidden rounded-3xl border bg-gradient-to-br p-6 transition-all hover:shadow-2xl hover:brightness-110 group",
-      colorMap[color],
+      analyticsColors[color].card,
       className
     )}>
       <div className="flex items-start justify-between mb-4">
@@ -65,7 +43,7 @@ export function AnalyticsCard({
                 strokeDasharray={125.6}
                 strokeDashoffset={125.6 - (125.6 * percentage) / 100}
                 strokeLinecap="round"
-                className={cn("transition-all duration-1000 ease-out", ringColorMap[color])}
+                className={cn("transition-all duration-1000 ease-out", analyticsColors[color].ring)}
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white">
@@ -87,9 +65,6 @@ export function AnalyticsCard({
     </div>
   );
 }
-
-
-
 
 export function AnalyticsSection({ title, description, children, className }: IAnalyticsSectionProps) {
   return (

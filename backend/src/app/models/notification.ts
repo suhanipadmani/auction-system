@@ -1,5 +1,6 @@
 import { Schema, Types, model } from "mongoose";
 import { NOTIFICATION_TYPES } from "../enums";
+import { INotificationDocument } from "../types/models";
 
 export const notificationSchema = new Schema(
   {
@@ -35,7 +36,5 @@ export const notificationSchema = new Schema(
   },
   { timestamps: true },
 );
-
-import { INotificationDocument } from "../types/models";
 
 export const NotificationModel = model<INotificationDocument>("Notification", notificationSchema);

@@ -16,7 +16,18 @@ export interface IDepositRequest {
   _id: string;
   userId: IUserMinimal;
   amount: number;
+  adminNote?: string;
   status: Extract<TransactionStatus, "pending" | "approved" | "rejected"> | "approved" | "rejected";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IPayoutRequest {
+  _id: string;
+  userId: IUserMinimal;
+  amount: number;
+  adminNote?: string;
+  status: "approved" | "pending" | "rejected";
   createdAt: string;
   updatedAt: string;
 }

@@ -8,14 +8,14 @@ export const useAuctionSocket = (auctionId: string) => {
   const { socket, isConnected } = useSocket();
   const queryClient = useQueryClient();
 
-  // Local state for real-time overrides (Hybrid Approach)
+  // Local state for real-time overrides
   const [realTimeData, setRealTimeData] = useState<{
     highestBid?: number;
     highestBidderId?: string;
     highestBidderName?: string;
   }>({});
 
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
 
   useEffect(() => {
     if (isConnected && auctionId) {
@@ -91,7 +91,6 @@ export const useAuctionSocket = (auctionId: string) => {
     socket.on("auction_status_update", handleStatusUpdate);
     socket.on("error", handleError);
 
-    // CLEANUP: Explicitly remove listeners on unmount
     return () => {
       socket.off("new_bid", handleNewBid);
       socket.off("auction_status_update", handleStatusUpdate);

@@ -4,7 +4,8 @@ import { IUser } from "./auth";
 import { IAuction } from "./auction";
 import { IViewType, ITransaction, IDepositRequest, IAdjustmentData } from "./wallet";
 import { USER_ACTIONS } from "@/enums/user.enum";
-import { TRANSACTION_STATUSES, TRANSACTION_TYPES } from "@/enums/wallet.enum";
+import { TRANSACTION_STATUSES } from "@/enums/wallet.enum";
+import { AnalyticsColor } from "@/constants/analyticsColors";
 
 
 export interface IUsersTableProps {
@@ -40,6 +41,15 @@ export interface IModalProps {
   title: string;
   children: ReactNode;
   footer?: ReactNode;
+  
+  // Built-in actions
+  confirmText?: string | ReactNode;
+  cancelText?: string | ReactNode;
+  onConfirm?: () => void;
+  onCancel?: () => void;
+  isConfirmDisabled?: boolean;
+  isConfirmLoading?: boolean;
+  isDanger?: boolean;
 }
 
 export interface IAuthLayoutProps {
@@ -82,6 +92,7 @@ export interface IHeaderProps {
 export interface ITableSkeletonProps {
   rows?: number;
   columns?: number;
+  cols?: string[];
 }
 
 export interface IDrawerProps {
@@ -94,12 +105,10 @@ export interface IDashboardStatCardProps {
   title: string;
   value: string | number;
   icon: ReactNode;
-  color?: "indigo" | "emerald" | "purple" | "amber" | "rose" | "blue" | "teal";
+  color?: AnalyticsColor;
   className?: string;
   trend?: string;
 }
-
-
 
 export interface IWalletModalsProps {
   // Adjustment Modal
@@ -188,7 +197,7 @@ export interface IAnalyticsCardProps {
   subtitle?: string;
   icon: ReactNode;
   percentage?: number;
-  color?: "indigo" | "emerald" | "purple" | "amber" | "rose" | "blue" | "teal";
+  color?: AnalyticsColor;
   className?: string;
 }
 
@@ -237,6 +246,14 @@ export interface ITableColumn<T> {
   headerClassName?: string;
 }
 
+export interface IPageColumn<T> {
+  key: string;
+  label: string;
+  align?: "left" | "right";
+  render: (item: T) => React.ReactNode;
+}
+
+
 export interface IApprovalTableProps {
   data: IAuction[];
   onAction: any;
@@ -251,13 +268,58 @@ export interface IInventoryTableProps {
   formatCurrency: any;
 }
 
+export interface IPaginationProps {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  showingCount: number;
+  onPageChange: (page: number) => void;
+  typeLabel?: string;
+  className?: string;
+}
 
+export interface DropdownOption {
+  label: string
+  value: string
+}
 
+export interface DropdownProps {
+  options: DropdownOption[]
+  value?: string | string[]
+  onChange: (value: any) => void
+  multiple?: boolean
+  placeholder?: string
+  className?: string
+  triggerClassName?: string
+  triggerIcon?: React.ReactNode
+  loading?: boolean
+  disabled?: boolean
+  maxSelectionLimit?: number
+}
 
+export interface UseDropdownProps {
+  options: DropdownOption[]
+  value?: string | string[]
+  onChange: (value: any) => void
+  multiple?: boolean
+  disabled?: boolean
+  maxSelectionLimit?: number
+}
 
+export interface AccordionItem {
+  id: string;
+  question: string;
+  answer: string;
+}
 
+export interface AccordionItemProps {
+  item: AccordionItem;
+  isOpen: boolean;
+  onToggle: () => void;
+}
 
-
-
-
+export interface AccordionProps {
+  items: AccordionItem[];
+  className?: string;
+}
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -39,8 +38,6 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
   const [autoBidLimit, setAutoBidLimit] = useState<string>("");
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [selectedGoalId, setSelectedGoalId] = useState<string>("");
-
-
 
   useEffect(() => {
     if (auction.status !== "active" || !auction.endTime) {
@@ -90,7 +87,7 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
 
   const minRequired = currentBid + auction.minIncrement;
 
-  const { placeBid, isPlacingBid, setupAutoBid, isSettingAutoBid } = useBidding();
+  const { setupAutoBid, isSettingAutoBid } = useBidding();
   const { data: statusResponse } = useBidStatus(auction._id as string, !!user);
   const { data: budgetsResponse } = useBudgets();
   const { mutate: assignToGoal } = useAssignAuctionToBudget();

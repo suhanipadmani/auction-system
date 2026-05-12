@@ -1,4 +1,4 @@
-import { IErrorDefinition } from "./AppError";
+import { IErrorDefinition } from "../types/error";
 
 export const ErrorMessages = {
   // Auth Errors

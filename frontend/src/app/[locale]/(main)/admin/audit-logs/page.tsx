@@ -21,7 +21,7 @@ import { useCurrency } from "@/hooks/useCurrency";
 // UI Components
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { TableSkeleton } from "@/components/ui/TableSkeleton";
-import { IAuditLogFilters } from "@/types/audit";
+import type { IAuditLogFilters } from "@/types/audit";
 
 
 const ACTION_MAP: Record<string, { label: string; icon: any; color: string }> = {

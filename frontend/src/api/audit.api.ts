@@ -1,6 +1,6 @@
 import { axiosClient } from "@/lib/axios";
 
-import { IAuditLogFilters, IAuditLogResponse } from "@/types/audit";
+import type { IAuditLogFilters, IAuditLogResponse } from "@/types/audit";
 
 
 export const auditApi = {
@@ -18,3 +18,5 @@ export const auditApi = {
     return { data: response.data.data, ...response.data.meta };
   }
 };
+
+export type { IAuditLogFilters };

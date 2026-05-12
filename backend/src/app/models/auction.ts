@@ -1,5 +1,6 @@
 import { Schema, Types, model } from "mongoose";
 import { AUCTION_STATUSES } from "../enums";
+import { IAuctionDocument } from "../types/models";
 
 export const auctionSchema = new Schema(
   {
@@ -79,7 +80,5 @@ export const auctionSchema = new Schema(
   },
   { timestamps: true },
 );
-
-import { IAuctionDocument } from "../types/models";
 
 export const AuctionModel = model<IAuctionDocument>("Auction", auctionSchema);

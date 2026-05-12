@@ -4,21 +4,15 @@ import { ShieldAlert, CheckCircle2, XCircle } from "lucide-react";
 
 // Hooks
 import { useUserWallet } from "@/hooks/useWallet";
-
 // Utils
 import { formatDate } from "@/lib/utils";
-
 // Components
 import { Modal } from "@/components/ui/Modal";
-import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useTranslations } from "next-intl";
 import { useCurrency } from "@/hooks/useCurrency";
-
 // Types
 import { IWalletModalsProps } from "@/types/components";
-import { IAdjustmentData } from "@/types/wallet";
-
 
 
 export function WalletStatusCheck({ userId }: { userId: string }) {
@@ -64,20 +58,10 @@ export function WalletModals({
         isOpen={isAdjustmentOpen}
         onClose={onAdjustmentClose}
         title={modalT('confirmAdjustment')}
-        footer={
-          <>
-            <Button variant="ghost" onClick={onAdjustmentClose}>
-              {modalT('cancel')}
-            </Button>
-            <Button 
-              className="bg-indigo-500 hover:bg-indigo-600"
-              onClick={onAdjustmentConfirm}
-              isLoading={isAdjusting}
-            >
-              {modalT('confirmApply')}
-            </Button>
-          </>
-        }
+        confirmText={modalT('confirmApply')}
+        cancelText={modalT('cancel')}
+        onConfirm={onAdjustmentConfirm}
+        isConfirmLoading={isAdjusting}
       >
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground leading-relaxed">
@@ -116,21 +100,11 @@ export function WalletModals({
         isOpen={isDepositOpen}
         onClose={onDepositClose}
         title={modalT(actionType === 'approved' ? 'approveDeposit' : 'rejectDeposit')}
-        footer={
-          <>
-            <Button variant="ghost" onClick={onDepositClose}>
-              {modalT('cancel')}
-            </Button>
-            <Button 
-              className={actionType === 'approved' ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-rose-500 hover:bg-rose-600'}
-              onClick={() => selectedRequest?._id && onDepositConfirm(selectedRequest._id, actionType)}
-
-              isLoading={isProcessing}
-            >
-              {modalT('confirmAction', { action: t(`statuses.${actionType}`) })}
-            </Button>
-          </>
-        }
+        confirmText={modalT('confirmAction', { action: t(`statuses.${actionType}`) })}
+        cancelText={modalT('cancel')}
+        onConfirm={() => selectedRequest?._id && onDepositConfirm(selectedRequest._id, actionType)}
+        isConfirmLoading={isProcessing}
+        isDanger={actionType === 'rejected'}
       >
         <div className="space-y-4">
           <div className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center space-y-3">

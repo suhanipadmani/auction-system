@@ -25,7 +25,7 @@ import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const { mutate: login, isPending, error } = useLogin();
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<ILoginForm>({

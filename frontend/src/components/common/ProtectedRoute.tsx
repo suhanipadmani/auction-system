@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-
 import { Loader2 } from "lucide-react";
-
 import { useAuthStore } from "@/store/auth.store";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {

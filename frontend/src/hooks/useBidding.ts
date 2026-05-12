@@ -4,7 +4,7 @@ import { axiosClient as axios } from "@/lib/axios";
 export const useBidding = () => {
   const queryClient = useQueryClient();
 
-  // Place manual bid via API (backup/alternative to sockets)
+  // Place manual bid via API 
   const placeBidMutation = useMutation({
     mutationFn: async ({ auctionId, amount }: { auctionId: string; amount: number }) => {
       const response = await axios.post("/bids/place", { auctionId, amount });

@@ -24,6 +24,7 @@
     "content": "Approving a payout will permanently deduct the funds from the user's locked balance. Ensure the physical or external money transfer is complete before marking as Approved. Rejections will automatically release the locked funds back to the user's available balance."
   },
   "pagination": {
-    "pageInfo": "Showing page {current} of {total}"
+    "pageInfo": "Showing page {current} of {total}",
+    "requests": "requests"
   }
 }

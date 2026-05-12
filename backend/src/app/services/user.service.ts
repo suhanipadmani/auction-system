@@ -20,11 +20,6 @@ export const createUser = async (data: ICreateUserData) => {
 };
 
 
-/**
- * Returns all users.
- * By default excludes DELETED users (hidden from system).
- * INACTIVE users are always visible — they are blocked but not hidden.
- */
 export const getAllUsers = async (includeDeleted = false, options: { page?: number; limit?: number; search?: string; role?: string } = {}) => {
   const { page = 1, limit = 20, search, role } = options;
   const skip = (page - 1) * limit;

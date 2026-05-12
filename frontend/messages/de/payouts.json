@@ -24,6 +24,7 @@
     "content": "Die Genehmigung einer Auszahlung zieht die Beträge dauerhaft vom gesperrten Guthaben des Benutzers ab. Stellen Sie sicher, dass die physische oder externe Überweisung abgeschlossen ist, bevor Sie sie als Genehmigt markieren. Ablehnungen geben die gesperrten Beträge automatisch wieder an das verfügbare Guthaben des Benutzers frei."
   },
   "pagination": {
-    "pageInfo": "Seite {current} von {total} wird angezeigt"
+    "pageInfo": "Seite {current} von {total} wird angezeigt",
+    "requests": "Anfragen"
   }
 }

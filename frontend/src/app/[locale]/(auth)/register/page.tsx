@@ -7,7 +7,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
-
 // Types
 import { IRegisterForm } from "@/types/forms";
 import { USER_ROLES } from "@/enums/user.enum";
@@ -24,7 +23,7 @@ import { useTranslations } from "next-intl";
 
 export default function RegisterPage() {
   const t = useTranslations("auth");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const { mutate: registerUser, isPending, error } = useRegister();
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<IRegisterForm>({

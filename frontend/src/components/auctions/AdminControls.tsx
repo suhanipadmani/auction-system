@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 
 import { IAdminControlsProps } from "@/types/components";
 
-
 export const AdminControls = ({ onAction, isProcessing }: IAdminControlsProps) => {
   const t = useTranslations("wallet.table.actions");
   return (
@@ -30,3 +29,4 @@ export const AdminControls = ({ onAction, isProcessing }: IAdminControlsProps) =
     </div>
   );
 };
+

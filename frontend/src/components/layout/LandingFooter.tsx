@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/routing";
-import { Hammer, Globe, MessageSquare, Briefcase } from "lucide-react";
+import { Hammer } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export function LandingFooter() {

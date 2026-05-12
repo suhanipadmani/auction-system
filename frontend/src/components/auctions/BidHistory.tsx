@@ -1,22 +1,26 @@
 import { useState } from "react";
-import { useAuctionBids } from "@/hooks/useAuction";
-import { useCurrency } from "@/hooks/useCurrency";
 import { cn } from "@/lib/utils";
+
+// External
 import { formatDistanceToNow } from "date-fns";
 import { Loader2, User, Zap, History, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/Card";
+import { useTranslations } from "next-intl";
+// Types
+import { IBidHistoryProps, IBidItemProps, IFullHistoryModalProps } from "@/types/components";
+// Hooks
+import { useAuctionBids } from "@/hooks/useAuction";
+import { useCurrency } from "@/hooks/useCurrency";
+// UI Components
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { useTranslations } from "next-intl";
-
-import { IBidHistoryProps, IBidItemProps, IFullHistoryModalProps } from "@/types/components";
 
 
 export const BidHistory = ({ auctionId }: IBidHistoryProps) => {
-  const { formatCurrency } = useCurrency();
+  useCurrency();
   const t = useTranslations("auction.details");
-  const [isFullHistoryOpen, setIsFullHistoryOpen] = useState(false);
+  const [isFullHistoryOpen, setIsFullHistoryOpen] = useState<boolean>(false);
   const { data: response, isLoading } = useAuctionBids(auctionId, { page: 1, limit: 3 });
   const bids = response?.data || [];
 
@@ -135,10 +139,10 @@ const BidItem = ({ bid, index, page }: IBidItemProps) => {
 
 // Full history modal component
 const FullHistoryModal = ({ isOpen, onClose, auctionId }: IFullHistoryModalProps) => {
-  const { formatCurrency } = useCurrency();
+  useCurrency();
   const t = useTranslations("auction.details");
   const tm = useTranslations("auction.management");
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState<number>(1);
   const { data: response, isLoading } = useAuctionBids(auctionId, { page, limit: 10 });
   const bids = response?.data || [];
   const totalPages = response?.totalPages || 1;

@@ -5,14 +5,14 @@ import { socket } from "@/lib/socket";
 import { useAuthStore } from "@/store/auth.store";
 import toast from "react-hot-toast";
 
-import { SocketContextType } from "@/types/socket";
+import { ISocketContextType } from "@/types/socket";
 
 
-const SocketContext = createContext<SocketContextType | undefined>(undefined);
+const SocketContext = createContext<ISocketContextType | undefined>(undefined);
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, isAuthenticated, _hasHydrated } = useAuthStore();
-  const [isConnected, setIsConnected] = React.useState(socket.connected);
+  const { user, _hasHydrated } = useAuthStore();
+  const [isConnected, setIsConnected] = React.useState<boolean>(socket.connected);
 
   const connect = useCallback(() => {
     if (!socket.connected) {
@@ -20,15 +20,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, []);
 
-  const disconnect = useCallback(() => {
-    if (socket.connected) {
-      socket.disconnect();
-    }
-  }, []);
-
   useEffect(() => {
     if (_hasHydrated) {
-      // Connect regardless of authentication status to allow public updates
       connect();
     }
   }, [_hasHydrated, connect]);

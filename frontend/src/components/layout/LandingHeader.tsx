@@ -8,7 +8,7 @@ import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { useTranslations } from "next-intl";
 
 export function LandingHeader() {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const t = useTranslations("dashboard.header");
 
   useEffect(() => {

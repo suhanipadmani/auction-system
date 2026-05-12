@@ -1,19 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Bell, Check, Trash2, Clock } from "lucide-react";
-import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from "@/hooks/useNotifications";
+import { useState, useEffect } from "react";
+import { Bell, Clock } from "lucide-react";
+import { 
+  useNotifications, 
+  useMarkNotificationRead, 
+  useMarkAllNotificationsRead 
+} from "@/hooks/useNotifications";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { useSocket } from "@/providers/SocketProvider";
 import { useQueryClient } from "@tanstack/react-query";
 import { NOTIFICATION_KEYS } from "@/hooks/useNotifications";
 import { useRouter } from "next/navigation";
 
 export const NotificationCenter = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const { data: response, isLoading } = useNotifications();
   const { mutate: markRead } = useMarkNotificationRead();
   const { mutate: markAllRead } = useMarkAllNotificationsRead();
@@ -29,7 +31,6 @@ export const NotificationCenter = () => {
     const handleNotification = (data: any) => {
       // Invalidate the notifications query to fetch the latest
       queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.all });
-      // Optional: Play a sound or show a toast
     };
 
     socket.on("notification", handleNotification);
@@ -39,7 +40,7 @@ export const NotificationCenter = () => {
   }, [socket, queryClient]);
 
   const handleNotificationClick = (n: any) => {
-    // 1. Delete notification (called markRead in hook but logic is now delete)
+    // 1. Delete notification
     markRead(n._id);
 
     // 2. Redirect if link exists

@@ -16,25 +16,19 @@ import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Table, TableHeader, TableBody, TableHead, TableRow } from "@/components/ui/Table";
 import { Badge } from "@/components/ui/Badge";
-import { TableSkeleton } from "@/components/common/TableSkeleton";
+import { TableSkeleton } from "@/components/ui/TableSkeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { TransactionLogRow } from "./TransactionLogRow";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem
-} from "@/components/ui/Select";
+import { Dropdown } from "@/components/ui/Dropdown";
 import { useTranslations } from "next-intl";
 
 export function TransactionLogSection() {
   const t = useTranslations("wallet");
   const [txType, setTxType] = useState<string>("all");
-  const [txSearch, setTxSearch] = useState("");
-  const [txStartDate, setTxStartDate] = useState("");
-  const [txEndDate, setTxEndDate] = useState("");
-  const [page, setPage] = useState(1);
+  const [txSearch, setTxSearch] = useState<string>("");
+  const [txStartDate, setTxStartDate] = useState<string>("");
+  const [txEndDate, setTxEndDate] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
 
   const { data: allTransactionsData, isLoading: isAllTransactionsLoading } = useAllTransactions({
     type: txType,
@@ -90,21 +84,22 @@ export function TransactionLogSection() {
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">{t('transactionType')}</label>
-              <Select value={txType} onValueChange={(val: string | null) => {
-                setTxType(val || "all");
-                setPage(1);
-              }}>
-                <SelectTrigger className="h-9 text-xs bg-background/50">
-                  <SelectValue placeholder={t('allTypes')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('allTypes')}</SelectItem>
-                  <SelectItem value={TRANSACTION_TYPES.CREDIT}>{t('txTypes.credit')}</SelectItem>
-                  <SelectItem value={TRANSACTION_TYPES.DEBIT}>{t('txTypes.debit')}</SelectItem>
-                  <SelectItem value={TRANSACTION_TYPES.LOCK}>{t('txTypes.lock')}</SelectItem>
-                  <SelectItem value={TRANSACTION_TYPES.UNLOCK}>{t('txTypes.unlock')}</SelectItem>
-                </SelectContent>
-              </Select>
+              <Dropdown
+                value={txType}
+                onChange={(val: string) => {
+                  setTxType(val || "all");
+                  setPage(1);
+                }}
+                options={[
+                  { label: t('allTypes'), value: "all" },
+                  { label: t('txTypes.credit'), value: TRANSACTION_TYPES.CREDIT },
+                  { label: t('txTypes.debit'), value: TRANSACTION_TYPES.DEBIT },
+                  { label: t('txTypes.lock'), value: TRANSACTION_TYPES.LOCK },
+                  { label: t('txTypes.unlock'), value: TRANSACTION_TYPES.UNLOCK },
+                ]}
+                placeholder={t('allTypes')}
+                triggerClassName="h-9 text-xs bg-background/50 border-input"
+              />
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">{t('fromDate')}</label>

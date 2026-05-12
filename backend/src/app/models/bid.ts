@@ -1,5 +1,6 @@
 import { Schema, Types, model } from "mongoose";
 import { BID_STATUSES } from "../enums";
+import { IBidDocument } from "../types/models";
 
 export const bidSchema = new Schema(
   {
@@ -45,7 +46,5 @@ export const bidSchema = new Schema(
   },
   { timestamps: true },
 );
-
-import { IBidDocument } from "../types/models";
 
 export const BidModel = model<IBidDocument>("Bid", bidSchema);
