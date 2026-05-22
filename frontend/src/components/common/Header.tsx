@@ -33,15 +33,15 @@ export function Header({ onMenuClick }: IHeaderProps) {
   }, []);
 
   return (
-    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 sm:px-6 sticky top-0 z-30 text-foreground">
+    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-3 sm:px-6 sticky top-0 z-30 text-foreground">
       <button 
         onClick={onMenuClick}
-        className="p-2 hover:bg-muted rounded-lg text-muted-foreground transition-colors lg:hidden"
+        className="p-1.5 sm:p-2 hover:bg-muted rounded-lg text-muted-foreground transition-colors lg:hidden"
       >
-        <Menu className="w-6 h-6" />
+        <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
       </button>
 
-      <div className="flex items-center gap-3 sm:gap-6 ml-auto">
+      <div className="flex items-center gap-2 sm:gap-6 ml-auto">
         <LanguageSwitcher />
         <NotificationCenter />
         

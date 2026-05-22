@@ -1,4 +1,5 @@
 import { axiosClient } from "@/lib/axios";
+import { ICreateUserDTO, IUpdateUserRoleDTO } from "@/types/user";
 
 export const userApi = {
   getAllUsers: async (includeDeleted = false, page = 1, limit = 20, search = "") => {
@@ -10,13 +11,18 @@ export const userApi = {
     return { data: response.data.data, ...response.data.meta };
   },
 
-  createUser: async (data: { name: string; email: string; password?: string; role: string }) => {
+  getMe: async () => {
+    const response = await axiosClient.get("/users/me");
+    return response.data.data;
+  },
+
+  createUser: async (data: ICreateUserDTO) => {
     const payload = { ...data, password: data.password };
     const response = await axiosClient.post("/users", payload);
     return response.data;
   },
 
-  updateUserRole: async ({ id, role }: { id: string; role: string }) => {
+  updateUserRole: async ({ id, role }: IUpdateUserRoleDTO) => {
     const response = await axiosClient.patch(`/users/${id}/role`, { role });
     return response.data;
   },

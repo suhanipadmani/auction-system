@@ -1,5 +1,17 @@
 import { axiosClient } from "@/lib/axios";
-import { IAuctionFilters, IAuctionResponse, ICreateAuctionDTO, IAuction, IUpdateAuctionDTO } from "@/types/auction";
+import { 
+  IAuctionFilters, 
+  IAuctionResponse, 
+  ICreateAuctionDTO, 
+  IAuction, 
+  IUpdateAuctionDTO,
+  IMyActivityParams,
+  IMyActivityResponse,
+  ISellerStats,
+  IAdminStats,
+  IPublicStats,
+  IBidsResponse
+} from "@/types/auction";
 
 export const auctionApi = {
   getAuctions: async (filters: IAuctionFilters = {}): Promise<IAuctionResponse> => {
@@ -51,49 +63,17 @@ export const auctionApi = {
     return response.data;
   },
 
-  getMyBiddingActivity: async (params?: { 
-    page?: number; 
-    limit?: number; 
-    tab?: string;
-    search?: string;
-    sortBy?: string;
-    sortOrder?: string;
-  }): Promise<{ 
-    success: boolean; 
-    data: IAuction[]; 
-    total?: number;
-    page?: number;
-    totalPages?: number;
-    stats: { 
-      activeWinningCount: number; 
-      activeOutbidCount: number; 
-      wonCount: number;
-      lossCount: number;
-      totalSpent: number;
-    } 
-  }> => {
+  getMyBiddingActivity: async (params?: IMyActivityParams): Promise<IMyActivityResponse> => {
     const response = await axiosClient.get("/auctions/my-activity", { params });
     return { ...response.data.data, ...response.data.meta };
   },
   
-  getSellerStats: async (): Promise<{ success: boolean; data: { 
-    activeListings: number; 
-    completedSales: number; 
-    totalEarnings: number;
-    successRate: number;
-    avgHighestBid: number;
-    maxBidReceived: number;
-  } }> => {
+  getSellerStats: async (): Promise<{ success: boolean; data: ISellerStats }> => {
     const response = await axiosClient.get("/auctions/seller-stats");
     return response.data;
   },
 
-  getAdminStats: async (): Promise<{ success: boolean; data: { 
-    totalAuctions: number; 
-    systemRevenue: number; 
-    activeUsersCount: number;
-    totalUsersCount: number;
-  } }> => {
+  getAdminStats: async (): Promise<{ success: boolean; data: IAdminStats }> => {
     const response = await axiosClient.get("/auctions/admin-stats");
     return response.data;
   },
@@ -110,13 +90,7 @@ export const auctionApi = {
     return { data: response.data.data, ...response.data.meta };
   },
 
-  getAuctionBids: async (id: string, params: { page?: number; limit?: number } = {}): Promise<{ 
-    success: boolean; 
-    data: any[]; 
-    total?: number;
-    page?: number;
-    totalPages?: number;
-  }> => {
+  getAuctionBids: async (id: string, params: { page?: number; limit?: number } = {}): Promise<IBidsResponse> => {
     const response = await axiosClient.get(`/auctions/${id}/bids`, { params });
     return { data: response.data.data, ...response.data.meta };
   },
@@ -126,13 +100,7 @@ export const auctionApi = {
     return response.data;
   },
 
-  getPublicStats: async (): Promise<{ success: boolean; data: { 
-    totalAuctions: number; 
-    activeAuctions: number; 
-    activeBidders: number;
-    totalBids: number;
-    totalVolume: number;
-  } }> => {
+  getPublicStats: async (): Promise<{ success: boolean; data: IPublicStats }> => {
     const response = await axiosClient.get("/auctions/public-stats");
     return response.data;
   }

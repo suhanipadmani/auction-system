@@ -1,7 +1,8 @@
 import { axiosClient } from "../lib/axios";
+import { INotificationResponse } from "@/types/notification";
 
 export const notificationApi = {
-  getMyNotifications: async (params: { page?: number; limit?: number } = {}) => {
+  getMyNotifications: async (params: { page?: number; limit?: number } = {}): Promise<INotificationResponse> => {
     const response = await axiosClient.get("/notifications", { params });
     return { data: response.data.data, ...response.data.meta };
   },

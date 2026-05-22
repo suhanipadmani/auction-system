@@ -15,6 +15,9 @@ import { Modal } from "@/components/ui/Modal";
 import { Label } from "@/components/ui/Label";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { budgetGoalSchema, type BudgetGoalInput, type BudgetGoalForm } from "@/validations/budget.validation";
 
 export default function MyGoalsPage() {
     const { data: budgetsResponse, isLoading } = useBudgets();
@@ -22,22 +25,35 @@ export default function MyGoalsPage() {
     const { mutate: deleteGoal } = useDeleteBudget();
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
-    const [newName, setNewName] = useState<string>("");
-    const [newBudget, setNewBudget] = useState<string>("");
 
+    const { 
+        register, 
+        handleSubmit, 
+        reset, 
+        formState: { errors, isValid } 
+    } = useForm<BudgetGoalForm>({
+        resolver: zodResolver(budgetGoalSchema),
+        mode: "onChange",
+        defaultValues: {
+            name: "",
+            maxBudget: "" as any
+        }
+    });
 
-    const goals = budgetsResponse?.data || [];
+    const handleCloseModal = () => {
+        setIsCreateModalOpen(false);
+        reset();
+    };
 
-    const handleCreate = (e: React.FormEvent) => {
-        e.preventDefault();
-        createGoal({ name: newName, maxBudget: Number(newBudget) }, {
+    const handleCreate = (data: BudgetGoalForm) => {
+        createGoal(data as BudgetGoalInput, {
             onSuccess: () => {
-                setIsCreateModalOpen(false);
-                setNewName("");
-                setNewBudget("");
+                handleCloseModal();
             }
         });
     };
+
+    const goals = budgetsResponse?.data || [];
 
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -190,32 +206,44 @@ export default function MyGoalsPage() {
             {/* Create Modal */}
             <Modal
                 isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
+                onClose={handleCloseModal}
                 title="Create New Bidding Goal"
             >
-                <form onSubmit={handleCreate} className="space-y-6 pt-4">
+                <form onSubmit={handleSubmit(handleCreate)} className="space-y-6 pt-4">
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label>Goal Name</Label>
+                            <Label required>Goal Name</Label>
                             <input
                                 type="text"
-                                className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary transition-colors"
+                                className={cn(
+                                    "w-full h-12 px-4 rounded-xl bg-white/5 border text-white focus:outline-none transition-colors",
+                                    errors.name ? "border-red-500 focus:border-red-500" : "border-white/10 focus:border-primary"
+                                )}
                                 placeholder="e.g., Luxury Watches, Office Furniture..."
-                                value={newName}
-                                onChange={(e) => setNewName(e.target.value)}
-                                required
+                                {...register("name")}
                             />
+                            {errors.name && (
+                                <p className="text-xs text-red-500 font-medium animate-in fade-in slide-in-from-top-1">
+                                    {errors.name.message}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
-                            <Label>Maximum Budget</Label>
+                            <Label required>Maximum Budget</Label>
                             <input
                                 type="number"
-                                className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary transition-colors"
+                                className={cn(
+                                    "w-full h-12 px-4 rounded-xl bg-white/5 border text-white focus:outline-none transition-colors",
+                                    errors.maxBudget ? "border-red-500 focus:border-red-500" : "border-white/10 focus:border-primary"
+                                )}
                                 placeholder="Total spending limit"
-                                value={newBudget}
-                                onChange={(e) => setNewBudget(e.target.value)}
-                                required
+                                {...register("maxBudget")}
                             />
+                            {errors.maxBudget && (
+                                <p className="text-xs text-red-500 font-medium animate-in fade-in slide-in-from-top-1">
+                                    {errors.maxBudget.message}
+                                </p>
+                            )}
                         </div>
                     </div>
                     <div className="flex gap-4 pt-4">
@@ -223,7 +251,7 @@ export default function MyGoalsPage() {
                             type="button"
                             variant="ghost"
                             className="flex-1"
-                            onClick={() => setIsCreateModalOpen(false)}
+                            onClick={handleCloseModal}
                         >
                             Cancel
                         </Button>
@@ -231,6 +259,7 @@ export default function MyGoalsPage() {
                             type="submit"
                             className="flex-1 bg-primary text-white"
                             isLoading={isCreating}
+                            disabled={!isValid}
                         >
                             Create Goal
                         </Button>

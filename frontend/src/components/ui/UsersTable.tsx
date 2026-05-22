@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Calendar, UserX, UserMinus, UserCheck, ShieldCheck, RotateCcw, AlertTriangle } from "lucide-react";
+import { Mail, Calendar, UserX, UserMinus, UserCheck, ShieldCheck, RotateCcw } from "lucide-react";
 import { Dropdown } from "./Dropdown";
 import { Button } from "./Button";
 import {
@@ -13,88 +13,15 @@ import {
   TableRow,
 } from "./Table";
 import { Badge } from "./Badge";
-import { Modal } from "./Modal";
-import { IUsersTableProps, IConfirmModalProps } from "@/types/components";
+import { UserConfirmModal } from "./UserConfirmModal";
+import { IUsersTableProps } from "@/types/components";
 import { IUser } from "@/types/auth";
 import { USER_ACTIONS } from "@/enums/user.enum";
 import { useTranslations } from "next-intl";
-import { formatDate } from "@/lib/utils";
-
-
-
-function ConfirmModal({ user, action, onConfirm, onCancel, isLoading }: IConfirmModalProps) {
-  const t = useTranslations("admin_users.modals");
-  const isDelete = action === "delete";
-  const isDeactivate = action === "deactivate";
-  const isRestore = action === "restore";
-  const isActivate = action === "activate";
-
-  let title = "Action";
-  if (isDelete) title = t('deleteTitle');
-  if (isRestore) title = t('restoreTitle');
-  if (isDeactivate) title = t('deactivateTitle');
-  if (isActivate) title = t('activateTitle');
-
-  return (
-    <Modal
-      isOpen={!!user && !!action}
-      onClose={onCancel}
-      title={title}
-      cancelText={t('cancel')}
-      confirmText={
-        <>
-          {isDelete && <><UserX className="w-3.5 h-3.5 mr-2" /> {t('yesDelete')}</>}
-          {isRestore && <><RotateCcw className="w-3.5 h-3.5 mr-2" /> {t('yesRestore')}</>}
-          {isDeactivate && <><UserMinus className="w-3.5 h-3.5 mr-2" /> {t('yesDeactivate')}</>}
-          {isActivate && <><UserCheck className="w-3.5 h-3.5 mr-2" /> {t('yesActivate')}</>}
-        </>
-      }
-      onConfirm={onConfirm}
-      onCancel={onCancel}
-      isConfirmLoading={isLoading}
-      isDanger={isDelete || isDeactivate}
-    >
-      {user && (
-        <div className="space-y-4">
-          {/* Icon banner */}
-          <div className={`flex items-center justify-center w-14 h-14 rounded-2xl mx-auto ${
-            isDelete || isDeactivate ? "bg-red-500/10" : "bg-emerald-500/10"
-          }`}>
-            {isDelete && <AlertTriangle className="w-7 h-7 text-red-400" />}
-            {isDeactivate && <UserMinus className="w-7 h-7 text-red-400" />}
-            {isRestore && <RotateCcw className="w-7 h-7 text-emerald-400" />}
-            {isActivate && <UserCheck className="w-7 h-7 text-emerald-400" />}
-          </div>
-
-          {/* Description */}
-          <div className="text-center space-y-1">
-            <p className="text-sm text-muted-foreground">
-              {isDelete && t('deleteDesc')}
-              {isDeactivate && t('deactivateDesc')}
-              {isRestore && t('restoreDesc')}
-              {isActivate && t('activateDesc')}
-            </p>
-          </div>
-
-          {/* User card */}
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-border/40">
-            {/* Avatar */}
-            <div className="w-9 h-9 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-semibold text-sm flex-shrink-0">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
-            <div className="min-w-0">
-              <p className="font-medium text-white text-sm truncate">{user.name}</p>
-              <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-            </div>
-            <Badge variant="outline" className="ml-auto text-xs capitalize bg-white/5 border-border/40 shrink-0">
-              {user.role}
-            </Badge>
-          </div>
-        </div>
-      )}
-    </Modal>
-  );
-}
+import { cn, formatDate } from "@/lib/utils";
+import { Card, CardContent } from "./Card";
+import { Pagination } from "./Pagination";
+import { USER_ROLES, USER_STATUS } from "@/constants/user.constants";
 
 //  Main table 
 export function UsersTable({
@@ -110,6 +37,10 @@ export function UsersTable({
   isActivating,
   isDeleting,
   isRestoring,
+  currentPage,
+  totalPages,
+  totalItems,
+  onPageChange,
 }: IUsersTableProps) {
   const t = useTranslations("admin_users.table");
   const [pendingAction, setPendingAction] = useState<{
@@ -132,17 +63,17 @@ export function UsersTable({
   };
 
   const columns = [
-    { key: "userInfo", label: t('userInfo'), className: "px-4 sm:px-6 py-5" },
-    { key: "role", label: t('role'), className: "px-4 sm:px-6 py-5" },
-    { key: "status", label: t('status'), className: "px-4 sm:px-6 py-5 hidden min-[450px]:table-cell" },
-    { key: "joined", label: t('joined'), className: "px-6 py-5 hidden md:table-cell" },
-    { key: "actions", label: t('actions'), className: "px-4 sm:px-6 py-5 text-right" },
+    { key: "userInfo", label: t('userInfo'), className: "" },
+    { key: "role", label: t('role'), className: "" },
+    { key: "status", label: t('status'), className: "hidden min-[450px]:table-cell" },
+    { key: "joined", label: t('joined'), className: "hidden md:table-cell" },
+    { key: "actions", label: t('actions'), className: "text-right" },
   ];
 
   return (
     <>
       {/* Confirmation modal */}
-      <ConfirmModal
+      <UserConfirmModal
         user={pendingAction?.user ?? null}
         action={pendingAction?.action ?? null}
         onConfirm={handleConfirm}
@@ -150,11 +81,11 @@ export function UsersTable({
         isLoading={isDeleting || isRestoring || isDeactivating || isActivating}
       />
 
-      <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-xl mt-8">
-        <div className="overflow-x-auto">
+      <Card className="border-border/50 bg-card/30 backdrop-blur-sm shadow-xl overflow-hidden mt-8">
+        <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="hover:bg-transparent border-none">
+              <TableRow className="hover:bg-transparent">
                 {columns.map((col) => (
                   <TableHead key={col.key} className={col.className}>
                     {col.label}
@@ -165,17 +96,17 @@ export function UsersTable({
 
             <TableBody>
               {users.map((user) => {
-                const isAdmin   = user.role === "admin";
+                const isAdmin   = user.role === USER_ROLES.ADMIN;
                 const isSelf    = user._id === currentUser?._id;
-                const isDeleted = user.status === "deleted";
+                const isDeleted = user.status === USER_STATUS.DELETED;
 
                 return (
                   <TableRow
                     key={user._id}
-                    className={`hover:bg-muted/50 transition-colors border-border ${isDeleted ? "opacity-60" : ""}`}
+                    className={cn("transition-colors", isDeleted && "opacity-60")}
                   >
                     {/* User info */}
-                    <TableCell className="px-4 sm:px-6 py-4">
+                    <TableCell>
                       <div className="flex items-center gap-2 sm:gap-3">
                         {/* Mini avatar */}
                         <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-semibold text-[10px] sm:text-xs flex-shrink-0 ${
@@ -196,7 +127,7 @@ export function UsersTable({
                     </TableCell>
 
                     {/* Role */}
-                    <TableCell className="px-4 sm:px-6 py-4">
+                    <TableCell>
                       {isAdmin ? (
                         <Badge variant="outline" className="gap-1.5 px-3 py-1.5 bg-primary/10 text-primary border-primary/20 whitespace-nowrap">
                           <ShieldCheck className="w-3.5 h-3.5" />
@@ -210,24 +141,25 @@ export function UsersTable({
                             disabled={isUpdatingRole || isSelf || isDeleted}
                             placeholder={t('selectRole')}
                             options={[
-                              { label: t('roles.bidder'), value: "bidder" },
-                              { label: t('roles.seller'), value: "seller" },
-                              { label: t('roles.admin'), value: "admin" }
+                              { label: t('roles.bidder'), value: USER_ROLES.BIDDER },
+                              { label: t('roles.seller'), value: USER_ROLES.SELLER },
+                              { label: t('roles.admin'), value: USER_ROLES.ADMIN }
                             ]}
                             triggerClassName="w-full text-xs sm:text-sm h-9 sm:h-10"
+                            showSearch={false}
                           />
                         </div>
                       )}
                     </TableCell>
 
                     {/* Status */}
-                    <TableCell className="px-4 sm:px-6 py-4 hidden min-[450px]:table-cell">
+                    <TableCell className="hidden min-[450px]:table-cell">
                       {isDeleted ? (
                         <Badge variant="outline" className="gap-1.5 bg-red-500/10 text-red-400 border-red-500/20 whitespace-nowrap">
                           <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
                           {t('statuses.deleted')}
                         </Badge>
-                      ) : user.status === "inactive" ? (
+                      ) : user.status === USER_STATUS.INACTIVE ? (
                         <Badge variant="outline" className="gap-1.5 bg-amber-500/10 text-amber-400 border-amber-500/20 whitespace-nowrap">
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                           {t('statuses.inactive')}
@@ -241,7 +173,7 @@ export function UsersTable({
                     </TableCell>
 
                     {/* Joined */}
-                    <TableCell className="px-6 py-4 hidden md:table-cell">
+                    <TableCell className="hidden md:table-cell">
                       <div className="flex items-center gap-2 text-muted-foreground whitespace-nowrap">
                         <Calendar className="w-4 h-4" />
                         {user.createdAt ? formatDate(user.createdAt, "date") : "N/A"}
@@ -249,7 +181,7 @@ export function UsersTable({
                     </TableCell>
 
                     {/* Actions */}
-                    <TableCell className="px-6 py-4 text-right">
+                    <TableCell className="text-right">
                       {isSelf || isAdmin ? (
                         <span className="text-xs text-muted-foreground italic">{t('noActions')}</span>
                       ) : isDeleted ? (
@@ -265,7 +197,7 @@ export function UsersTable({
                         </Button>
                       ) : (
                         <div className="flex items-center justify-end gap-2">
-                          {user.status === "inactive" ? (
+                          {user.status === USER_STATUS.INACTIVE ? (
                             <Button
                               variant="outline"
                               size="sm"
@@ -314,8 +246,20 @@ export function UsersTable({
               )}
             </TableBody>
           </Table>
-        </div>
-      </div>
+
+          {onPageChange && totalPages && totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage || 1}
+              totalPages={totalPages}
+              totalItems={totalItems || 0}
+              showingCount={users.length}
+              onPageChange={onPageChange}
+              typeLabel={t('pagination.users') || "Users"}
+            />
+          )}
+        </CardContent>
+      </Card>
     </>
   );
 }
+

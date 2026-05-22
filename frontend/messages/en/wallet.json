@@ -61,6 +61,8 @@
     "actionBy": "Action By",
     "date": "Date",
     "status": "Status",
+    "approve": "Approve",
+    "reject": "Reject",
     "actions": {
       "approve": "Approve",
       "reject": "Reject"
@@ -101,7 +103,9 @@
     "walletFrozenNotice": "This user's wallet is currently locked. Approving this deposit will fail unless you unfreeze the wallet first.",
     "cancel": "Cancel",
     "confirmApply": "Confirm & Apply",
-    "confirmAction": "Confirm {action}"
+    "confirmAction": "Confirm {action}",
+    "approve": "Approve",
+    "reject": "Reject"
   },
   "user": {
     "title": "My Wallet",

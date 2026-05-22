@@ -31,3 +31,8 @@ export const assignAuction = async (req: Request, res: Response) => {
   const goal = await BudgetService.assignAuctionToGoal(req.user!.id, id as string, auctionId);
   sendSuccess(res, "Auction assigned to goal successfully", goal);
 };
+export const unassignAuction = async (req: Request, res: Response) => {
+  const { auctionId } = req.body;
+  await BudgetService.unassignAuctionFromGoal(req.user!.id, auctionId);
+  sendSuccess(res, "Auction unassigned from goal successfully");
+};

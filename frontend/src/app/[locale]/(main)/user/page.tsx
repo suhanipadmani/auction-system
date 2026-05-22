@@ -18,10 +18,12 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { DashboardStatCard } from "@/components/dashboard/DashboardStatCard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { QuickActionCard } from "@/components/dashboard/QuickActionCard";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { useTranslations } from "next-intl";
 
 export default function UserDashboardPage() {
     const t = useTranslations("common.dashboard.user");
+    const tDashboard = useTranslations("common.dashboard");
     const user = useAuthStore((state) => state.user);
     const { data: balanceResponse, isLoading: isBalanceLoading } = useBalance();
     const { data: activityResponse, isLoading: isActivityLoading } = useMyBiddingActivity();
@@ -40,6 +42,10 @@ export default function UserDashboardPage() {
     const winRate = totalCompleted > 0 ? Math.round((stats.wonCount / totalCompleted) * 100) : 0;
 
     const isLoading = isBalanceLoading || isActivityLoading;
+
+    if (isLoading) {
+        return <DashboardSkeleton />;
+    }
 
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -102,7 +108,7 @@ export default function UserDashboardPage() {
                 <div className="flex flex-col gap-1">
                     <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
                         <span className="w-2 h-8 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
-                        {useTranslations("common.dashboard")("toolsAndOperations")}
+                        {tDashboard("toolsAndOperations")}
                     </h2>
                     <p className="text-gray-500 text-sm">{t("tools.description")}</p>
                 </div>

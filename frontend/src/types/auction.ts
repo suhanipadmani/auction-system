@@ -65,3 +65,65 @@ export type IAuctionFormData = {
   endTime: string;
 };
 
+export interface IMyActivityParams {
+  page?: number; 
+  limit?: number; 
+  tab?: string;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: string;
+}
+
+export interface IMyActivityResponse {
+  success: boolean; 
+  data: IAuction[]; 
+  total?: number;
+  page?: number;
+  totalPages?: number;
+  stats: { 
+    activeWinningCount: number; 
+    activeOutbidCount: number; 
+    wonCount: number;
+    lossCount: number;
+    totalSpent: number;
+  } 
+}
+
+export interface ISellerStats {
+  activeListings: number; 
+  completedSales: number; 
+  totalEarnings: number;
+  successRate: number;
+  avgHighestBid: number;
+  maxBidReceived: number;
+}
+
+export interface IAdminStats {
+  totalAuctions: number; 
+  systemRevenue: number; 
+  activeUsersCount: number;
+  totalUsersCount: number;
+}
+
+export interface IPublicStats {
+  totalAuctions: number; 
+  activeAuctions: number; 
+  activeBidders: number;
+  totalBids: number;
+  totalVolume: number;
+}
+
+export interface IBidsResponse {
+  success: boolean; 
+  data: any[]; 
+  total?: number;
+  page?: number;
+  totalPages?: number;
+}
+
+export interface IAdminAuctionConfirmModal {
+  isOpen: boolean;
+  auctionId: string | null;
+  action: "approve" | "reject" | null;
+}
+

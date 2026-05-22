@@ -57,24 +57,27 @@ export class NotificationService {
     const { page = 1, limit = 20 } = options;
     const skip = (page - 1) * limit;
 
-    const [data, total] = await Promise.all([
+    const [data, total, unreadCount] = await Promise.all([
       NotificationModel.find({ userId })
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
-      NotificationModel.countDocuments({ userId })
+      NotificationModel.countDocuments({ userId }),
+      NotificationModel.countDocuments({ userId, isRead: false })
     ]);
 
-    return { data, total, page, totalPages: Math.ceil(total / limit) };
+    return { data, total, unreadCount, page, totalPages: Math.ceil(total / limit) };
   }
 
   static async markAsRead(notificationId: string, userId: string) {
-    // UPDATED: Automatically delete after viewing/reading
-    return await NotificationModel.findOneAndDelete({ _id: notificationId, userId });
+    return await NotificationModel.findOneAndUpdate(
+      { _id: notificationId, userId },
+      { isRead: true },
+      { new: true }
+    );
   }
 
   static async markAllAsRead(userId: string) {
-    // UPDATED: Automatically delete after "Mark all as read"
-    return await NotificationModel.deleteMany({ userId });
+    return await NotificationModel.updateMany({ userId }, { isRead: true });
   }
 }

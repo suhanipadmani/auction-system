@@ -47,7 +47,7 @@ export function Sidebar({ isMobile, onClose, isCollapsed, onToggle }: ISidebarPr
           </div>
         )}
 
-        {!isMobile && onToggle && (
+        {!isMobile && onToggle && !isSignOutModalOpen && (
           <button
             onClick={onToggle}
             className="absolute -right-3.5 top-16 -translate-y-1/2 w-7 h-7 bg-indigo-600 rounded-full flex items-center justify-center text-white border-2 border-background hover:bg-indigo-500 transition-all shadow-[0_0_15px_rgba(79,70,229,0.4)] z-[60]"

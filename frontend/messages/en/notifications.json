@@ -1,6 +1,10 @@
 {
-  "title": "Notifications",
-  "empty": "No new notifications",
+  "title": "Activity Center",
+  "subtitle": "Stay updated with your latest auction alerts and wallet activity",
+  "recentTitle": "Recent Notifications",
+  "recentSubtitle": "Showing your latest {count} alerts",
+  "empty": "No activity yet",
+  "emptySubtitle": "We'll notify you when something important happens.",
   "markAllRead": "Mark all as read",
   "types": {
     "outbid": {

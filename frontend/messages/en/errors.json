@@ -13,5 +13,6 @@
   "BID_TOO_LOW": "Your bid must be at least {amount}.",
   "BID_CONFLICT": "Someone else placed a bid just now. Please try again.",
   "WALLET_INSUFFICIENT_BALANCE": "Insufficient wallet balance to perform this action.",
-  "WALLET_FROZEN": "Your wallet is currently frozen."
+  "WALLET_FROZEN": "Your wallet is currently frozen.",
+  "RATE_LIMIT_EXCEEDED": "Too many requests. Please slow down and try again later."
 }

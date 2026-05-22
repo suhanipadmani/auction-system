@@ -1,7 +1,6 @@
-import * as React from "react"
 import { Input as InputPrimitive } from "@base-ui/react/input"
-
 import { cn } from "@/lib/utils"
+import { IInputProps } from "@/types/components"
 
 function Input({ 
   className, 
@@ -11,17 +10,13 @@ function Input({
   icon, 
   rightElement,
   ...props 
-}: React.ComponentProps<"input"> & { 
-  label?: string; 
-  error?: string; 
-  icon?: React.ReactNode;
-  rightElement?: React.ReactNode;
-}) {
+}: IInputProps) {
   return (
     <div className="w-full space-y-2">
       {label && (
-        <label className="text-sm font-medium text-foreground/80">
+        <label className="text-sm font-medium text-foreground/80 flex items-center gap-1">
           {label}
+          {props.required && <span className="text-destructive font-bold">*</span>}
         </label>
       )}
       <div className="relative">

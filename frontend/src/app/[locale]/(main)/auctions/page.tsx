@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuctions } from "@/hooks/useAuction";
+import { useDebounce } from "@/hooks/useDebounce";
 import { AUCTION_STATUSES } from "@/enums";
 import { AuctionCard } from "@/components/auctions/AuctionCard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
@@ -11,8 +12,9 @@ import { IDiscoveryTabType } from "@/types/auction";
 import { Input } from "@/components/ui/Input";
 import { BiddingGoalsOverview } from "@/components/auctions/BiddingGoalsOverview";
 import { useAuthStore } from "@/store/auth.store";
-import { useTranslations } from "next-intl";
 import { Pagination } from "@/components/ui/Pagination";
+import { AuctionCardSkeleton } from "@/components/dashboard/DashboardSkeleton";
+import { useTranslations } from "next-intl";
 
 
 export default function AuctionDiscoveryPage() {
@@ -22,8 +24,9 @@ export default function AuctionDiscoveryPage() {
 
     const [activeTab, setActiveTab] = useState<IDiscoveryTabType>("live");
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [debouncedSearch, setDebouncedSearch] = useState<string>("");
     const [page, setPage] = useState<number>(1);
+    const debouncedSearch = useDebounce(searchQuery, 500);
+
     const { data: response, isLoading } = useAuctions({
         status: activeTab === "live" ? AUCTION_STATUSES.ACTIVE : AUCTION_STATUSES.APPROVED,
         search: debouncedSearch || undefined,
@@ -31,12 +34,9 @@ export default function AuctionDiscoveryPage() {
         limit: 20
     });
 
+    // Reset page to 1 when search query changes
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedSearch(searchQuery);
-            setPage(1);
-        }, 500);
-        return () => clearTimeout(timer);
+        setPage(1);
     }, [searchQuery]);
 
     const auctions = response?.data || [];
@@ -91,13 +91,11 @@ export default function AuctionDiscoveryPage() {
 
             {/* Content */}
             {isLoading ? (
-              <div className="flex flex-col items-center justify-center py-20 gap-4">
-                <div className="relative">
-                  <Loader2 className="w-12 h-12 text-primary animate-spin" />
-                  <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <AuctionCardSkeleton key={i} />
+                  ))}
                 </div>
-                <p className="text-muted-foreground font-medium">{t("scanning")}</p>
-              </div>
             ) : auctions.length > 0 ? (
               <div className="space-y-10 pb-20">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -30,8 +30,9 @@ export default function ResetPasswordPage() {
 
   const [error, setError] = useState<string | null>(null);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<IResetPasswordForm>({
+  const { register, handleSubmit, formState: { errors, isValid } } = useForm<IResetPasswordForm>({
     resolver: zodResolver(resetPasswordSchema),
+    mode: "onChange",
   });
 
   useEffect(() => {
@@ -125,7 +126,7 @@ export default function ResetPasswordPage() {
             </div>
           )}
 
-          <Button type="submit" isLoading={isLoading} className="w-full">
+          <Button type="submit" isLoading={isLoading} disabled={!isValid} className="w-full">
             Reset Password
           </Button>
         </form>

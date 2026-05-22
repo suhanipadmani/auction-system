@@ -4,12 +4,15 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { useAuthStore } from "@/store/auth.store";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 
 export default function DashboardRedirect() {
-  const user = useAuthStore((state) => state.user);
+  const { user, isSyncing } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
+    if (isSyncing) return;
+    
     if (!user) {
       router.replace("/auth/login");
       return;
@@ -29,7 +32,7 @@ export default function DashboardRedirect() {
       default:
         router.replace("/user");
     }
-  }, [user, router]);
+  }, [user, router, isSyncing]);
 
-  return null;
+  return <DashboardSkeleton />;
 }

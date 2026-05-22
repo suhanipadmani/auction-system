@@ -35,6 +35,7 @@ const buttonVariants = cva(
 )
 
 import { Loader2 } from "lucide-react"
+import { IButtonProps } from "@/types/components"
 
 function Button({
   className,
@@ -43,7 +44,7 @@ function Button({
   isLoading,
   children,
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { isLoading?: boolean }) {
+}: IButtonProps) {
   return (
     <ButtonPrimitive
       data-slot="button"

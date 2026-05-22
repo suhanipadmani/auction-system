@@ -1,6 +1,3 @@
-/**
- * Global date formatting utility
- */
 export const formatDate = (date: string | Date, type: "full" | "date" | "time" = "full", locale: string = "en") => {
   if (!date) return "N/A";
   const d = typeof date === "string" ? new Date(date) : date;

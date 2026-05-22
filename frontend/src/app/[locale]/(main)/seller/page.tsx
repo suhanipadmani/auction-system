@@ -10,6 +10,7 @@ import { useAuthStore } from "@/store/auth.store";
 // Components
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { QuickActionCard } from "@/components/dashboard/QuickActionCard";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 
 // Hooks
 import { useSellerStats } from "@/hooks/useAuction";
@@ -18,9 +19,14 @@ import { useCurrency } from "@/hooks/useCurrency";
 
 export default function SellerDashboardPage() {
   const t = useTranslations("common.dashboard.seller");
+  const commonT = useTranslations("common.dashboard");
   const { formatCurrency } = useCurrency();
   const user = useAuthStore((state) => state.user);
   const { data: statsResponse, isLoading } = useSellerStats();
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
 
   const stats = statsResponse?.data || {
     totalEarnings: 0,
@@ -93,7 +99,7 @@ export default function SellerDashboardPage() {
         <div className="flex flex-col gap-1">
           <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
             <span className="w-2 h-8 bg-purple-500 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)]" />
-            {useTranslations("common.dashboard")("toolsAndOperations")}
+            {commonT("toolsAndOperations")}
           </h2>
           <p className="text-gray-500 text-sm">{t("tools.description")}</p>
         </div>

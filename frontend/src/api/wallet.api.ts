@@ -1,5 +1,11 @@
-import { TRANSACTION_STATUSES, TRANSACTION_TYPES } from "@/enums/wallet.enum";
+import { TRANSACTION_STATUSES } from "@/enums/wallet.enum";
 import { axiosClient } from "../lib/axios";
+import { 
+  IBalanceAdjustmentDTO, 
+  IProcessDepositDTO, 
+  IProcessPayoutDTO, 
+  IToggleFreezeDTO 
+} from "@/types/wallet";
 
 export const walletApi = {
   
@@ -59,22 +65,22 @@ export const walletApi = {
     return response.data;
   },
   
-  processDeposit: async (data: { requestId: string; status: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED; adminNote?: string }) => {
+  processDeposit: async (data: IProcessDepositDTO) => {
     const response = await axiosClient.post("/admin/wallet/process-deposit", data);
     return response.data;
   },
 
-  processPayout: async (data: { requestId: string; status: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED; adminNote?: string }) => {
+  processPayout: async (data: IProcessPayoutDTO) => {
     const response = await axiosClient.post("/admin/wallet/process-payout", data);
     return response.data;
   },
   
-  adjustBalance: async (data: { userId: string; amount: number; type: TRANSACTION_TYPES.CREDIT | TRANSACTION_TYPES.DEBIT; note: string }) => {
+  adjustBalance: async (data: IBalanceAdjustmentDTO) => {
     const response = await axiosClient.post("/admin/wallet/adjust-balance", data);
     return response.data;
   },
   
-  toggleFreeze: async (data: { userId: string; isFrozen: boolean }) => {
+  toggleFreeze: async (data: IToggleFreezeDTO) => {
     const response = await axiosClient.post("/admin/wallet/toggle-freeze", data);
     return response.data;
   }

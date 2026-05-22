@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useMyBiddingActivity } from "@/hooks/useAuction";
+import { useDebounce } from "@/hooks/useDebounce";
 import { AuctionCard } from "@/components/auctions/AuctionCard";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { Gavel, Trophy, History, Loader2, Search, ListFilter } from "lucide-react";
@@ -12,6 +13,7 @@ import { Dropdown } from "@/components/ui/Dropdown";
 
 
 import { Pagination } from "@/components/ui/Pagination";
+import { AuctionCardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { useTranslations } from "next-intl";
 
 
@@ -23,10 +25,10 @@ export default function MyBiddingActivityPage() {
     const [activeTab, setActiveTab] = useState<IAuctionTabType>("active");
     const [page, setPage] = useState<number>(1);
     const [search, setSearch] = useState<string>("");
-    const [debouncedSearch, setDebouncedSearch] = useState<string>("");
     const [sortConfig, setSortConfig] = useState<string>("endTime-desc");
-
     const [sortBy, sortOrder] = sortConfig.split("-");
+    const debouncedSearch = useDebounce(search, 500);
+
     const { data: response, isLoading } = useMyBiddingActivity({
         tab: activeTab,
         page,
@@ -35,11 +37,6 @@ export default function MyBiddingActivityPage() {
         sortBy,
         sortOrder: sortOrder as any
     });
-
-    useEffect(() => {
-        const timer = setTimeout(() => setDebouncedSearch(search), 500);
-        return () => clearTimeout(timer);
-    }, [search]);
 
     const auctions = response?.data || [];
     const totalPages = response?.totalPages || 1;
@@ -121,9 +118,10 @@ export default function MyBiddingActivityPage() {
 
           {/* Content */}
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <Loader2 className="w-10 h-10 text-primary animate-spin" />
-              <p className="text-muted-foreground font-medium">{t("loading")}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <AuctionCardSkeleton key={i} />
+              ))}
             </div>
           ) : auctions.length > 0 ? (
             <div className="space-y-10 pb-20">

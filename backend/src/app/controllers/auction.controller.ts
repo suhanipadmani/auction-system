@@ -3,22 +3,23 @@ import { AuctionService } from "../services/auction.service";
 import { AuctionStatsService } from "../services/auction-stats.service";
 import { sendSuccess } from "../utils/apiResponse";
 import { getPagingMeta } from "../utils/pagination";
+import { SuccessMessages } from "../constants/successMessages";
 
 export const createAuction = async (req: Request, res: Response) => {
   const auction = await AuctionService.createAuction(req.user!.id, req.body);
-  sendSuccess(res, "Auction created successfully", auction, 201);
+  sendSuccess(res, SuccessMessages.AUCTION_CREATED, auction, 201);
 };
 
 export const updateAuction = async (req: Request, res: Response) => {
   const { id } = req.params;
   const auction = await AuctionService.updateAuction(id as string, req.user!.id, req.body);
-  sendSuccess(res, "Auction updated successfully", auction);
+  sendSuccess(res, SuccessMessages.AUCTION_UPDATED, auction);
 };
 
 export const cancelAuction = async (req: Request, res: Response) => {
   const { id } = req.params;
   const auction = await AuctionService.cancelAuction(id as string, req.user as any);
-  sendSuccess(res, "Auction cancelled successfully", auction);
+  sendSuccess(res, SuccessMessages.AUCTION_CANCELLED, auction);
 };
 
 export const getAuctions = async (req: Request, res: Response) => {
@@ -43,20 +44,22 @@ export const approveRejectAuction = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { action } = req.body;
   const auction = await AuctionService.adminApproveReject(id as string, action);
-  sendSuccess(res, `Auction ${action}ed successfully`, auction);
+  const message = action === 'approve' ? SuccessMessages.AUCTION_APPROVED : SuccessMessages.AUCTION_REJECTED;
+  sendSuccess(res, message, auction);
 };
 
 export const forceAction = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { action } = req.body;
   const auction = await AuctionService.forceAction(id as string, action);
-  sendSuccess(res, `Auction force ${action}ed`, auction);
+  const message = action === 'start' ? SuccessMessages.AUCTION_STARTED : SuccessMessages.AUCTION_ENDED;
+  sendSuccess(res, message, auction);
 };
 
 export const finalizeAuction = async (req: Request, res: Response) => {
   const { id } = req.params;
   const auction = await AuctionService.finalizeAuction(id as string, req.user!.id);
-  sendSuccess(res, "Sale finalized successfully", auction);
+  sendSuccess(res, SuccessMessages.AUCTION_FINALIZED, auction);
 };
 
 export const getMyActivity = async (req: Request, res: Response) => {
@@ -103,4 +106,5 @@ export const getAuctionBids = async (req: Request, res: Response) => {
   const result = await AuctionService.getAuctionBids(id as string, { page, limit }, req.user?.id, req.user?.role);
   sendSuccess(res, "Bids retrieved", result.data, 200, getPagingMeta(result.total, page, limit));
 };
+
 

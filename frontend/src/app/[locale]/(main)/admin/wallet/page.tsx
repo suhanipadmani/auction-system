@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import { WALLET_VIEW_TYPES, TRANSACTION_STATUSES } from "@/enums";
 import { IAdjustmentData, IDepositRequest, IViewType } from "@/types/wallet";
@@ -28,6 +28,7 @@ export default function AdminWalletPage() {
   // Modal State - Manual Adjustment
   const [isAdjustModalOpen, setIsAdjustModalOpen] = useState<boolean>(false);
   const [adjustmentData, setAdjustmentData] = useState<IAdjustmentData | null>(null);
+  const adjustmentFormRef = useRef<{ reset: () => void }>(null);
 
 
   // Mutations
@@ -67,6 +68,7 @@ export default function AdminWalletPage() {
       onSuccess: () => {
         setIsAdjustModalOpen(false);
         setAdjustmentData(null);
+        adjustmentFormRef.current?.reset();
       }
     });
   };
@@ -92,6 +94,7 @@ export default function AdminWalletPage() {
 
       {activeView === WALLET_VIEW_TYPES.MANUAL && (
         <BalanceAdjustmentSection 
+          ref={adjustmentFormRef}
           onReviewClick={handleOpenAdjustModal}
           isAdjusting={adjustBalance.isPending}
         />

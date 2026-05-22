@@ -7,6 +7,7 @@ import { IProvidersProps } from "@/types/forms";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { createQueryClient } from "@/lib/queryClient";
 import { SocketProvider } from "@/providers/SocketProvider";
+import { ProfileSyncProvider } from "@/providers/ProfileSyncProvider";
 import { Toaster } from "react-hot-toast";
 
 export const Providers = ({ children }: IProvidersProps) => {
@@ -15,8 +16,10 @@ export const Providers = ({ children }: IProvidersProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <SocketProvider>
-        {children}
-        <Toaster position="bottom-right" reverseOrder={false} />
+        <ProfileSyncProvider>
+          {children}
+          <Toaster position="bottom-right" reverseOrder={false} />
+        </ProfileSyncProvider>
       </SocketProvider>
     </QueryClientProvider>
   );

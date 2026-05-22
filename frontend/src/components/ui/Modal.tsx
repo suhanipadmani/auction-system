@@ -48,11 +48,12 @@ export function Modal({
     if (onConfirm || onCancel) {
       return (
         <>
-          <Button variant="ghost" onClick={handleCancel}>
+          <Button type="button" variant="ghost" onClick={handleCancel}>
             {cancelText}
           </Button>
           {onConfirm && (
             <Button 
+              type="button"
               variant={isDanger ? "destructive" : "default"}
               onClick={onConfirm}
               disabled={isConfirmDisabled || isConfirmLoading}
@@ -71,14 +72,19 @@ export function Modal({
   const footerContent = renderFooter();
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div 
         ref={modalRef}
-        className="bg-card/90 border border-border/50 backdrop-blur-xl rounded-3xl w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden"
+        className="bg-card/90 border border-border/50 backdrop-blur-xl rounded-3xl w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden cursor-default"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border/40">
-          <h2 className="text-xl font-bold font-heading text-white">{title}</h2>
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border/40">
+          <h2 className="text-lg sm:text-xl font-bold font-heading text-white">{title}</h2>
           <button 
             onClick={onClose}
             className="p-2 rounded-xl hover:bg-white/10 text-muted-foreground hover:text-white transition-colors"
@@ -88,13 +94,13 @@ export function Modal({
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6 text-sm sm:text-base">
           {children}
         </div>
 
         {/* Footer */}
         {footerContent && (
-          <div className="flex items-center justify-end gap-3 p-6 bg-white/5 border-t border-border/40">
+          <div className="flex items-center justify-end gap-2 sm:gap-3 p-4 sm:p-6 bg-white/5 border-t border-border/40">
             {footerContent}
           </div>
         )}

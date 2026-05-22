@@ -2,9 +2,10 @@ import { USER_STATUSES } from "../enums";
 import { generateToken } from "../utils/jwt";
 import { UserModel } from "../models/user";
 import { IRegisterData, ILoginData, IAuthResponse } from "../types/auth";
-
 import crypto from "crypto";
 import { AppError, ErrorMessages } from "../errors";
+import { EmailService } from "./email.service";
+import { env } from "../../config";
 
 export const registerUser = async (data: IRegisterData) => {
   const existingUser = await UserModel.findOne({ email: data.email });
@@ -64,10 +65,11 @@ export const forgotPassword = async (email: string) => {
   user.resetPasswordExpires = new Date(Date.now() + 30 * 60 * 1000) as any; // 30 mins
   await user.save();
 
-  // MOCK: Log to console instead of sending real email
-  console.log(`[AUTH-SERVICE] Password Reset: http://localhost:3000/reset-password?token=${resetToken}`);
+  // Send Real Email
+  const resetLink = `${env.frontendUrl}/reset-password?token=${resetToken}`;
+  await EmailService.sendPasswordResetEmail(user.email, resetLink);
 
-  return { message: "Reset token generated and logged to console" };
+  return { message: "Reset link has been sent to your email" };
 };
 
 export const resetPassword = async (token: string, password: string) => {

@@ -10,8 +10,9 @@ function Textarea({
   return (
     <div className="w-full space-y-2">
       {label && (
-        <label className="text-sm font-medium text-foreground/80">
+        <label className="text-sm font-medium text-foreground/80 flex items-center gap-1">
           {label}
+          {props.required && <span className="text-destructive font-bold">*</span>}
         </label>
       )}
       <textarea

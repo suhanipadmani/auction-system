@@ -23,8 +23,9 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<IForgotPasswordForm>({
+  const { register, handleSubmit, formState: { errors, isValid } } = useForm<IForgotPasswordForm>({
     resolver: zodResolver(forgotPasswordSchema),
+    mode: "onChange",
   });
 
   const onSubmit = async (data: IForgotPasswordForm) => {
@@ -85,7 +86,7 @@ export default function ForgotPasswordPage() {
           </div>
         )}
 
-        <Button type="submit" isLoading={isLoading} className="w-full">
+        <Button type="submit" isLoading={isLoading} disabled={!isValid} className="w-full">
           Send Reset Link
         </Button>
       </form>

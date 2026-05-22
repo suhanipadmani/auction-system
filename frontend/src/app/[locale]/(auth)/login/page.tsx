@@ -28,13 +28,26 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const { mutate: login, isPending, error } = useLogin();
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<ILoginForm>({
+  const { register, handleSubmit, setError, formState: { errors, isValid } } = useForm<ILoginForm>({
     resolver: zodResolver(loginSchema),
+    mode: "onChange",
     defaultValues: { role: USER_ROLES.BIDDER }
   });
 
   const onSubmit = (data: ILoginForm) => {
-    login(data);
+    login(data, {
+      onError: (err: any) => {
+        const details = err?.response?.data?.details;
+        if (details && typeof details === 'object') {
+          Object.keys(details).forEach((key) => {
+            setError(key as any, {
+              type: 'manual',
+              message: details[key]
+            });
+          });
+        }
+      }
+    });
   };
 
   return (
@@ -43,29 +56,6 @@ export default function LoginPage() {
       subtitle={t("loginSubtitle")}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-foreground/80 mb-3">{t("loginAs")}</label>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <label className={`flex-1 cursor-pointer flex flex-col items-center justify-center py-3 sm:py-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${
-              watch("role") === USER_ROLES.BIDDER || !watch("role") 
-                ? "bg-primary/10 border-primary text-primary shadow-[0_0_20px_rgba(99,102,241,0.2)]"
-                : "bg-background border-border text-muted-foreground hover:border-primary/30"
-            }`}>
-              <div className={`absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity ${watch("role") === USER_ROLES.BIDDER ? 'opacity-100' : ''}`} />
-              <input type="radio" value={USER_ROLES.BIDDER} {...register("role")} className="hidden" />
-              <span className="font-bold text-base sm:text-lg relative z-10">{t("bidder")}</span>
-            </label>
-            <label className={`flex-1 cursor-pointer flex flex-col items-center justify-center py-3 sm:py-4 rounded-2xl border-2 transition-all duration-300 relative overflow-hidden group ${
-              watch("role") === USER_ROLES.SELLER 
-                ? "bg-primary/10 border-primary text-primary shadow-[0_0_20px_rgba(99,102,241,0.2)]"
-                : "bg-background border-border text-muted-foreground hover:border-primary/30"
-            }`}>
-              <div className={`absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity ${watch("role") === USER_ROLES.SELLER ? 'opacity-100' : ''}`} />
-              <input type="radio" value={USER_ROLES.SELLER} {...register("role")} className="hidden" />
-              <span className="font-bold text-base sm:text-lg relative z-10">{t("seller")}</span>
-            </label>
-          </div>
-        </div>
 
         <Input
           label={t("email")}
@@ -74,6 +64,7 @@ export default function LoginPage() {
           icon={<Mail className="h-5 w-5" />}
           error={errors.email?.message}
           {...register("email")}
+          required = {true}
         />
 
         <Input
@@ -97,6 +88,7 @@ export default function LoginPage() {
           }
           error={errors.password?.message}
           {...register("password")}
+          required = {true}
         />
 
         <div className="flex justify-end">
@@ -108,7 +100,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        {error && (
+        {!!error && (
           <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
             <p className="text-sm text-red-400 text-center">
               {(error as any)?.response?.data?.message || t("loginError")}
@@ -116,7 +108,7 @@ export default function LoginPage() {
           </div>
         )}
 
-        <Button type="submit" isLoading={isPending} className="w-full">
+        <Button type="submit" isLoading={isPending} disabled={!isValid} className="w-full">
           {t("signIn")}
         </Button>
       </form>

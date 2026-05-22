@@ -46,6 +46,21 @@ export const useAssignAuctionToBudget = () => {
   });
 };
 
+export const useUnassignAuctionFromBudget = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ auctionId }: { auctionId: string }) => 
+      budgetApi.unassignAuction(auctionId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: BUDGET_KEYS.lists() });
+      toast.success("Auction unassigned from goal");
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || "Failed to unassign auction");
+    }
+  });
+};
+
 export const useDeleteBudget = () => {
   const queryClient = useQueryClient();
   return useMutation({

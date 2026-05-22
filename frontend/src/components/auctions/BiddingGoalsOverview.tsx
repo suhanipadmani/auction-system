@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Target, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
 	useBudgets,
 	useCreateBudget
@@ -13,6 +14,9 @@ import { Modal } from "@/components/ui/Modal";
 import { Label } from "@/components/ui/Label";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { budgetGoalSchema, type BudgetGoalInput, type BudgetGoalForm } from "@/validations/budget.validation";
 
 export function BiddingGoalsOverview() {
 	const { formatCurrency } = useCurrency();
@@ -22,21 +26,31 @@ export function BiddingGoalsOverview() {
 	const { mutate: createGoal, isPending: isCreating } = useCreateBudget();
 
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
-	const [newName, setNewName] = useState<string>("");
-	const [newBudget, setNewBudget] = useState<string>("");
+	
+	const { 
+		register, 
+		handleSubmit, 
+		reset, 
+		formState: { errors, isValid } 
+	} = useForm<BudgetGoalForm>({
+		resolver: zodResolver(budgetGoalSchema),
+		mode: "onChange",
+		defaultValues: {
+			name: "",
+			maxBudget: "" as any
+		}
+	});
 
 	const goals = budgetsResponse?.data || [];
 	const totalExposure = goals.reduce((sum, g) => sum + g.currentExposure, 0);
 	const totalLimit = goals.reduce((sum, g) => sum + g.maxBudget, 0);
 	const remaining = totalLimit - totalExposure;
 
-	const handleCreate = (e: React.FormEvent) => {
-		e.preventDefault();
-		createGoal({ name: newName, maxBudget: Number(newBudget) }, {
+	const handleCreate = (data: BudgetGoalForm) => {
+		createGoal(data as BudgetGoalInput, {
 			onSuccess: () => {
 				setIsCreateModalOpen(false);
-				setNewName("");
-				setNewBudget("");
+				reset();
 			}
 		});
 	};
@@ -95,29 +109,41 @@ export function BiddingGoalsOverview() {
 				onClose={() => setIsCreateModalOpen(false)}
 				title={t("modal.title")}
 			>
-				<form onSubmit={handleCreate} className="space-y-6 pt-4">
+				<form onSubmit={handleSubmit(handleCreate)} className="space-y-6 pt-4">
 					<div className="space-y-4">
 						<div className="space-y-2">
-							<Label>{t("modal.nameLabel")}</Label>
+							<Label required>{t("modal.nameLabel")}</Label>
 							<input
 								type="text"
-								className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary transition-colors"
+								className={cn(
+									"w-full h-12 px-4 rounded-xl bg-white/5 border text-white focus:outline-none transition-colors",
+									errors.name ? "border-red-500 focus:border-red-500" : "border-white/10 focus:border-primary"
+								)}
 								placeholder={t("modal.namePlaceholder")}
-								value={newName}
-								onChange={(e) => setNewName(e.target.value)}
-								required
+								{...register("name")}
 							/>
+							{errors.name && (
+								<p className="text-xs text-red-500 font-medium animate-in fade-in slide-in-from-top-1">
+									{errors.name.message}
+								</p>
+							)}
 						</div>
 						<div className="space-y-2">
-							<Label>{t("modal.budgetLabel")}</Label>
+							<Label required>{t("modal.budgetLabel")}</Label>
 							<input
 								type="number"
-								className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-primary transition-colors"
+								className={cn(
+									"w-full h-12 px-4 rounded-xl bg-white/5 border text-white focus:outline-none transition-colors",
+									errors.maxBudget ? "border-red-500 focus:border-red-500" : "border-white/10 focus:border-primary"
+								)}
 								placeholder={t("modal.budgetPlaceholder")}
-								value={newBudget}
-								onChange={(e) => setNewBudget(e.target.value)}
-								required
+								{...register("maxBudget")}
 							/>
+							{errors.maxBudget && (
+								<p className="text-xs text-red-500 font-medium animate-in fade-in slide-in-from-top-1">
+									{errors.maxBudget.message}
+								</p>
+							)}
 						</div>
 					</div>
 					<div className="flex gap-4 pt-4">
@@ -133,6 +159,7 @@ export function BiddingGoalsOverview() {
 							type="submit"
 							className="flex-1 bg-primary text-white"
 							isLoading={isCreating}
+							disabled={!isValid}
 						>
 							{t("modal.submit")}
 						</Button>

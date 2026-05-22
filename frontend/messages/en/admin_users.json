@@ -10,7 +10,11 @@
   },
   "error": {
     "accessDenied": "Access Denied",
-    "failedToLoad": "Failed to load users. Please ensure you have Admin privileges."
+    "accessDeniedDesc": "You do not have administrative privileges to manage users.",
+    "failedToLoad": "Failed to load users",
+    "tooManyRequests": "Too Many Requests",
+    "tryAgainLater": "You're moving a bit fast! Please wait a moment before trying again.",
+    "genericError": "An unexpected error occurred while fetching users."
   },
   "pagination": {
     "showing": "Showing {count} of {total} users",

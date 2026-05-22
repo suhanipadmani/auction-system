@@ -14,5 +14,6 @@ router.post("/", validate(createBudgetSchema), asyncHandler(BudgetController.cre
 router.patch("/:id", validate(updateBudgetSchema), asyncHandler(BudgetController.update));
 router.delete("/:id", asyncHandler(BudgetController.deleteBudget));
 router.post("/:id/assign", validate(assignAuctionSchema), asyncHandler(BudgetController.assignAuction));
+router.post("/unassign", validate(assignAuctionSchema), asyncHandler(BudgetController.unassignAuction));
 
 export const budgetRoutes = router;

@@ -1,19 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 import { cn } from "@/lib/utils";
 
 // External
 import { formatDistanceToNow } from "date-fns";
-import { Loader2, User, Zap, History, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { Loader2, User, Zap, History, ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 // Types
 import { IBidHistoryProps, IBidItemProps, IFullHistoryModalProps } from "@/types/components";
 // Hooks
-import { useAuctionBids } from "@/hooks/useAuction";
+import { useAuctionBids, useInfiniteAuctionBids } from "@/hooks/useAuction";
 import { useCurrency } from "@/hooks/useCurrency";
 // UI Components
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 
 
@@ -139,13 +139,24 @@ const BidItem = ({ bid, index, page }: IBidItemProps) => {
 
 // Full history modal component
 const FullHistoryModal = ({ isOpen, onClose, auctionId }: IFullHistoryModalProps) => {
-  useCurrency();
   const t = useTranslations("auction.details");
-  const tm = useTranslations("auction.management");
-  const [page, setPage] = useState<number>(1);
-  const { data: response, isLoading } = useAuctionBids(auctionId, { page, limit: 10 });
-  const bids = response?.data || [];
-  const totalPages = response?.totalPages || 1;
+  const { ref, inView } = useInView();
+  
+  const { 
+    data, 
+    isLoading, 
+    isFetchingNextPage, 
+    hasNextPage, 
+    fetchNextPage 
+  } = useInfiniteAuctionBids(auctionId, 10);
+
+  const bids = data?.pages.flatMap(page => page.data) || [];
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <Modal
@@ -153,46 +164,42 @@ const FullHistoryModal = ({ isOpen, onClose, auctionId }: IFullHistoryModalProps
       onClose={onClose}
       title={t('completeBidHistory')}
     >
-      <div className="min-h-[400px] flex flex-col">
-        {isLoading ? (
-          <div className="flex-1 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : (
-          <>
-            <div className="flex-1 divide-y divide-white/5">
-              {bids.map((bid, index) => (
-                <BidItem key={bid._id} bid={bid} index={index} page={page} />
-              ))}
+      <div className="flex flex-col h-[60vh]">
+        <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
+          {bids.length === 0 && !isLoading ? (
+            <div className="h-full flex flex-col items-center justify-center opacity-40">
+              <History className="h-12 w-12 mb-4" />
+              <p className="font-bold uppercase tracking-widest text-xs">{t('noBidsYet')}</p>
             </div>
-
-            {totalPages > 1 && (
-              <div className="mt-6 p-4 rounded-xl bg-white/5 flex items-center justify-between">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="h-9 text-xs"
-                >
-                  <ChevronLeft className="w-4 h-4 mr-2" /> {tm('pagination.previous')}
-                </Button>
-                <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  {tm('page', { current: page, total: totalPages })}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="h-9 text-xs"
-                >
-                  {tm('pagination.next')} <ChevronRight className="w-4 h-4 ml-2" />
-                </Button>
+          ) : (
+            <div className="divide-y divide-white/5">
+              {bids.map((bid, index) => (
+                <BidItem 
+                  key={bid._id} 
+                  bid={bid} 
+                  index={index} 
+                  page={1} // In infinite scroll, we treat it as continuous
+                />
+              ))}
+              
+              {/* Infinite Scroll Trigger */}
+              <div ref={ref} className="h-10 flex items-center justify-center">
+                {isFetchingNextPage && (
+                  <Loader2 className="h-5 w-5 animate-spin text-primary/50" />
+                )}
               </div>
-            )}
-          </>
-        )}
+            </div>
+          )}
+          
+          {isLoading && bids.length === 0 && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm rounded-2xl z-50">
+              <div className="bg-black/60 p-6 rounded-2xl border border-white/10 shadow-2xl flex flex-col items-center gap-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 animate-pulse">Loading History</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </Modal>
   );

@@ -14,6 +14,7 @@ import { AuctionStatus } from "@/types/auction";
 import { useTranslations } from "next-intl";
 
 import { useAuctions } from "@/hooks/useAuction";
+import { useDebounce } from "@/hooks/useDebounce";
 
 // Utils
 import { cn } from "@/lib/utils";
@@ -32,10 +33,11 @@ export default function SellerAuctionsPage() {
   const [status, setStatus] = useState<AuctionStatus | "all">("all");
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
-  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const [sortConfig, setSortConfig] = useState<string>("createdAt-desc");
 
   const [sortBy, sortOrder] = sortConfig.split("-");
+  const debouncedSearch = useDebounce(search, 500);
+
   const { data: response, isLoading } = useAuctions({ 
     sellerId: user?._id,
     status: status === "all" ? undefined : status,
@@ -45,11 +47,6 @@ export default function SellerAuctionsPage() {
     sortBy,
     sortOrder: sortOrder as "asc" | "desc"
   });
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 500);
-    return () => clearTimeout(timer);
-  }, [search]);
   
   const auctions = response?.data || [];
   const totalPages = response?.totalPages || 1;

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, Lock, Mail, Save, Key, ShieldCheck, AlertCircle } from "lucide-react";
+import { User, Lock, Mail, Save, Key, ShieldCheck, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { profileSchema, passwordSchema } from "@/validations/user.validation";
 
@@ -30,16 +30,23 @@ export default function SettingsPage() {
   const [isUpdatingProfile, setIsUpdatingProfile] = useState<boolean>(false);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState<boolean>(false);
 
+  // Password visibility states
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   // Profile Form
-  const { register: registerProfile, handleSubmit: handleSubmitProfile, formState: { errors: profileErrors } } = useForm<IProfileForm>({
+  const { register: registerProfile, handleSubmit: handleSubmitProfile, formState: { errors: profileErrors, isValid: isProfileValid } } = useForm<IProfileForm>({
     resolver: zodResolver(profileSchema),
+    mode: "onChange",
     defaultValues: { name: user?.name || "" }
   });
 
   // Password Form
-  const { register: registerPassword, handleSubmit: handleSubmitPassword, reset: resetPasswordForm, formState: { errors: passwordErrors } } = useForm<IPasswordForm>({
+  const { register: registerPassword, handleSubmit: handleSubmitPassword, reset: resetPasswordForm, formState: { errors: passwordErrors, isValid: isPasswordValid } } = useForm<IPasswordForm>({
     resolver: zodResolver(passwordSchema),
+    mode: "onChange",
   });
 
   const onUpdateProfile = async (data: IProfileForm) => {
@@ -73,8 +80,8 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <DashboardHeader 
-        title={t("title")} 
+      <DashboardHeader
+        title={t("title")}
         subtitle={t("subtitle")}
       />
 
@@ -88,7 +95,7 @@ export default function SettingsPage() {
             </h2>
             <p className="text-sm text-muted-foreground mt-1">{t("general.description")}</p>
           </div>
-          
+
           <form onSubmit={handleSubmitProfile(onUpdateProfile)} className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
@@ -96,10 +103,11 @@ export default function SettingsPage() {
                 icon={<User className="h-5 w-5" />}
                 error={profileErrors.name?.message}
                 {...registerProfile("name")}
+                required
               />
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground/80 flex items-center gap-2">
-                  <Mail className="h-4 w-4" /> 
+                  <Mail className="h-4 w-4" />
                   {t("general.email")}
                 </label>
                 <div className="h-11 px-4 rounded-xl bg-muted/50 border border-border flex items-center text-muted-foreground text-sm cursor-not-allowed italic">
@@ -112,7 +120,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="flex justify-end pt-2">
-              <Button type="submit" isLoading={isUpdatingProfile} className="gap-2">
+              <Button type="submit" isLoading={isUpdatingProfile} disabled={!isProfileValid} className="gap-2">
                 <Save className="w-4 h-4" />
                 {t("general.save")}
               </Button>
@@ -129,40 +137,82 @@ export default function SettingsPage() {
             </h2>
             <p className="text-sm text-muted-foreground mt-1">{t("security.description")}</p>
           </div>
-          
+
           <form onSubmit={handleSubmitPassword(onUpdatePassword)} className="p-6 space-y-6">
             <div className="max-w-xl space-y-6">
               <Input
                 label={t("security.currentPassword")}
-                type="password"
+                type={showCurrentPassword ? "text" : "password"}
                 placeholder={t("security.currentPasswordPlaceholder")}
                 icon={<Key className="h-5 w-5" />}
+                rightElement={
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="p-2 hover:bg-white/5 rounded-full transition-colors"
+                  >
+                    {showCurrentPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </button>
+                }
                 error={passwordErrors.currentPassword?.message}
                 {...registerPassword("currentPassword")}
+                required={true}
               />
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
                   label={t("security.newPassword")}
-                  type="password"
+                  type={showNewPassword ? "text" : "password"}
                   placeholder={t("security.newPasswordPlaceholder")}
                   icon={<Lock className="h-5 w-5" />}
+                  rightElement={
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="p-2 hover:bg-white/5 rounded-full transition-colors"
+                    >
+                      {showNewPassword ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </button>
+                  }
                   error={passwordErrors.newPassword?.message}
                   {...registerPassword("newPassword")}
+                  required={true}
                 />
                 <Input
                   label={t("security.confirmPassword")}
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   placeholder={t("security.confirmPasswordPlaceholder")}
                   icon={<Lock className="h-5 w-5" />}
+                  rightElement={
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="p-2 hover:bg-white/5 rounded-full transition-colors"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </button>
+                  }
                   error={passwordErrors.confirmPassword?.message}
                   {...registerPassword("confirmPassword")}
+                  required
                 />
               </div>
             </div>
 
             <div className="flex justify-end pt-2">
-              <Button type="submit" isLoading={isUpdatingPassword} variant="secondary" className="gap-2">
+              <Button type="submit" isLoading={isUpdatingPassword} disabled={!isPasswordValid} variant="secondary" className="gap-2">
                 <ShieldCheck className="w-4 h-4" />
                 {t("security.update")}
               </Button>

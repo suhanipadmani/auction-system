@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
 import { walletApi } from "../api/wallet.api";
@@ -31,6 +31,7 @@ export const useRequestDeposit = () => {
     mutationFn: walletApi.requestDeposit,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wallet-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["wallet-transactions"] });
       toast.success("Deposit request submitted successfully!");
     },
     onError: (error: any) => {
@@ -46,6 +47,7 @@ export const useRequestPayout = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wallet-payout-requests"] });
       queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
+      queryClient.invalidateQueries({ queryKey: ["wallet-transactions"] });
       toast.success("Withdrawal request submitted successfully! Amount moved to locked balance.");
     },
     onError: (error: any) => {
@@ -91,7 +93,8 @@ export const useAllTransactions = (params: any = {}) => {
   const { page = 1, limit = 20, ...rest } = params;
   return useQuery({
     queryKey: ["admin-all-transactions", { page, limit, ...rest }],
-    queryFn: () => walletApi.getAllTransactions({ page, limit, ...rest })
+    queryFn: () => walletApi.getAllTransactions({ page, limit, ...rest }),
+    placeholderData: keepPreviousData,
   });
 };
 

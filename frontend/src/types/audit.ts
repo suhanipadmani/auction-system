@@ -28,3 +28,9 @@ export interface IAuditLogFilters {
   page?: number;
   limit?: number;
 }
+
+export interface IAuditLogPageFilters {
+  action: string;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+}

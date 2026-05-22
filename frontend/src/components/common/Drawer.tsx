@@ -32,7 +32,7 @@ export function Drawer({ isOpen, onClose, children }: IDrawerProps) {
       
       {/* Sidebar Content */}
       <div 
-        className={`absolute left-0 top-0 bottom-0 w-64 bg-gray-950 border-r border-gray-800 transform transition-transform duration-300 ease-out ${
+        className={`absolute left-0 top-0 bottom-0 w-72 bg-gray-950 border-r border-gray-800 transform transition-transform duration-300 ease-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

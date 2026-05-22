@@ -17,7 +17,15 @@
   "modals": {
     "addNote": "Notiz hinzufügen (optional):",
     "rejectReason": "Grund für die Ablehnung (obligatorisch):",
-    "rejectionRequired": "Ablehnungsnotiz ist erforderlich."
+    "rejectionRequired": "Ablehnungsnotiz ist erforderlich.",
+    "approveTitle": "Auszahlung genehmigen",
+    "rejectTitle": "Auszahlung ablehnen",
+    "approveConfirm": "Genehmigen",
+    "rejectConfirm": "Ablehnen",
+    "approveDescription": "Sind Sie sicher, dass Sie diese Auszahlungsanfrage genehmigen möchten? Dies wird die Mittel vom gesperrten Guthaben des Benutzers abziehen.",
+    "rejectDescription": "Sind Sie sicher, dass Sie diese Auszahlungsanfrage ablehnen möchten? Die gesperrten Mittel werden dem verfügbaren Guthaben des Benutzers wieder gutgeschrieben.",
+    "noteLabel": "Administratornotiz",
+    "notePlaceholder": "Details hier eingeben..."
   },
   "notice": {
     "title": "Administrativer Hinweis",

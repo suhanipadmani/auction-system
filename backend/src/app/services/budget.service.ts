@@ -58,6 +58,14 @@ export class BudgetService {
     return goal;
   }
 
+  static async unassignAuctionFromGoal(userId: string, auctionId: string) {
+    await BudgetModel.updateMany(
+      { userId },
+      { $pull: { auctionIds: new Types.ObjectId(auctionId) } }
+    );
+    return true;
+  }
+
   /**
    * Calculates current exposure for a goal (Sum of winning bids)
    */

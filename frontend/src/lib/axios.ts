@@ -25,16 +25,21 @@ axiosClient.interceptors.request.use((config) => {
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Session expiry handling
     if (error.response?.status === 401 && typeof window !== "undefined") {
       localStorage.removeItem("auth-storage");
+      window.location.href = "/login";
     }
-
-    // Extract structured error from backend
     const apiError = error.response?.data;
     if (apiError && apiError.errorCode) {
-      // Attach the errorCode to the error object so hooks can use it for translation
       error.errorCode = apiError.errorCode;
+    }
+
+    if (error.response?.status === 429 && !apiError?.message) {
+      if (error.response.data) {
+        error.response.data.message = "Too many requests. Please try again later.";
+      } else {
+        error.response.data = { message: "Too many requests. Please try again later." };
+      }
     }
 
     return Promise.reject(error);

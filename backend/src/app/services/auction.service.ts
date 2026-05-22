@@ -107,7 +107,7 @@ export class AuctionService {
         await NotificationService.sendNotification(
           bid.bidderId.toString(),
           NOTIFICATION_TYPES.AUCTION_END,
-          `The auction "${auction.title}" has been cancelled. Your bid of $${bid.amount} has been refunded to your wallet.`,
+          `The auction "${auction.title}" has been cancelled. Your bid of ₹${bid.amount} has been refunded to your wallet.`,
           `/dashboard/auctions/${auction._id}`
         );
       }
@@ -324,7 +324,7 @@ export class AuctionService {
         await NotificationService.sendNotification(
           auction.highestBidderId.toString(),
           NOTIFICATION_TYPES.WIN,
-          `Congratulations! You won the auction: "${auction.title}" for $${auction.highestBid}`,
+          `Congratulations! You won the auction: "${auction.title}" for ₹${auction.highestBid}`,
           `/dashboard/auctions/${auction._id}`
         );
 
@@ -332,7 +332,7 @@ export class AuctionService {
         await NotificationService.sendNotification(
           auction.sellerId.toString(),
           NOTIFICATION_TYPES.AUCTION_END,
-          `Your auction "${auction.title}" has ended. Final bid: $${auction.highestBid}`,
+          `Your auction "${auction.title}" has ended. Final bid: ₹${auction.highestBid}`,
           `/dashboard/seller/auctions`
         );
 

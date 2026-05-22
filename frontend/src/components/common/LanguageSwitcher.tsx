@@ -26,7 +26,8 @@ export function LanguageSwitcher() {
       ]}
       triggerIcon={<Globe className="w-4 h-4 text-primary shrink-0" />}
       placeholder="Lang"
-      triggerClassName="w-[160px] h-9 gap-2 bg-white/5 border-white/10 hover:bg-white/10 rounded-full transition-all text-white outline-none focus:ring-0 focus:ring-offset-0 border-0 ring-0 ring-offset-0 focus-visible:ring-0"
+      showSearch={false}
+      triggerClassName="w-12 sm:w-[160px] h-9 gap-0 sm:gap-2 bg-white/5 border-white/10 hover:bg-white/10 rounded-full transition-all text-white outline-none focus:ring-0 focus:ring-offset-0 border-0 ring-0 ring-offset-0 focus-visible:ring-0 [&>div>span:not(:first-child)]:hidden sm:[&>div>span:not(:first-child)]:block"
     />
   );
 }

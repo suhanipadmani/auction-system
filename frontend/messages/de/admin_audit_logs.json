@@ -4,6 +4,10 @@
   "statusLabel": "Echtzeit",
   "statusValue": "Aktiviert",
   "exportCsv": "CSV exportieren",
+  "exporting": "Wird exportiert...",
+  "exportSuccess": "CSV erfolgreich exportiert",
+  "exportError": "CSV-Export fehlgeschlagen",
+  "noLogsToExport": "Keine Protokolle zum Exportieren gefunden",
   "filters": {
     "eventType": "Ereignistyp",
     "fromDate": "Von Datum",
@@ -18,10 +22,12 @@
     "action": "Aktion",
     "user": "Benutzer",
     "details": "Details / Metadaten",
+    "logs": "Audit-Protokolle",
     "noLogs": "Keine Audit-Protokolle gefunden, die Ihren Kriterien entsprechen."
   },
   "pagination": {
-    "page": "Seite {current} von {total}"
+    "page": "Seite {current} von {total}",
+    "logs": "Audit-Protokolle"
   },
   "actions": {
     "BID_PLACED": "Gebot platziert",

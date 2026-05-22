@@ -154,7 +154,7 @@ export class BidService {
       await NotificationService.sendNotification(
         auction.highestBidderId.toString(),
         NOTIFICATION_TYPES.OUTBID,
-        `You have been outbid on "${auction.title}". New highest bid: $${amount}`,
+        `You have been outbid on "${auction.title}". New highest bid: ₹${amount}`,
         `/dashboard/auctions/${auction._id}`
       );
     }
@@ -162,7 +162,7 @@ export class BidService {
     await NotificationService.sendNotification(
       auction.sellerId.toString(),
       NOTIFICATION_TYPES.BID_RECEIVED,
-      `New bid: $${amount} was placed on your auction "${auction.title}".`,
+      `New bid: ₹${amount} was placed on your auction "${auction.title}".`,
       `/dashboard/seller/auctions`
     );
   }

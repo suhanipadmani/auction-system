@@ -63,7 +63,7 @@ export function QuickActionCard({
 
   const Content = (
     <div className={cn(
-      "relative group p-6 rounded-[2rem] bg-white/[0.03] border border-white/[0.08] backdrop-blur-md overflow-hidden transition-all duration-500 flex items-start gap-5 shadow-2xl",
+      "relative group p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] bg-white/[0.03] border border-white/[0.08] backdrop-blur-md overflow-hidden transition-all duration-500 flex items-start gap-4 sm:gap-5 shadow-2xl",
       !disabled && "hover:shadow-[0_0_30px_rgba(0,0,0,0.3)] hover:-translate-y-1.5 active:scale-[0.98]",
       !disabled && scheme.border,
       !disabled && scheme.bg,
@@ -77,7 +77,7 @@ export function QuickActionCard({
 
       {/* Icon Container */}
       <div className={cn(
-        "relative shrink-0 h-14 w-14 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-lg",
+        "relative shrink-0 h-12 w-12 sm:h-14 sm:w-14 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-500 shadow-lg",
         scheme.icon,
         !disabled && "group-hover:scale-110 group-hover:rotate-3 shadow-[0_0_20px_rgba(0,0,0,0.4)] group-hover:shadow-[0_0_25px_rgba(var(--color),0.5)]"
       )}>

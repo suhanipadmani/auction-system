@@ -3,6 +3,13 @@ import { USER_STATUSES } from "../enums";
 import { AppError, ErrorMessages } from "../errors";
 import { UserModel } from "../models/user";
 import { ICreateUserData } from "../types/user";
+import { SocketService } from "./socket.service";
+
+export const getUserById = async (id: string) => {
+  const user = await UserModel.findById(id).select("-password");
+  if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
+  return user;
+};
 
 export const createUser = async (data: ICreateUserData) => {
   const existingUser = await UserModel.findOne({ email: data.email });
@@ -62,6 +69,8 @@ export const updateUserRole = async (id: string, role: string) => {
   ).select("-password");
 
   if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
+
+  SocketService.emitToUser(id, "account_updated", { role });
   return user;
 };
 
@@ -74,6 +83,8 @@ export const deactivateUser = async (id: string) => {
   ).select("-password");
 
   if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
+
+  SocketService.emitToUser(id, "account_status_changed", { status: USER_STATUSES.INACTIVE });
   return user;
 };
 
@@ -86,6 +97,8 @@ export const activateUser = async (id: string) => {
   ).select("-password");
 
   if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
+
+  SocketService.emitToUser(id, "account_status_changed", { status: USER_STATUSES.ACTIVE });
   return user;
 };
 
@@ -98,6 +111,8 @@ export const softDeleteUser = async (id: string) => {
   ).select("-password");
 
   if (!user) throw AppError.from(ErrorMessages.USER_NOT_FOUND);
+
+  SocketService.emitToUser(id, "account_status_changed", { status: USER_STATUSES.DELETED });
   return user;
 };
 

@@ -22,6 +22,9 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@
 import { Badge } from "@/components/ui/Badge";
 import { TableSkeleton } from "@/components/ui/TableSkeleton";
 import { Pagination } from "@/components/ui/Pagination";
+import { Modal } from "@/components/ui/Modal";
+import { Label } from "@/components/ui/Label";
+import { Textarea } from "@/components/ui/Textarea";
 import { TRANSACTION_STATUSES } from "@/enums";
 
 
@@ -51,18 +54,37 @@ export default function AdminPayoutsPage() {
 
   const totalPages = (payoutsData as any)?.totalPages || 1;
 
-  const handleProcess = (requestId: string, status: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED) => {
-    const adminNote = window.prompt(
-      status === "approved"
-        ? t('modals.addNote')
-        : t('modals.rejectReason')
-    );
+  // Modal State
+  const [isProcessModalOpen, setIsProcessModalOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
+  const [processAction, setProcessAction] = useState<TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED | null>(null);
+  const [adminNote, setAdminNote] = useState("");
 
-    if (status === "rejected" && !adminNote) {
-      alert(t('modals.rejectionRequired'));
-      return;
-    }
-    processPayout.mutate({ requestId, status, adminNote: adminNote || "" });
+  const handleProcessClick = (requestId: string, status: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED) => {
+    setSelectedRequest(requestId);
+    setProcessAction(status);
+    setAdminNote("");
+    setIsProcessModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsProcessModalOpen(false);
+    setSelectedRequest(null);
+    setProcessAction(null);
+    setAdminNote("");
+  };
+
+  const handleConfirmProcess = () => {
+    if (!selectedRequest || !processAction) return;
+
+    processPayout.mutate(
+      { requestId: selectedRequest, status: processAction, adminNote: adminNote.trim() },
+      {
+        onSuccess: () => {
+          handleCloseModal();
+        }
+      }
+    );
   };
 
   return (
@@ -159,12 +181,12 @@ export default function AdminPayoutsPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       {payout.status === "pending" ? (
-                        <div className="flex gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex gap-2 justify-end">
                           <Button
                             size="sm"
                             variant="destructive"
                             className="h-8 w-8 p-0"
-                            onClick={() => handleProcess(payout._id, TRANSACTION_STATUSES.REJECTED)}
+                            onClick={() => handleProcessClick(payout._id, TRANSACTION_STATUSES.REJECTED)}
                             disabled={processPayout.isPending}
                           >
                             <XCircle className="h-4 w-4" />
@@ -172,7 +194,7 @@ export default function AdminPayoutsPage() {
                           <Button
                             size="sm"
                             className="h-8 w-8 p-0 bg-emerald-500 hover:bg-emerald-600"
-                            onClick={() => handleProcess(payout._id, TRANSACTION_STATUSES.APPROVED)}
+                            onClick={() => handleProcessClick(payout._id, TRANSACTION_STATUSES.APPROVED)}
                             disabled={processPayout.isPending}
                           >
                             <CheckCircle className="h-4 w-4" />
@@ -212,6 +234,39 @@ export default function AdminPayoutsPage() {
           </p>
         </div>
       </div>
+
+      {/* Process Modal */}
+      <Modal
+        isOpen={isProcessModalOpen}
+        onClose={handleCloseModal}
+        onCancel={handleCloseModal}
+        title={processAction === TRANSACTION_STATUSES.APPROVED ? t('modals.approveTitle') : t('modals.rejectTitle')}
+        confirmText={processAction === TRANSACTION_STATUSES.APPROVED ? t('modals.approveConfirm') : t('modals.rejectConfirm')}
+        onConfirm={handleConfirmProcess}
+        isDanger={processAction === TRANSACTION_STATUSES.REJECTED}
+        isConfirmLoading={processPayout.isPending}
+        isConfirmDisabled={processAction === TRANSACTION_STATUSES.REJECTED && !adminNote.trim()}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            {processAction === TRANSACTION_STATUSES.APPROVED 
+              ? t('modals.approveDescription') 
+              : t('modals.rejectDescription')}
+          </p>
+          <div className="space-y-2">
+            <Label htmlFor="adminNote" required={processAction === TRANSACTION_STATUSES.REJECTED}>
+              {t('modals.noteLabel')}
+            </Label>
+            <Textarea
+              id="adminNote"
+              value={adminNote}
+              onChange={(e) => setAdminNote(e.target.value)}
+              placeholder={t('modals.notePlaceholder')}
+              rows={3}
+            />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

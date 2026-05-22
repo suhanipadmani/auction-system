@@ -45,10 +45,30 @@ export interface ITransaction {
   createdAt: string;
 }
 
-export interface IAdjustmentData {
+export interface IBalanceAdjustmentDTO {
   userId: string;
   amount: number;
   type: TRANSACTION_TYPES.CREDIT | TRANSACTION_TYPES.DEBIT;
   note: string;
+}
+
+export interface IAdjustmentData extends IBalanceAdjustmentDTO {
   userName: string;
+}
+
+export interface IProcessDepositDTO {
+  requestId: string;
+  status: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED;
+  adminNote?: string;
+}
+
+export interface IProcessPayoutDTO {
+  requestId: string;
+  status: TRANSACTION_STATUSES.APPROVED | TRANSACTION_STATUSES.REJECTED;
+  adminNote?: string;
+}
+
+export interface IToggleFreezeDTO {
+  userId: string;
+  isFrozen: boolean;
 }

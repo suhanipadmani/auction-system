@@ -4,6 +4,10 @@
   "statusLabel": "Real-time",
   "statusValue": "Enabled",
   "exportCsv": "Export CSV",
+  "exporting": "Exporting...",
+  "exportSuccess": "CSV exported successfully",
+  "exportError": "Failed to export CSV",
+  "noLogsToExport": "No logs found to export",
   "filters": {
     "eventType": "Event Type",
     "fromDate": "From Date",
@@ -18,10 +22,12 @@
     "action": "Action",
     "user": "User",
     "details": "Details / Metadata",
+    "logs": "Audit Logs",
     "noLogs": "No audit logs found matching your criteria."
   },
   "pagination": {
-    "page": "Page {current} of {total}"
+    "page": "Page {current} of {total}",
+    "logs": "Audit Logs"
   },
   "actions": {
     "BID_PLACED": "Bid Placed",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { History, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
@@ -9,6 +9,7 @@ import { ITransaction } from "@/types/wallet";
 
 // Hooks
 import { useAllTransactions } from "@/hooks/useWallet";
+import { useDebounce } from "@/hooks/useDebounce";
 import { TRANSACTION_TYPES } from "@/enums";
 
 // Components
@@ -20,21 +21,27 @@ import { TableSkeleton } from "@/components/ui/TableSkeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { TransactionLogRow } from "./TransactionLogRow";
 import { Dropdown } from "@/components/ui/Dropdown";
+import { DatePicker } from "@/components/ui/DatePicker";
 import { useTranslations } from "next-intl";
 
 export function TransactionLogSection() {
   const t = useTranslations("wallet");
   const [txType, setTxType] = useState<string>("all");
   const [txSearch, setTxSearch] = useState<string>("");
-  const [txStartDate, setTxStartDate] = useState<string>("");
-  const [txEndDate, setTxEndDate] = useState<string>("");
+  const [txStartDate, setTxStartDate] = useState<Date | undefined>(undefined);
+  const [txEndDate, setTxEndDate] = useState<Date | undefined>(undefined);
   const [page, setPage] = useState<number>(1);
+  const debouncedSearch = useDebounce(txSearch, 500);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, txType, txStartDate, txEndDate]);
 
   const { data: allTransactionsData, isLoading: isAllTransactionsLoading } = useAllTransactions({
     type: txType,
-    search: txSearch,
-    startDate: txStartDate,
-    endDate: txEndDate,
+    search: debouncedSearch,
+    startDate: txStartDate?.toISOString(),
+    endDate: txEndDate?.toISOString(),
     page,
     limit: 10
   });
@@ -60,7 +67,7 @@ export function TransactionLogSection() {
 
   return (
     <div className="animate-in slide-in-from-bottom-4 duration-500">
-      <Card className="border-border/50 bg-card/30 backdrop-blur-sm">
+      <Card className="border-border/50 bg-card/30 backdrop-blur-sm overflow-visible min-h-[450px] relative z-10">
         <CardHeader className="flex flex-row items-center justify-between border-b border-border/40 pb-4 mb-4">
           <CardTitle className="text-xl font-heading flex items-center gap-2">
             <History className="h-5 w-5 text-indigo-400" />
@@ -71,16 +78,20 @@ export function TransactionLogSection() {
           </Badge>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 rounded-xl bg-white/5 border border-white/10 relative z-20">
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">{t('searchUser')}</label>
-              <Input
-                placeholder="Name or email..."
-                value={txSearch}
-                onChange={(e) => setTxSearch(e.target.value)}
-                icon={<Search className="h-3.5 w-3.5" />}
-                className="h-9 text-xs bg-background/50"
-              />
+              <form onSubmit={(e) => e.preventDefault()}>
+                <Input
+                  placeholder="Name or email..."
+                  value={txSearch}
+                  onChange={(e) => {
+                    setTxSearch(e.target.value);
+                  }}
+                  icon={<Search className="h-3.5 w-3.5" />}
+                  className="h-9 text-xs bg-background/50"
+                />
+              </form>
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">{t('transactionType')}</label>
@@ -88,7 +99,6 @@ export function TransactionLogSection() {
                 value={txType}
                 onChange={(val: string) => {
                   setTxType(val || "all");
-                  setPage(1);
                 }}
                 options={[
                   { label: t('allTypes'), value: "all" },
@@ -103,20 +113,24 @@ export function TransactionLogSection() {
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">{t('fromDate')}</label>
-              <Input
-                type="date"
+              <DatePicker
                 value={txStartDate}
-                onChange={(e) => setTxStartDate(e.target.value)}
-                className="h-9 text-xs bg-background/50 [color-scheme:dark]"
+                onChange={(date) => {
+                  setTxStartDate(date);
+                }}
+                placeholder="From..."
+                className="w-full"
               />
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase font-bold text-muted-foreground ml-1">{t('toDate')}</label>
-              <Input
-                type="date"
+              <DatePicker
                 value={txEndDate}
-                onChange={(e) => setTxEndDate(e.target.value)}
-                className="h-9 text-xs bg-background/50 [color-scheme:dark]"
+                onChange={(date) => {
+                  setTxEndDate(date);
+                }}
+                placeholder="To..."
+                className="w-full"
               />
             </div>
           </div>

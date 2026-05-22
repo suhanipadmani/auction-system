@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { useBidding } from "@/hooks/useBidding";
 import { useBidStatus } from "@/hooks/useAuction";
 import { useAuthStore } from "@/store/auth.store";
-import { useBudgets, useAssignAuctionToBudget } from "@/hooks/useBudget";
+import { useBudgets, useAssignAuctionToBudget, useUnassignAuctionFromBudget } from "@/hooks/useBudget";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
@@ -91,6 +91,7 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
   const { data: statusResponse } = useBidStatus(auction._id as string, !!user);
   const { data: budgetsResponse } = useBudgets();
   const { mutate: assignToGoal } = useAssignAuctionToBudget();
+  const { mutate: unassignFromGoal } = useUnassignAuctionFromBudget();
 
   const userStatus = statusResponse?.data;
   const budgets = budgetsResponse?.data || [];
@@ -110,9 +111,16 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
 
   // Budget validation 
   const numericAmount = parseFloat(bidAmount) || 0;
-  const isOverBudget = assignedGoal && (assignedGoal.currentExposure + (numericAmount - (isHighestBidder ? currentBid : 0)) > assignedGoal.maxBudget);
+  const bidAmountInBase = convertBack(numericAmount);
+  const isBidAmountValid = bidAmount !== "" && !isNaN(numericAmount) && bidAmountInBase >= (minRequired - 0.01);
+  
+  const isOverBudget = assignedGoal && isBidAmountValid && (assignedGoal.currentExposure + (bidAmountInBase - (isHighestBidder ? currentBid : 0)) > assignedGoal.maxBudget);
   const remainingInGoal = assignedGoal ? assignedGoal.maxBudget - assignedGoal.currentExposure + (isHighestBidder ? currentBid : 0) : 0;
   const exposurePercentage = assignedGoal ? (assignedGoal.currentExposure / assignedGoal.maxBudget) * 100 : 0;
+  
+  const numericAutoLimit = parseFloat(autoBidLimit) || 0;
+  const autoLimitInBase = convertBack(numericAutoLimit);
+  const isAutoLimitValid = autoBidLimit !== "" && !isNaN(numericAutoLimit) && autoLimitInBase > currentBid;
 
   const handleManualBid = () => {
     if (!user) {
@@ -123,7 +131,7 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
     const amount = parseFloat(bidAmount);
     const amountInBase = convertBack(amount);
     
-    if (isNaN(amountInBase) || amountInBase < minRequired) {
+    if (isNaN(amountInBase) || amountInBase < (minRequired - 0.01)) {
       toast.error(t("errors.minBid", { amount: formatCurrency(minRequired) }));
       return;
     }
@@ -138,6 +146,13 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
     }
   }, [isHighestBidder]);
 
+  // Sync Auto-Bid limit state with server data
+  useEffect(() => {
+    if (userStatus?.autoBidLimit && !autoBidLimit) {
+      setAutoBidLimit(convertAmount(userStatus.autoBidLimit).toFixed(2));
+    }
+  }, [userStatus?.autoBidLimit, autoBidLimit]);
+
   const handleAutoBidSetup = async () => {
     if (!user) {
       toast.error(t("participatePrompt"));
@@ -147,7 +162,12 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
     const limit = parseFloat(autoBidLimit);
     const limitInBase = convertBack(limit);
     
-    if (isNaN(limitInBase) || limitInBase <= currentBid) {
+    if (isNaN(limit) || isNaN(limitInBase)) {
+      toast.error(t("errors.invalidAmount") || "Please enter a valid amount");
+      return;
+    }
+
+    if (limitInBase <= currentBid) {
       toast.error(t("limitExceeded"));
       return;
     }
@@ -156,12 +176,17 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
       onSuccess: () => {
         toast.success(t("setupAutoBid"));
         setIsAutoBid(false);
-        setAutoBidLimit("");
       },
       onError: (err: any) => {
         toast.error(err.response?.data?.message || t("errors.autoBidFailed"));
       }
     });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && isAutoLimitValid && !isSettingAutoBid) {
+      handleAutoBidSetup();
+    }
   };
 
   return (
@@ -172,8 +197,8 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
           <div className="p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">{t("budgetActive", { name: assignedGoal.name })}</span>
+                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">{t("budgetActive", { name: assignedGoal.name })}</span>
               </div>
               <span className="text-[10px] font-bold text-white/50">{formatCurrency(remainingInGoal)} {t("left")}</span>
             </div>
@@ -181,14 +206,14 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
             <Progress
               value={exposurePercentage}
               indicatorClassName={cn(
-                "bg-indigo-500",
-                exposurePercentage > 90 ? "bg-red-500" : exposurePercentage > 70 ? "bg-amber-500" : "bg-indigo-500"
+                "bg-blue-500",
+                exposurePercentage > 90 ? "bg-red-500" : exposurePercentage > 70 ? "bg-amber-500" : "bg-blue-500"
               )}
             />
 
             <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-tight text-muted-foreground">
               <span>{Math.round(exposurePercentage)}% {t("used")}</span>
-              <span className={cn(numericAmount > 0 ? "text-indigo-300" : "opacity-0")}>
+              <span className={cn(numericAmount > 0 ? "text-blue-300" : "opacity-0")}>
                 +{formatCurrency(numericAmount - (isHighestBidder ? currentBid : 0))} {t("exposureImpact")}
               </span>
             </div>
@@ -196,11 +221,11 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
         </Card>
       )}
 
-      <Card className="border-white/5 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 backdrop-blur-xl transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10">
+      <Card className="border-white/5 bg-gradient-to-br from-blue-500/10 to-purple-500/5 backdrop-blur-xl transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/10">
 
         <CardHeader className="text-center p-8">
           <CardTitle className="text-muted-foreground text-xs font-black uppercase tracking-[0.3em] flex items-center justify-center gap-2">
-            <TrendingUp className="w-4 h-4 text-indigo-400" />
+            <TrendingUp className="w-4 h-4 text-blue-400" />
             {t("currentHighestBid")}
           </CardTitle>
           <div className="mt-4 text-5xl font-black text-white tracking-tighter drop-shadow-2xl animate-in zoom-in-50 duration-500">
@@ -215,8 +240,8 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
 
         <CardContent className="p-8 pt-0 space-y-6">
           <div className="flex items-center justify-center gap-3 py-3 px-4 bg-white/5 rounded-2xl border border-white/10 group transition-colors hover:bg-white/10">
-            <Clock className="w-5 h-5 text-indigo-400 group-hover:animate-spin-slow" />
-            <span className="text-sm font-bold text-indigo-200">
+            <Clock className="w-5 h-5 text-blue-400 group-hover:animate-spin-slow" />
+            <span className="text-sm font-bold text-blue-200">
               {timeLeft}
             </span>
           </div>
@@ -234,7 +259,7 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
                     value={bidAmount}
                     onChange={(e) => setBidAmount(e.target.value)}
                     className={cn(
-                      "pl-8 h-14 bg-black/40 border-white/10 rounded-xl font-bold focus:ring-indigo-500 focus:border-indigo-500",
+                      "pl-8 h-14 bg-black/40 border-white/10 rounded-xl font-bold focus:ring-blue-500 focus:border-blue-500",
                       isOverBudget && "border-red-500 focus:ring-red-500 focus:border-red-500"
                     )}
                     disabled={auction.status !== "active" || isHighestBidder}
@@ -253,7 +278,7 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
                     "w-full h-14 text-lg font-black shadow-xl rounded-xl transition-all active:scale-95 disabled:opacity-50",
                     isOverBudget ? "bg-red-600 hover:bg-red-700 shadow-red-500/20" : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20"
                   )}
-                  disabled={auction.status !== "active" || isHighestBidder || isPending || isOverBudget}
+                  disabled={auction.status !== "active" || isHighestBidder || isPending || isOverBudget || !isBidAmountValid}
                 >
                   {isPending ? t("processing") : isHighestBidder ? t("highestBidder") : isOverBudget ? t("limitExceeded") : t("placeBid")}
                 </Button>
@@ -277,15 +302,20 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
             </div>
           )}
 
-          {/* Budget Goal Assignment - Hide for Admin */}
-          {user && !isOwner && !isAdmin && (
-            <div className="pt-4 border-t border-white/5 space-y-3">
+          {/* Goal Assignment - Hide for Admin, Owner and Guests */}
+          {!isOwner && user && !isAdmin && (
+            <div className="space-y-3 pb-6">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{t("assignToGoal")}</Label>
-                {assignedGoal && (
-                  <Badge variant="outline" className="text-[10px] bg-indigo-500/10 text-indigo-400 border-indigo-500/20">
-                    Tracking
-                  </Badge>
+                <Label className="text-[10px] font-black text-white/40 uppercase tracking-widest">{t("assignToGoal")}</Label>
+                {selectedGoalId && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-6 px-2 text-[9px] font-black uppercase text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                    onClick={() => unassignFromGoal({ auctionId: auction._id })}
+                  >
+                    {t("removeGoal")}
+                  </Button>
                 )}
               </div>
               <select
@@ -294,7 +324,11 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
                 onChange={(e) => {
                   const newGoalId = e.target.value;
                   setSelectedGoalId(newGoalId);
-                  assignToGoal({ goalId: newGoalId, auctionId: auction._id });
+                  if (newGoalId) {
+                    assignToGoal({ goalId: newGoalId, auctionId: auction._id });
+                  } else {
+                    unassignFromGoal({ auctionId: auction._id });
+                  }
                 }}
               >
 
@@ -311,45 +345,101 @@ export const BiddingSection = ({ auction, socketData }: IBiddingSectionProps) =>
             </div>
           )}
 
-          {/* Auto Bid Section - Hide for Admin, Owner and Guests */}
+          {/* Auto Bid Section */}
           {!isOwner && user && !isAdmin && (
-            <div className="pt-4 border-t border-white/5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-amber-400" />
-                  <Label className="text-sm font-bold text-white">{t("enableAutoBid")}</Label>
+            <div className="pt-6 border-t border-white/5 space-y-4">
+              <div
+                className={cn(
+                  "w-full flex items-center justify-between p-4 rounded-2xl border transition-all duration-300",
+                  isAutoBid
+                    ? "bg-blue-500/10 border-blue-500/30 shadow-lg shadow-blue-500/5"
+                    : "bg-white/5 border-white/5"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={cn(
+                    "p-2 rounded-xl transition-colors",
+                    isAutoBid ? "bg-blue-500 text-white" : "bg-white/5 text-blue-400"
+                  )}>
+                    <Zap className={cn("w-4 h-4", isAutoBid ? "fill-current" : "")} />
+                  </div>
+                  <div className="text-left">
+                    <Label className="text-sm font-bold text-white block">
+                      {userStatus?.autoBidLimit ? t("activeAutoBid") : t("enableAutoBid")}
+                    </Label>
+                    <p className="text-[10px] text-muted-foreground">{t("autoBidDesc")}</p>
+                  </div>
                 </div>
-                <Switch
-                  checked={isAutoBid}
-                  onCheckedChange={setIsAutoBid}
-                  className="data-[state=checked]:bg-amber-500"
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = !isAutoBid;
+                    setIsAutoBid(next);
+                    if (next && userStatus?.autoBidLimit) {
+                      setAutoBidLimit(convertAmount(userStatus.autoBidLimit).toFixed(2));
+                    }
+                  }}
                   disabled={auction.status !== "active" || isHighestBidder}
-                />
+                  className={cn(
+                    "w-14 h-8 rounded-full p-1 transition-all duration-500 relative flex items-center cursor-pointer",
+                    isAutoBid ? "bg-blue-600/60 border border-blue-500/20 shadow-lg shadow-blue-500/20" : "bg-white/10"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "w-6 h-6 bg-white rounded-full transition-all duration-500 ease-spring shadow-lg",
+                      isAutoBid ? "translate-x-6" : "translate-x-0"
+                    )}
+                  />
+                </button>
               </div>
 
-              {userStatus?.autoBidLimit && !isAutoBid && (
-                <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider">{t("activeAutoBid")}</span>
-                  <span className="text-xs font-black text-white">{formatCurrency(userStatus.autoBidLimit)}</span>
+              {userStatus?.autoBidLimit && (
+                <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl flex items-center justify-between group transition-colors hover:bg-blue-500/10">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">
+                      {t("autoBidLimit")}:
+                    </span>
+                  </div>
+                  <span className="text-sm font-black text-white">{formatCurrency(userStatus.autoBidLimit)}</span>
                 </div>
               )}
 
               {isAutoBid && (
-                <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                  <Input
-                    type="number"
-                    placeholder={t("maxLimit")}
-                    value={autoBidLimit}
-                    onChange={(e) => setAutoBidLimit(e.target.value)}
-                    className="h-12 bg-black/40 border-white/10 rounded-xl font-bold"
-                  />
-                  <Button
-                    variant="outline"
-                    className="w-full border-amber-500/30 text-amber-400 hover:bg-amber-500 hover:text-white"
-                    onClick={handleAutoBidSetup}
-                    disabled={isSettingAutoBid}
+                <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                      <span className="text-muted-foreground font-bold">{symbol}</span>
+                    </div>
+                     <Input
+                      type="number"
+                      placeholder={t("maxLimit")}
+                      value={autoBidLimit}
+                      onChange={(e) => setAutoBidLimit(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      className="pl-8 h-12 bg-black/40 border-white/10 rounded-xl font-bold focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    />
+                  </div>
+                   <Button
+                    className="w-full h-12 bg-blue-500/20 hover:bg-blue-600/40 border border-blue-500/40 text-blue-300 hover:text-white font-black rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-500/10"
+                    onClick={() => {
+                      console.log("Setting up auto-bid for amount:", autoBidLimit);
+                      handleAutoBidSetup();
+                    }}
+                    disabled={isSettingAutoBid || !isAutoLimitValid}
                   >
-                    {isSettingAutoBid ? t("settingUp") : t("setupAutoBid")}
+                    {isSettingAutoBid ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                        {t("settingUp") || "Setting up..."}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 fill-current" />
+                        {t("setupAutoBid")}
+                      </div>
+                    )}
                   </Button>
                 </div>
               )}

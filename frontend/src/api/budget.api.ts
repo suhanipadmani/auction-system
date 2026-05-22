@@ -1,5 +1,5 @@
 import { axiosClient } from "@/lib/axios";
-import { IBudgetGoal } from "@/types/budget";
+import { IBudgetGoal, ICreateBudgetGoalDTO } from "@/types/budget";
 
 
 export const budgetApi = {
@@ -8,7 +8,7 @@ export const budgetApi = {
     return response.data;
   },
 
-  createGoal: async (data: { name: string; maxBudget: number }): Promise<{ success: boolean; data: IBudgetGoal }> => {
+  createGoal: async (data: ICreateBudgetGoalDTO): Promise<{ success: boolean; data: IBudgetGoal }> => {
     const response = await axiosClient.post("/budgets", data);
     return response.data;
   },
@@ -25,6 +25,10 @@ export const budgetApi = {
 
   assignAuction: async (goalId: string, auctionId: string): Promise<{ success: boolean; data: IBudgetGoal }> => {
     const response = await axiosClient.post(`/budgets/${goalId}/assign`, { auctionId });
+    return response.data;
+  },
+  unassignAuction: async (auctionId: string): Promise<{ success: boolean }> => {
+    const response = await axiosClient.post(`/budgets/unassign`, { auctionId });
     return response.data;
   }
 };

@@ -1,29 +1,26 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAppMutation } from "./useAppMutation";
 import { axiosClient as axios } from "@/lib/axios";
+import { MESSAGES } from "../constants/messages";
 
 export const useBidding = () => {
-  const queryClient = useQueryClient();
-
   // Place manual bid via API 
-  const placeBidMutation = useMutation({
+  const placeBidMutation = useAppMutation({
     mutationFn: async ({ auctionId, amount }: { auctionId: string; amount: number }) => {
       const response = await axios.post("/bids/place", { auctionId, amount });
       return response.data;
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["auction", variables.auctionId] });
-    }
+    invalidateKeys: [["auction"], ["bids"]],
+    successMessage: MESSAGES.SUCCESS.BID_PLACED,
   });
 
   // Setup auto-bid
-  const setupAutoBidMutation = useMutation({
+  const setupAutoBidMutation = useAppMutation({
     mutationFn: async ({ auctionId, limit }: { auctionId: string; limit: number }) => {
       const response = await axios.post("/bids/auto-setup", { auctionId, limit });
       return response.data;
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["auction", variables.auctionId] });
-    }
+    invalidateKeys: [["auction"], ["bid-status"]],
+    successMessage: MESSAGES.SUCCESS.BID_PLACED,
   });
 
   return {
@@ -33,3 +30,4 @@ export const useBidding = () => {
     isSettingAutoBid: setupAutoBidMutation.isPending
   };
 };
+

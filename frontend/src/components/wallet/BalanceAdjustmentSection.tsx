@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useImperativeHandle, forwardRef } from "react";
 import {
   RefreshCcw,
   Search,
@@ -27,7 +27,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Dropdown } from "@/components/ui/Dropdown";
 
-export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanceAdjustmentSectionProps) {
+export const BalanceAdjustmentSection = forwardRef(({ onReviewClick, isAdjusting }: IBalanceAdjustmentSectionProps, ref) => {
   const t = useTranslations("wallet");
   const { formatCurrency, convertBack } = useCurrency();
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -35,6 +35,18 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
   const [adjustmentAmount, setAdjustmentAmount] = useState<string>("");
   const [adjustmentType, setAdjustmentType] = useState<TRANSACTION_TYPES.CREDIT | TRANSACTION_TYPES.DEBIT>(TRANSACTION_TYPES.CREDIT);
   const [adjustmentNote, setAdjustmentNote] = useState<string>("");
+  
+  const resetForm = () => {
+    setSearchTerm("");
+    setSelectedUserId("");
+    setAdjustmentAmount("");
+    setAdjustmentType(TRANSACTION_TYPES.CREDIT);
+    setAdjustmentNote("");
+  };
+
+  useImperativeHandle(ref, () => ({
+    reset: resetForm
+  }));
 
   const { data: usersData } = useUsers();
   const { data: userWalletData, isLoading: isUserWalletLoading } = useUserWallet(selectedUserId);
@@ -71,15 +83,14 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('searchUser')}</label>
-              <Input
-                placeholder={t('searchPlaceholder')}
-                icon={<Search className="h-4 w-4" />}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+            <Input
+              label={t('searchUser')}
+              placeholder={t('searchPlaceholder')}
+              icon={<Search className="h-4 w-4" />}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              required
+            />
 
             {searchTerm && filteredUsers.length > 0 && (
               <div className="max-h-40 overflow-y-auto rounded-xl border border-border/50 bg-background/50 p-1">
@@ -125,43 +136,40 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('type')}</label>
-                <Dropdown
-                  value={adjustmentType}
-                  onChange={(val: any) => setAdjustmentType(val)}
-                  options={[
-                    { label: t('creditAdd'), value: "credit" },
-                    { label: t('debitRemove'), value: "debit" }
-                  ]}
-                  triggerClassName="w-full bg-background/50 h-11"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('amount')}</label>
-                <Input
-                  type="number"
-                  placeholder="0.00"
-                  className="h-11 bg-background/50"
-                  value={adjustmentAmount}
-                  onChange={(e) => setAdjustmentAmount(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('adminNote')}</label>
+              <Dropdown
+                label={t('type')}
+                value={adjustmentType}
+                onChange={(val: any) => setAdjustmentType(val)}
+                options={[
+                  { label: t('creditAdd'), value: "credit" },
+                  { label: t('debitRemove'), value: "debit" }
+                ]}
+                triggerClassName="w-full bg-background/50 h-11"
+                required
+              />
               <Input
-                placeholder={t('notePlaceholder')}
+                label={t('amount')}
+                type="number"
+                placeholder="0.00"
                 className="h-11 bg-background/50"
-                value={adjustmentNote}
-                onChange={(e) => setAdjustmentNote(e.target.value)}
+                value={adjustmentAmount}
+                onChange={(e) => setAdjustmentAmount(e.target.value)}
+                required
               />
             </div>
 
+            <Input
+              label={t('adminNote')}
+              placeholder={t('notePlaceholder')}
+              className="h-11 bg-background/50"
+              value={adjustmentNote}
+              onChange={(e) => setAdjustmentNote(e.target.value)}
+              required
+            />
+
             <Button
               className="w-full h-12 shadow-lg shadow-primary/20 mt-2"
-              disabled={!selectedUserId || !adjustmentAmount || Number(adjustmentAmount) <= 0 || userWalletData?.data?.isFrozen || isAdjusting}
+              disabled={!selectedUserId || !adjustmentAmount || Number(adjustmentAmount) <= 0 || !adjustmentNote.trim() || userWalletData?.data?.isFrozen || isAdjusting}
               onClick={handleReview}
               isLoading={isAdjusting}
             >
@@ -209,4 +217,6 @@ export function BalanceAdjustmentSection({ onReviewClick, isAdjusting }: IBalanc
       </Card>
     </div>
   );
-}
+});
+
+BalanceAdjustmentSection.displayName = "BalanceAdjustmentSection";

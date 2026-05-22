@@ -8,6 +8,7 @@ import { errorMiddleware } from "../app/middleware/error.middleware";
 export const createExpressApp = () => {
   const app = express();
 
+  app.set("trust proxy", 1);
   app.use(helmet());
   app.use(cors({ origin: env.frontendUrl }));
   app.use(express.json());

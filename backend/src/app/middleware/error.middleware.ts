@@ -8,13 +8,16 @@ import { sendError } from "../utils/apiResponse";
 export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
   let statusCode = err.statusCode || 500;
   let message = err.message || "Internal Server Error";
-  let details = undefined;
+  let details: any = undefined;
 
   // Handle Specific Mongoose/MongoDB Errors
   if (err.name === "ValidationError") {
     statusCode = 400;
     message = "Validation Error";
-    details = Object.values(err.errors).map((val: any) => val.message);
+    details = {};
+    Object.keys(err.errors).forEach((key) => {
+      details[key] = err.errors[key].message;
+    });
   } else if (err.code === 11000) {
     statusCode = 400;
     message = "Duplicate field value entered";
@@ -30,7 +33,6 @@ export const errorMiddleware = (err: any, req: Request, res: Response, next: Nex
     console.error(`[ERROR] [${req.method} ${req.url}] : ${err.stack || message}`);
   }
 
-  // In production, don't leak internal error details for 500s
   const cleanMessage = env.nodeEnv === "production" && statusCode === 500 
     ? "Something went wrong on our end" 
     : message;

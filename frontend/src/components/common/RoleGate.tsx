@@ -12,12 +12,12 @@ import { IRoleGateProps } from "@/types/components";
  */
 export function RoleGate({ children, allowedRoles }: IRoleGateProps) {
 
-  const { user, _hasHydrated } = useAuthStore();
+  const { user, _hasHydrated, isSyncing } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
 
-    if (_hasHydrated && user && !allowedRoles.includes(user.role)) {
+    if (_hasHydrated && !isSyncing && user && !allowedRoles.includes(user.role)) {
       switch (user.role) {
         case "admin":
           router.replace("/admin");
@@ -31,10 +31,10 @@ export function RoleGate({ children, allowedRoles }: IRoleGateProps) {
           break;
       }
     }
-  }, [user, _hasHydrated, allowedRoles, router]);
+  }, [user, _hasHydrated, isSyncing, allowedRoles, router]);
 
-  // Show a loading state while hydration is in progress
-  if (!_hasHydrated) {
+  // Show a loading state while hydration or sync is in progress
+  if (!_hasHydrated || isSyncing) {
     return (
       <div className="min-h-[400px] w-full flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-primary animate-spin" />

@@ -6,14 +6,15 @@ import { ClipboardList, Search } from "lucide-react";
 import { toast } from "sonner";
 // Hooks
 import { useAuctions, useAdminApprove, useAdminInventory } from "@/hooks/useAuction";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useCurrency } from "@/hooks/useCurrency";
 // Types
 import { IApprovalTableProps, IInventoryTableProps } from "@/types/components";
-import { AdminTab } from "@/types/auction";
+import { AdminTab, IAdminAuctionConfirmModal } from "@/types/auction";
 // Constants
 import { AUCTION_STATUS_OPTIONS } from "@/constants/auction.constants";
 
-// Components
+import { Card, CardContent } from "@/components/ui/Card";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
 import { AUCTION_STATUSES } from "@/enums";
@@ -21,12 +22,10 @@ import { TableSkeleton } from "@/components/ui/TableSkeleton";
 import { Pagination } from "@/components/ui/Pagination";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
-
 import { Dropdown } from "@/components/ui/Dropdown";
 import { cn } from "@/lib/utils";
 import { getApprovalColumns, getInventoryColumns } from "./columns";
 import { useTranslations } from "next-intl";
-
 
 export default function AdminAuctionManagementPage() {
   const t = useTranslations("admin_auctions");
@@ -34,15 +33,12 @@ export default function AdminAuctionManagementPage() {
 
   const [activeTab, setActiveTab] = useState<AdminTab>("pending");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [pendingPage, setPendingPage] = useState<number>(1);
   const [inventoryPage, setInventoryPage] = useState<number>(1);
-  const [confirmModal, setConfirmModal] = useState<{
-    isOpen: boolean;
-    auctionId: string | null;
-    action: "approve" | "reject" | null;
-  }>({
+  const debouncedSearch = useDebounce(searchQuery, 500);
+
+  const [confirmModal, setConfirmModal] = useState<IAdminAuctionConfirmModal>({
     isOpen: false,
     auctionId: null,
     action: null,
@@ -63,13 +59,10 @@ export default function AdminAuctionManagementPage() {
 
   const { mutate: approveReject, isPending: isProcessing } = useAdminApprove();
 
+  // Reset pages on search change
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
-      setPendingPage(1);
-      setInventoryPage(1);
-    }, 500);
-    return () => clearTimeout(timer);
+    setPendingPage(1);
+    setInventoryPage(1);
   }, [searchQuery]);
 
 
@@ -146,13 +139,13 @@ export default function AdminAuctionManagementPage() {
             <Input
               placeholder={t('searchPlaceholder')}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
               icon={<Search className="w-4 h-4" />}
               className="bg-white/5 border-white/10 h-12 rounded-2xl"
             />
             <Dropdown
               value={statusFilter}
-              onChange={(val) => setStatusFilter(val || "all")}
+              onChange={(val: string | null) => setStatusFilter(val || "all")}
               options={AUCTION_STATUS_OPTIONS}
               placeholder={t('statusFilter.placeholder')}
               triggerClassName="w-[180px] h-12 rounded-2xl bg-white/5 border-white/10 text-white"
@@ -161,71 +154,69 @@ export default function AdminAuctionManagementPage() {
         )}
       </div>
 
-      <div className="bg-white/[0.08] backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden">
-        {activeTab === "pending" ? (
-          loadingPending ? (
-            <Table>
-              <TableBody>
-                <TableSkeleton cols={["w-40", "w-24", "w-32", "w-20", "w-16"]} rows={5} />
-              </TableBody>
-            </Table>
-          ) : !pendingResponse?.data?.length ? (
+      <Card className="border-border/50 bg-card/30 backdrop-blur-sm shadow-xl overflow-hidden">
+        <CardContent className="p-0">
+          {activeTab === "pending" ? (
+            loadingPending ? (
+              <Table>
+                <TableBody>
+                  <TableSkeleton cols={["w-40", "w-24", "w-32", "w-20", "w-16"]} rows={5} />
+                </TableBody>
+              </Table>
+            ) : !pendingResponse?.data?.length ? (
+              <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-400 space-y-4">
+                <ClipboardList className="w-12 h-12 opacity-20" />
+                <p>{t('empty.pending')}</p>
+              </div>
+            ) : (
+              <div className="space-y-0">
+                <ApprovalTable
+                  data={pendingResponse?.data || []}
+                  onAction={handleAction}
+                  isProcessing={isProcessing}
+                  t={t}
+                  formatCurrency={formatCurrency}
+                />
 
-            <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-400 space-y-4">
-              <ClipboardList className="w-12 h-12 opacity-20" />
-              <p>{t('empty.pending')}</p>
-            </div>
+                <Pagination
+                  currentPage={pendingPage}
+                  totalPages={pendingResponse?.totalPages || 1}
+                  totalItems={pendingResponse?.total || 0}
+                  showingCount={pendingResponse?.data?.length || 0}
+                  onPageChange={setPendingPage}
+                  typeLabel={t('pagination.pending')}
+                />
+              </div>
+            )
           ) : (
-            <div className="space-y-4">
-              <ApprovalTable
-                data={pendingResponse?.data || []}
-                onAction={handleAction}
-                isProcessing={isProcessing}
-                t={t}
-                formatCurrency={formatCurrency}
-              />
+            loadingInventory ? (
+              <Table>
+                <TableBody>
+                  <TableSkeleton cols={["w-40", "w-24", "w-32", "w-20", "w-16"]} rows={5} />
+                </TableBody>
+              </Table>
+            ) : !inventoryData?.length ? (
+              <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-400 space-y-4">
+                <Search className="w-12 h-12 opacity-20" />
+                <p>{t('empty.inventory')}</p>
+              </div>
+            ) : (
+              <div className="space-y-0">
+                <InventoryTable data={inventoryData} t={t} formatCurrency={formatCurrency} />
 
-              <Pagination
-                currentPage={pendingPage}
-                totalPages={pendingResponse?.totalPages || 1}
-                totalItems={pendingResponse?.total || 0}
-                showingCount={pendingResponse?.data?.length || 0}
-                onPageChange={setPendingPage}
-                typeLabel={t('pagination.pending')}
-              />
-
-            </div>
-          )
-        ) : (
-          loadingInventory ? (
-            <Table>
-              <TableBody>
-                <TableSkeleton cols={["w-40", "w-24", "w-32", "w-20", "w-16"]} rows={5} />
-              </TableBody>
-            </Table>
-          ) : !inventoryData?.length ? (
-
-            <div className="flex flex-col items-center justify-center min-h-[400px] text-gray-400 space-y-4">
-              <Search className="w-12 h-12 opacity-20" />
-              <p>{t('empty.inventory')}</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <InventoryTable data={inventoryData} t={t} formatCurrency={formatCurrency} />
-
-              <Pagination
-                currentPage={inventoryPage}
-                totalPages={inventoryResponse?.totalPages || 1}
-                totalItems={inventoryResponse?.total || 0}
-                showingCount={inventoryData.length}
-                onPageChange={setInventoryPage}
-                typeLabel={t('pagination.auctions')}
-              />
-
-            </div>
-          )
-        )}
-      </div>
+                <Pagination
+                  currentPage={inventoryPage}
+                  totalPages={inventoryResponse?.totalPages || 1}
+                  totalItems={inventoryResponse?.total || 0}
+                  showingCount={inventoryData.length}
+                  onPageChange={setInventoryPage}
+                  typeLabel={t('pagination.auctions')}
+                />
+              </div>
+            )
+          )}
+        </CardContent>
+      </Card>
 
       <Modal
         isOpen={confirmModal.isOpen}
@@ -251,8 +242,8 @@ function ApprovalTable({ data, onAction, isProcessing, t, formatCurrency }: IApp
   const columns = getApprovalColumns(onAction, isProcessing, t, formatCurrency);
   return (
     <Table>
-      <TableHeader className="bg-black/25">
-        <TableRow className="hover:bg-transparent border-white/5 text-gray-400">
+      <TableHeader>
+        <TableRow>
           {columns.map((col: any, idx: number) => (
             <TableHead key={idx} className={col.headerClassName}>{col.header}</TableHead>
           ))}
@@ -260,7 +251,7 @@ function ApprovalTable({ data, onAction, isProcessing, t, formatCurrency }: IApp
       </TableHeader>
       <TableBody>
         {data.map((auction) => (
-          <TableRow key={auction._id} className="border-white/5 hover:bg-white/[0.05] transition-colors">
+          <TableRow key={auction._id}>
             {columns.map((col: any, idx: number) => (
               <TableCell key={idx} className={col.className}>
                 {col.render(auction)}
@@ -277,8 +268,8 @@ function InventoryTable({ data, t, formatCurrency }: IInventoryTableProps) {
   const columns = getInventoryColumns(t, formatCurrency);
   return (
     <Table>
-      <TableHeader className="bg-black/25">
-        <TableRow className="hover:bg-transparent border-white/5 text-gray-400">
+      <TableHeader>
+        <TableRow>
           {columns.map((col: any, idx: number) => (
             <TableHead key={idx} className={col.headerClassName}>{col.header}</TableHead>
           ))}
@@ -286,7 +277,7 @@ function InventoryTable({ data, t, formatCurrency }: IInventoryTableProps) {
       </TableHeader>
       <TableBody>
         {data.map((auction) => (
-          <TableRow key={auction._id} className="border-white/5 hover:bg-white/[0.05] transition-colors">
+          <TableRow key={auction._id}>
             {columns.map((col: any, idx: number) => (
               <TableCell key={idx} className={col.className}>
                 {col.render(auction)}

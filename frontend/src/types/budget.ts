@@ -8,3 +8,8 @@ export interface IBudgetGoal {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ICreateBudgetGoalDTO {
+  name: string;
+  maxBudget: number;
+}

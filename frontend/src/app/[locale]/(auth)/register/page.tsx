@@ -26,13 +26,26 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const { mutate: registerUser, isPending, error } = useRegister();
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<IRegisterForm>({
+  const { register, handleSubmit, watch, setError, formState: { errors, isValid } } = useForm<IRegisterForm>({
     resolver: zodResolver(registerSchema),
+    mode: "onChange",
     defaultValues: { role: USER_ROLES.BIDDER }
   });
 
   const onSubmit = (data: IRegisterForm) => {
-    registerUser(data);
+    registerUser(data, {
+      onError: (err: any) => {
+        const details = err?.response?.data?.details;
+        if (details && typeof details === 'object') {
+          Object.keys(details).forEach((key) => {
+            setError(key as any, {
+              type: 'manual',
+              message: details[key]
+            });
+          });
+        }
+      }
+    });
   };
 
   return (
@@ -48,6 +61,7 @@ export default function RegisterPage() {
           icon={<User className="h-5 w-5" />}
           error={errors.name?.message}
           {...register("name")}
+          required
         />
 
         <div>
@@ -81,6 +95,7 @@ export default function RegisterPage() {
           icon={<Mail className="h-5 w-5" />}
           error={errors.email?.message}
           {...register("email")}
+          required
         />
 
         <Input
@@ -104,9 +119,34 @@ export default function RegisterPage() {
           }
           error={errors.password?.message}
           {...register("password")}
+          required
         />
 
-        {error && (
+        <Input
+          label={t("confirmPassword")}
+          type={showPassword ? "text" : "password"}
+          placeholder="••••••••"
+          icon={<Lock className="h-5 w-5" />}
+          rightElement={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="p-2 hover:text-white transition-colors outline-none"
+              tabIndex={-1}
+            >
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
+          }
+          error={errors.confirmPassword?.message}
+          {...register("confirmPassword")}
+          required
+        />
+
+        {!!error && (
           <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
             <p className="text-sm text-red-400 text-center">
               {(error as any)?.response?.data?.message || t("registerError")}
@@ -114,7 +154,7 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <Button type="submit" isLoading={isPending} className="w-full mt-2">
+        <Button type="submit" isLoading={isPending} disabled={!isValid} className="w-full mt-2">
           {t("createAccountBtn")}
         </Button>
       </form>

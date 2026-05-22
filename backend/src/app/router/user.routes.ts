@@ -13,6 +13,7 @@ export const userRoutes = Router();
 userRoutes.use(authenticate);
 
 // Profile and security (Any authenticated user)
+userRoutes.get("/me", userController.getMe);
 userRoutes.patch("/me", userController.updateMe);
 userRoutes.patch("/me/password", userController.changePassword);
 

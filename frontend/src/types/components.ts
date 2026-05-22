@@ -21,6 +21,11 @@ export interface IUsersTableProps {
   isActivating: boolean;
   isDeleting: boolean;
   isRestoring: boolean;
+  // Pagination
+  currentPage?: number;
+  totalPages?: number;
+  totalItems?: number;
+  onPageChange?: (page: number) => void;
 }
 
 export interface IEmptyStateProps {
@@ -41,7 +46,7 @@ export interface IModalProps {
   title: string;
   children: ReactNode;
   footer?: ReactNode;
-  
+
   // Built-in actions
   confirmText?: string | ReactNode;
   cancelText?: string | ReactNode;
@@ -295,6 +300,9 @@ export interface DropdownProps {
   loading?: boolean
   disabled?: boolean
   maxSelectionLimit?: number
+  label?: string
+  required?: boolean
+  showSearch?: boolean
 }
 
 export interface UseDropdownProps {
@@ -321,5 +329,22 @@ export interface AccordionItemProps {
 export interface AccordionProps {
   items: AccordionItem[];
   className?: string;
+}
+
+export interface IInputProps extends React.ComponentProps<"input"> {
+  label?: string; 
+  error?: string; 
+  icon?: React.ReactNode;
+  rightElement?: React.ReactNode;
+}
+
+export interface IButtonProps extends React.ComponentProps<"button"> {
+  variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
+  size?: "default" | "xs" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg";
+  isLoading?: boolean;
+}
+
+export interface IAuditLogDetailsProps {
+  metadata: any;
 }
 

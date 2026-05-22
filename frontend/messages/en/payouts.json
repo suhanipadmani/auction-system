@@ -17,7 +17,15 @@
   "modals": {
     "addNote": "Adding a note (optional):",
     "rejectReason": "Reason for rejection (mandatory):",
-    "rejectionRequired": "Rejection note is required."
+    "rejectionRequired": "Rejection note is required.",
+    "approveTitle": "Approve Payout",
+    "rejectTitle": "Reject Payout",
+    "approveConfirm": "Approve",
+    "rejectConfirm": "Reject",
+    "approveDescription": "Are you sure you want to approve this payout request? This will deduct the funds from the user's locked balance.",
+    "rejectDescription": "Are you sure you want to reject this payout request? The locked funds will be returned to the user's available balance.",
+    "noteLabel": "Administrator Note",
+    "notePlaceholder": "Enter details here..."
   },
   "notice": {
     "title": "Administrative Notice",
